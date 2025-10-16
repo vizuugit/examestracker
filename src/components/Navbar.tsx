@@ -58,9 +58,14 @@ const Navbar = () => {
             Home
           </Link>
           {user && (
-            <Link to="/dashboard" className="font-medium text-white/80 hover:text-white transition-colors">
-              Dashboard
-            </Link>
+            <>
+              <Link to="/dashboard" className="font-medium text-white/80 hover:text-white transition-colors">
+                Dashboard
+              </Link>
+              <Link to="/patients" className="font-medium text-white/80 hover:text-white transition-colors">
+                Pacientes
+              </Link>
+            </>
           )}
           <button 
             onClick={() => scrollToSection('contact')}
@@ -83,6 +88,9 @@ const Navbar = () => {
               <DropdownMenuContent align="end" className="bg-black/95 border-white/10 text-white">
                 <DropdownMenuItem onClick={() => navigate('/dashboard')} className="cursor-pointer hover:bg-white/10">
                   Dashboard
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/patients')} className="cursor-pointer hover:bg-white/10">
+                  Pacientes
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-white/10" />
                 <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer hover:bg-white/10 text-red-400">
@@ -123,13 +131,22 @@ const Navbar = () => {
               Home
             </Link>
             {user && (
-              <Link 
-                to="/dashboard"
-                className="font-medium text-white/90 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-4 py-3 transition-colors text-lg block"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
+              <>
+                <Link 
+                  to="/dashboard"
+                  className="font-medium text-white/90 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-4 py-3 transition-colors text-lg block"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <Link 
+                  to="/patients"
+                  className="font-medium text-white/90 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-4 py-3 transition-colors text-lg block"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Pacientes
+                </Link>
+              </>
             )}
             <button 
               onClick={() => scrollToSection('contact')}
