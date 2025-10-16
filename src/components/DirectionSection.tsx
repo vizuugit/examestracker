@@ -1,157 +1,93 @@
-import { ArrowRight, ShoppingBag, MapPin, Users, TrendingUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Upload, Bot, BarChart3, Download } from "lucide-react";
 
 const DirectionSection = () => {
   return (
     <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-zinc-900 to-black relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute top-20 left-20 w-72 h-72 bg-rest-blue/5 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-white/3 rounded-full blur-3xl" />
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-4xl mx-auto mb-20">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 tracking-tight leading-tight">
-            Choose Your
-            <span className="block bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">
-              Wellness Journey
+            Como
+            <span className="block bg-gradient-to-r from-rest-lightblue to-rest-cyan bg-clip-text text-transparent">
+              Funciona
             </span>
           </h2>
           <p className="text-xl text-white/70 leading-relaxed">
-            Whether you're looking to enhance your personal wellness or build a thriving business, 
-            we have the perfect solution for you.
+            Em apenas 4 passos simples, transforme PDFs de exames em dados estruturados e visualizações inteligentes.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          {/* Shop Section */}
-          <div className="group bg-gradient-to-br from-zinc-900/80 to-black/80 border border-white/10 rounded-3xl p-10 backdrop-blur-md hover:border-white/20 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
-            <div className="flex items-center mb-8">
-              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mr-6">
-                <ShoppingBag className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h3 className="text-3xl font-bold text-white mb-2">Shop Products</h3>
-                <p className="text-white/60">For Personal & Professional Use</p>
-              </div>
-            </div>
-
-            <div className="space-y-6 mb-10">
-              <p className="text-lg text-white/80 leading-relaxed">
-                Bring professional-grade recovery technology to your home or business. 
-                Our equipment is trusted by elite athletes, wellness centers, and health professionals worldwide.
-              </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+          {steps.map((step, index) => (
+            <div key={index} className="group relative">
+              {/* Connector Line (Desktop only) */}
+              {index < steps.length - 1 && (
+                <div className="hidden lg:block absolute top-16 left-[calc(50%+4rem)] w-full h-0.5 bg-gradient-to-r from-rest-blue/50 to-transparent" />
+              )}
               
-              <div className="space-y-4">
-                {shopFeatures.map((feature, index) => (
-                  <div key={index} className="flex items-center">
-                    <div className="w-2 h-2 bg-white rounded-full mr-4" />
-                    <span className="text-white/70">{feature}</span>
-                  </div>
-                ))}
+              <div className="bg-gradient-to-br from-zinc-900/80 to-black/80 border border-white/10 rounded-3xl p-8 backdrop-blur-md hover:border-rest-blue/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl relative z-10">
+                {/* Step Number */}
+                <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-rest-blue to-rest-cyan rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                  {index + 1}
+                </div>
+                
+                {/* Icon */}
+                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:bg-rest-blue/20 transition-colors">
+                  <step.icon className="w-8 h-8 text-rest-lightblue" />
+                </div>
+                
+                {/* Content */}
+                <h3 className="text-xl font-bold text-white mb-3 text-center">{step.title}</h3>
+                <p className="text-white/70 text-sm leading-relaxed text-center">{step.description}</p>
               </div>
-            </div>
-
-            <Link to="/shop">
-              <Button className="bg-white text-black hover:bg-white/90 w-full py-4 rounded-xl text-lg font-semibold flex items-center justify-center gap-3 group-hover:shadow-lg transition-all duration-300">
-                Browse Equipment
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-          </div>
-
-          {/* Licensee Section */}
-          <div className="group bg-gradient-to-br from-zinc-900/80 to-black/80 border border-white/10 rounded-3xl p-10 backdrop-blur-md hover:border-white/20 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
-            <div className="flex items-center mb-8">
-              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mr-6">
-                <MapPin className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h3 className="text-3xl font-bold text-white mb-2">Open a Location</h3>
-                <p className="text-white/60">Licensee Opportunity</p>
-              </div>
-            </div>
-
-            <div className="space-y-6 mb-10">
-              <p className="text-lg text-white/80 leading-relaxed">
-                Join our growing network of successful wellness entrepreneurs. 
-                Build a thriving business in the booming recovery wellness industry with our proven licensee model.
-              </p>
-              
-              <div className="space-y-4">
-                {licenseeFeatures.map((feature, index) => (
-                  <div key={index} className="flex items-center">
-                    <div className="w-2 h-2 bg-white rounded-full mr-4" />
-                    <span className="text-white/70">{feature}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <Link to="/licensee">
-              <Button className="bg-white text-black hover:bg-white/90 w-full py-4 rounded-xl text-lg font-semibold flex items-center justify-center gap-3 group-hover:shadow-lg transition-all duration-300">
-                Explore Opportunities
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        {/* Stats Section */}
-        <div className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-          {stats.map((stat, index) => (
-            <div key={index} className="text-center group">
-              <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-white/10 transition-colors">
-                <stat.icon className="w-8 h-8 text-white" />
-              </div>
-              <div className="text-3xl md:text-4xl font-bold text-white mb-2">{stat.number}</div>
-              <div className="text-white/60 font-medium">{stat.label}</div>
             </div>
           ))}
+        </div>
+
+        {/* CTA Section */}
+        <div className="mt-20 text-center">
+          <p className="text-white/70 mb-6 text-lg">
+            Pronto para revolucionar o acompanhamento dos seus pacientes?
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white font-semibold px-8 py-4 rounded-full text-lg hover-scale transition-all">
+              Começar Gratuitamente
+            </button>
+            <button className="bg-white/5 hover:bg-white/10 text-white font-semibold px-8 py-4 rounded-full text-lg border border-white/20 hover:border-rest-blue/50 transition-all">
+              Ver Demonstração
+            </button>
+          </div>
         </div>
       </div>
     </section>
   );
 };
 
-const shopFeatures = [
-  "Professional-grade equipment",
-  "Complete warranty coverage",
-  "Free shipping included",
-  "Expert installation support",
-  "Ongoing technical assistance"
-];
-
-const licenseeFeatures = [
-  "Proven business model",
-  "Comprehensive training program",
-  "Marketing & operational support",
-  "Protected territory rights",
-  "Growing industry demand"
-];
-
-const stats = [
+const steps = [
   {
-    icon: MapPin,
-    number: "25+",
-    label: "Active Locations"
+    icon: Upload,
+    title: "Upload de PDF",
+    description: "Faça upload do laudo médico em PDF. Arraste e solte ou clique para selecionar o arquivo."
   },
   {
-    icon: Users,
-    number: "500+",
-    label: "Equipment Sold"
+    icon: Bot,
+    title: "IA Processa",
+    description: "Nossa IA extrai automaticamente todos os dados: biomarcadores, valores, referências e datas."
   },
   {
-    icon: TrendingUp,
-    number: "6 mo",
-    label: "Open in 6 months"
+    icon: BarChart3,
+    title: "Visualize Gráficos",
+    description: "Veja gráficos de evolução temporal e compare resultados de diferentes exames facilmente."
   },
   {
-    icon: ShoppingBag,
-    number: "24/7",
-    label: "Support Available"
+    icon: Download,
+    title: "Exporte Relatórios",
+    description: "Gere relatórios em PDF profissionais para compartilhar com pacientes ou colegas."
   }
 ];
 

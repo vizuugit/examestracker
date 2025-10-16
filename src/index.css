@@ -34,6 +34,12 @@
     --ring: 222.2 84% 4.9%;
  
     --radius: 0.5rem;
+    
+    /* Medical status colors */
+    --medical-success: 142 71% 35%;
+    --medical-warning: 38 92% 50%;
+    --medical-critical: 0 72% 51%;
+    --medical-info: 199 100% 36%;
   }
  
   .dark {

@@ -70,6 +70,12 @@ export default {
 					cyan: '#00B4D8',
 					light: '#000000',
 					dark: '#FFFFFF'
+				},
+				medical: {
+					success: '#2E8540',
+					warning: '#F59E0B',
+					critical: '#DC2626',
+					info: '#0077B6'
 				}
 			},
 			borderRadius: {

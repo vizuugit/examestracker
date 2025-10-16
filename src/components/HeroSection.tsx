@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowRight, Play, MapPin, Users, TrendingUp, Star } from "lucide-react";
+import { ArrowRight, Upload, Brain, TrendingUp, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const HeroSection = () => {
@@ -26,9 +26,9 @@ const HeroSection = () => {
     <section className="relative min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-20 left-20 w-96 h-96 bg-rest-blue/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-20 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-yellow-500/5 to-transparent rounded-full blur-3xl animate-spin-slow" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-rest-cyan/5 to-transparent rounded-full blur-3xl animate-spin-slow" />
       </div>
 
       {/* Grid Pattern Overlay */}
@@ -39,21 +39,21 @@ const HeroSection = () => {
           {/* Left Content */}
           <div className={`space-y-8 ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}>
             {/* Badge */}
-            <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500/20 to-yellow-400/10 rounded-full border border-yellow-500/30 backdrop-blur-sm">
-              <Star className="w-4 h-4 text-yellow-400 mr-2" />
-              <span className="text-sm font-medium text-white">America's Premier Recovery Network</span>
+            <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-rest-blue/20 to-rest-cyan/10 rounded-full border border-rest-blue/30 backdrop-blur-sm">
+              <Shield className="w-4 h-4 text-rest-lightblue mr-2" />
+              <span className="text-sm font-medium text-white">Plataforma de Acompanhamento de Exames Médicos</span>
             </div>
 
             {/* Main Headline */}
             <div className="space-y-4">
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight tracking-tight">
-                Transform Your
-                <span className="block bg-gradient-to-r from-yellow-400 to-yellow-500 bg-clip-text text-transparent">
-                  Wellness Journey
+                Transforme o
+                <span className="block bg-gradient-to-r from-rest-lightblue to-rest-cyan bg-clip-text text-transparent">
+                  Acompanhamento dos Seus Pacientes
                 </span>
               </h1>
               <p className="text-xl md:text-2xl text-white/80 max-w-2xl leading-relaxed">
-                Join the REST RECOVERY revolution. Premium wellness centers offering cutting-edge recovery technology and profitable licensee opportunities.
+                Plataforma inteligente de gestão de exames médicos com IA. Automatize a análise de laudos e visualize a evolução dos seus pacientes.
               </p>
             </div>
 
@@ -61,10 +61,9 @@ const HeroSection = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-yellow-500 to-yellow-400 hover:from-yellow-400 hover:to-yellow-300 text-black font-semibold px-8 py-4 text-lg hover-scale group"
-                onClick={() => scrollToSection('contact')}
+                className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white font-semibold px-8 py-4 text-lg hover-scale group"
               >
-                Start Your Journey
+                Começar Agora
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>
@@ -72,55 +71,57 @@ const HeroSection = () => {
             {/* Social Proof Stats */}
             <div className="grid grid-cols-3 gap-8 pt-8 border-t border-white/10">
               <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-400">25+</div>
-                <div className="text-sm text-white/70">Locations</div>
+                <div className="text-3xl font-bold text-rest-lightblue">1000+</div>
+                <div className="text-sm text-white/70">Exames Processados</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-400">15+</div>
-                <div className="text-sm text-white/70">States</div>
+                <div className="text-3xl font-bold text-rest-lightblue">50+</div>
+                <div className="text-sm text-white/70">Profissionais</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-400">6 mo</div>
-                <div className="text-sm text-white/70">To Open</div>
+                <div className="text-3xl font-bold text-rest-lightblue">&lt; 60s</div>
+                <div className="text-sm text-white/70">Processamento</div>
               </div>
             </div>
           </div>
 
-          {/* Right Content - Logo & Features */}
+          {/* Right Content - Features */}
           <div className={`space-y-8 ${isVisible ? 'animate-fade-in' : 'opacity-0'}`} style={{ animationDelay: '0.3s' }}>
-            {/* Enhanced Logo Display */}
+            {/* Enhanced Visual */}
             <div className="relative group">
-              <div className="absolute -inset-8 bg-gradient-to-r from-yellow-500/20 to-white/10 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-700" />
-              <div className="relative rounded-3xl overflow-hidden border border-white/20 backdrop-blur-sm bg-white/5 p-8 hover-scale">
-                <img 
-                  alt="REST RECOVERY - Premier Wellness & Recovery Centers" 
-                  className="w-full h-auto object-contain transform group-hover:scale-105 transition-transform duration-700" 
-                  src="/lovable-uploads/b75b628b-2cba-4748-8f80-792a5ae8ee1d.png" 
-                />
+              <div className="absolute -inset-8 bg-gradient-to-r from-rest-blue/20 to-white/10 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-700" />
+              <div className="relative rounded-3xl overflow-hidden border border-white/20 backdrop-blur-sm bg-white/5 p-12 hover-scale flex items-center justify-center min-h-[300px]">
+                <div className="text-center space-y-4">
+                  <div className="w-32 h-32 bg-gradient-to-br from-rest-blue to-rest-cyan rounded-full flex items-center justify-center mx-auto">
+                    <Brain className="w-16 h-16 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Processamento com IA</h3>
+                  <p className="text-white/70">Extração inteligente de dados médicos</p>
+                </div>
               </div>
             </div>
 
             {/* Quick Features */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-yellow-500/30 transition-colors hover-scale">
-                <MapPin className="w-6 h-6 text-yellow-400 mb-2" />
-                <div className="text-sm font-medium text-white">25+ Locations</div>
-                <div className="text-xs text-white/70">15+ States</div>
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-rest-blue/30 transition-colors hover-scale">
+                <Upload className="w-6 h-6 text-rest-lightblue mb-2" />
+                <div className="text-sm font-medium text-white">Upload Rápido</div>
+                <div className="text-xs text-white/70">PDFs em segundos</div>
               </div>
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-yellow-500/30 transition-colors hover-scale">
-                <Users className="w-6 h-6 text-yellow-400 mb-2" />
-                <div className="text-sm font-medium text-white">Expert Team</div>
-                <div className="text-xs text-white/70">Certified Professionals</div>
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-rest-blue/30 transition-colors hover-scale">
+                <Brain className="w-6 h-6 text-rest-lightblue mb-2" />
+                <div className="text-sm font-medium text-white">IA Inteligente</div>
+                <div className="text-xs text-white/70">Análise automática</div>
               </div>
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-yellow-500/30 transition-colors hover-scale">
-                <TrendingUp className="w-6 h-6 text-yellow-400 mb-2" />
-                <div className="text-sm font-medium text-white">Growing Fast</div>
-                <div className="text-xs text-white/70">New Locations Monthly</div>
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-rest-blue/30 transition-colors hover-scale">
+                <TrendingUp className="w-6 h-6 text-rest-lightblue mb-2" />
+                <div className="text-sm font-medium text-white">Gráficos Evolutivos</div>
+                <div className="text-xs text-white/70">Acompanhe tendências</div>
               </div>
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-yellow-500/30 transition-colors hover-scale">
-                <Star className="w-6 h-6 text-yellow-400 mb-2" />
-                <div className="text-sm font-medium text-white">5-Star Rated</div>
-                <div className="text-xs text-white/70">Customer Satisfaction</div>
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-rest-blue/30 transition-colors hover-scale">
+                <Shield className="w-6 h-6 text-rest-lightblue mb-2" />
+                <div className="text-sm font-medium text-white">100% Seguro</div>
+                <div className="text-xs text-white/70">Dados protegidos</div>
               </div>
             </div>
           </div>
