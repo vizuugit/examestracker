@@ -1,1 +1,4 @@
 project_id = "vmusmbuofkhzmtoqdhqc"
+
+[functions.aws-proxy]
+verify_jwt = false

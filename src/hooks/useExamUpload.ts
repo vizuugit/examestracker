@@ -2,7 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const AWS_API_URL = "https://uretx67kbrqws3kmsjfwun2w340mtbgo.lambda-url.us-east-1.on.aws/";
+const EDGE_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/aws-proxy`;
 
 interface UploadOptions {
   patientId: string;
@@ -45,10 +45,13 @@ export function useExamUpload() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      // 2. Get upload URL from AWS
-      const response = await fetch(AWS_API_URL, {
+      // 2. Get upload URL from Edge Function (proxy to AWS)
+      const response = await fetch(EDGE_FUNCTION_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        },
         body: JSON.stringify({
           userId: patientId,
           fileName: file.name,
@@ -126,8 +129,12 @@ export function useExamUpload() {
         setProgress(50 + (attempts / maxAttempts) * 40); // 50% -> 90%
 
         try {
-          // Fetch status from AWS
-          const response = await fetch(`${AWS_API_URL}?userId=${userId}`);
+          // Fetch status from Edge Function (proxy to AWS)
+          const response = await fetch(`${EDGE_FUNCTION_URL}?userId=${userId}`, {
+            headers: {
+              "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            }
+          });
           if (!response.ok) throw new Error("Erro ao verificar status");
 
           const data = await response.json();
