@@ -120,7 +120,7 @@ export function useExamUpload() {
   };
 
   const pollExamStatus = async (userId: string, fileName: string, examId: string) => {
-    const maxAttempts = 60; // 60 tentativas x 3 segundos = 180 segundos (3 minutos)
+    const maxAttempts = 100; // 100 tentativas x 3 segundos = 300 segundos (5 minutos)
     let attempts = 0;
     const startTime = Date.now();
 
