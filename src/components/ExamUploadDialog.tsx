@@ -141,7 +141,14 @@ export function ExamUploadDialog({
               <div className="bg-white/5 rounded-xl p-6 border border-white/10">
                 <div className="flex items-center gap-3 mb-4">
                   <Loader2 className="w-5 h-5 animate-spin text-rest-lightblue" />
-                  <span className="font-medium">{status}</span>
+                  <div className="flex-1">
+                    <p className="font-medium">{status}</p>
+                    {progress > 50 && (
+                      <p className="text-xs text-white/50 mt-1">
+                        Aguarde, o processamento pode levar até 3 minutos
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <Progress value={progress} className="h-2" />
                 <p className="text-sm text-white/60 mt-2">{progress}%</p>

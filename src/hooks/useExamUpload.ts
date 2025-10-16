@@ -120,16 +120,31 @@ export function useExamUpload() {
   };
 
   const pollExamStatus = async (userId: string, fileName: string, examId: string) => {
-    const maxAttempts = 30; // 30 tentativas x 3 segundos = 90 segundos max
+    const maxAttempts = 60; // 60 tentativas x 3 segundos = 180 segundos (3 minutos)
     let attempts = 0;
+    const startTime = Date.now();
 
     return new Promise<void>((resolve, reject) => {
       const interval = setInterval(async () => {
         attempts++;
+        const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
         setProgress(50 + (attempts / maxAttempts) * 40); // 50% -> 90%
+
+        // Mensagens progressivas com tempo
+        if (elapsedSeconds < 30) {
+          setStatus(`Processando com IA... (${elapsedSeconds}s)`);
+        } else if (elapsedSeconds < 60) {
+          setStatus(`Processando com IA... (${Math.floor(elapsedSeconds / 60)}min ${elapsedSeconds % 60}s)`);
+        } else if (elapsedSeconds < 120) {
+          setStatus(`Processando com IA... (${Math.floor(elapsedSeconds / 60)}min - quase lá)`);
+        } else {
+          setStatus(`Processando com IA... (${Math.floor(elapsedSeconds / 60)}min - aguarde mais um pouco)`);
+        }
 
         try {
           // Fetch status from Edge Function (proxy to AWS)
+          console.log(`[Polling] Tentativa ${attempts}/${maxAttempts} (${elapsedSeconds}s) - Verificando status para ${fileName}`);
+          
           const response = await fetch(`${EDGE_FUNCTION_URL}?userId=${userId}`, {
             headers: {
               "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
@@ -138,25 +153,48 @@ export function useExamUpload() {
           if (!response.ok) throw new Error("Erro ao verificar status");
 
           const data = await response.json();
+          console.log(`[Polling] Resposta AWS:`, data);
+          
           const awsExam = data.exams.find(
-            (e: AWSExamData) => e.file_name === fileName && e.status === "completed"
+            (e: AWSExamData) => e.file_name === fileName
           );
 
-          if (awsExam) {
-            // Processing completed!
-            clearInterval(interval);
-            await syncExamToSupabase(examId, awsExam);
-            resolve();
-          } else if (attempts >= maxAttempts) {
-            // Timeout
+          if (!awsExam) {
+            console.warn(`[Polling] Exame não encontrado na resposta AWS`);
+          } else {
+            console.log(`[Polling] Status do exame: ${awsExam.status}, Total exames: ${awsExam.total_exames}`);
+          }
+
+          // Detectar exame travado: mais de 60s e sem dados
+          if (attempts > 20 && awsExam && awsExam.status === "processing" && awsExam.total_exames === 0) {
+            console.error(`[Polling] Exame travado detectado após ${elapsedSeconds}s - campos vazios`);
             clearInterval(interval);
             await supabase
               .from("exams")
               .update({ processing_status: "error" })
               .eq("id", examId);
-            reject(new Error("Timeout no processamento"));
+            reject(new Error("O processamento parece estar travado. Por favor, tente novamente."));
+            return;
+          }
+
+          if (awsExam && awsExam.status === "completed") {
+            // Processing completed!
+            console.log(`[Polling] ✅ Processamento concluído após ${elapsedSeconds}s!`);
+            clearInterval(interval);
+            await syncExamToSupabase(examId, awsExam);
+            resolve();
+          } else if (attempts >= maxAttempts) {
+            // Timeout após 3 minutos
+            console.error(`[Polling] ⏱️ Timeout após ${elapsedSeconds}s (${maxAttempts} tentativas)`);
+            clearInterval(interval);
+            await supabase
+              .from("exams")
+              .update({ processing_status: "error" })
+              .eq("id", examId);
+            reject(new Error(`Timeout no processamento (${Math.floor(elapsedSeconds / 60)}min). O processamento está demorando mais que o esperado.`));
           }
         } catch (error) {
+          console.error(`[Polling] Erro na tentativa ${attempts}:`, error);
           clearInterval(interval);
           reject(error);
         }
