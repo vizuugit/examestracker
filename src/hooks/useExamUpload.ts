@@ -165,8 +165,8 @@ export function useExamUpload() {
             console.log(`[Polling] Status do exame: ${awsExam.status}, Total exames: ${awsExam.total_exames}`);
           }
 
-          // Detectar exame travado: mais de 60s e sem dados
-          if (attempts > 20 && awsExam && awsExam.status === "processing" && awsExam.total_exames === 0) {
+          // Detectar exame travado: agora espera 3 minutos (60 tentativas x 3s) antes de considerar travado
+          if (attempts > 60 && awsExam && awsExam.status === "processing" && awsExam.total_exames === 0) {
             console.error(`[Polling] Exame travado detectado após ${elapsedSeconds}s - campos vazios`);
             clearInterval(interval);
             await supabase
