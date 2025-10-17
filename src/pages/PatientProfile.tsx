@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExamUploadDialog } from "@/components/ExamUploadDialog";
+import { ExamResultsDialog } from "@/components/ExamResultsDialog";
 import { toast } from "sonner";
 
 const PatientProfile = () => {
@@ -16,6 +17,7 @@ const PatientProfile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [selectedExamId, setSelectedExamId] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const { data: patient, isLoading } = useQuery({
@@ -222,9 +224,12 @@ const PatientProfile = () => {
                 {exams.map((exam) => (
                   <div
                     key={exam.id}
-                     className={`bg-white/5 rounded-xl p-4 border border-white/10 hover:border-rest-blue/30 transition-colors ${
-                       exam.processing_status === 'processing' ? 'animate-pulse' : ''
-                     }`}
+                    onClick={() => exam.processing_status === 'completed' && setSelectedExamId(exam.id)}
+                    className={`bg-white/5 rounded-xl p-4 border border-white/10 transition-all ${
+                      exam.processing_status === 'completed' 
+                        ? 'hover:border-rest-blue/50 cursor-pointer hover:bg-white/10' 
+                        : 'hover:border-rest-blue/30'
+                    } ${exam.processing_status === 'processing' ? 'animate-pulse' : ''}`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -282,6 +287,12 @@ const PatientProfile = () => {
         onSuccess={() => {
           // Refetch exams
         }}
+      />
+
+      <ExamResultsDialog
+        open={!!selectedExamId}
+        onOpenChange={(open) => !open && setSelectedExamId(null)}
+        examId={selectedExamId}
       />
     </div>
   );
