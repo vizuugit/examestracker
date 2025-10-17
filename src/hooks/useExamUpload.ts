@@ -8,6 +8,7 @@ interface UploadOptions {
   patientId: string;
   file: File;
   examDate?: Date;
+  onComplete?: () => void;
 }
 
 interface AWSExamData {
@@ -35,7 +36,7 @@ export function useExamUpload() {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState("");
 
-  const uploadExam = async ({ patientId, file, examDate }: UploadOptions) => {
+  const uploadExam = async ({ patientId, file, examDate, onComplete }: UploadOptions) => {
     try {
       setUploading(true);
       setProgress(10);
@@ -106,6 +107,9 @@ export function useExamUpload() {
       toast.success("Exame processado com sucesso!", {
         description: `${exam.total_biomarkers || 0} biomarcadores extraídos.`,
       });
+
+      // Callback para notificar componentes externos
+      onComplete?.();
 
       return exam;
     } catch (error) {

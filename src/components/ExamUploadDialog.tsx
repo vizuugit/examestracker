@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { useExamUpload } from "@/hooks/useExamUpload";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ExamUploadDialogProps {
   open: boolean;
@@ -31,6 +32,7 @@ export function ExamUploadDialog({
   const [file, setFile] = useState<File | null>(null);
   const [examDate, setExamDate] = useState<Date>();
   const { uploadExam, uploading, progress, status } = useExamUpload();
+  const queryClient = useQueryClient();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const pdfFile = acceptedFiles[0];
@@ -57,6 +59,10 @@ export function ExamUploadDialog({
         patientId,
         file,
         examDate,
+        onComplete: () => {
+          // Invalidar cache de exames quando processamento terminar
+          queryClient.invalidateQueries({ queryKey: ['patient-exams', patientId] });
+        },
       });
 
       // Reset form

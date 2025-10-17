@@ -1,20 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Upload, Calendar, Activity } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExamUploadDialog } from "@/components/ExamUploadDialog";
+import { toast } from "sonner";
 
 const PatientProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: patient, isLoading } = useQuery({
     queryKey: ["patient", id],
@@ -46,6 +48,41 @@ const PatientProfile = () => {
     },
     enabled: !!id,
   });
+
+  // FASE 4: Realtime listener para atualizar exames automaticamente
+  useEffect(() => {
+    if (!id) return;
+
+    const channel = supabase
+      .channel('exam-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'exams',
+          filter: `patient_id=eq.${id}`,
+        },
+        (payload) => {
+          console.log('[Realtime] Exame atualizado:', payload);
+          
+          // Invalidar cache para atualizar a lista
+          queryClient.invalidateQueries({ queryKey: ['patient-exams', id] });
+
+          // Mostrar toast quando exame for completado
+          if (payload.new.processing_status === 'completed') {
+            toast.success('Exame processado com sucesso!', {
+              description: `${payload.new.total_biomarkers || 0} biomarcadores extraídos.`,
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [id, queryClient]);
 
   if (isLoading) {
     return (
@@ -175,7 +212,9 @@ const PatientProfile = () => {
                 {exams.map((exam) => (
                   <div
                     key={exam.id}
-                    className="bg-white/5 rounded-xl p-4 border border-white/10 hover:border-rest-blue/30 transition-colors"
+                     className={`bg-white/5 rounded-xl p-4 border border-white/10 hover:border-rest-blue/30 transition-colors ${
+                       exam.processing_status === 'processing' ? 'animate-pulse' : ''
+                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
