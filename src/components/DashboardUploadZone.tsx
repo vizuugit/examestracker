@@ -9,6 +9,8 @@ import { useExamUpload } from "@/hooks/useExamUpload";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { Switch } from "@/components/ui/switch";
+import { PatientMatchDialog } from "@/components/PatientMatchDialog";
 import {
   Command,
   CommandEmpty,
@@ -27,7 +29,7 @@ import { Progress } from "@/components/ui/progress";
 export const DashboardUploadZone = () => {
   const { toast } = useToast();
   const { user } = useAuth();
-  const { uploadExam, uploading, progress, status } = useExamUpload();
+  const { uploadExam, uploadExamWithAutoMatching, uploading, progress, status } = useExamUpload();
   const [file, setFile] = useState<File | null>(null);
   const [selectedPatient, setSelectedPatient] = useState<string>("");
   const [selectedPatientName, setSelectedPatientName] = useState<string>("");
@@ -35,6 +37,13 @@ export const DashboardUploadZone = () => {
     new Date().toISOString().split("T")[0]
   );
   const [open, setOpen] = useState(false);
+  const [autoMatching, setAutoMatching] = useState(true);
+  const [matchDialogOpen, setMatchDialogOpen] = useState(false);
+  const [matchData, setMatchData] = useState<{
+    extractedName: string;
+    candidates: any[];
+    examId: string;
+  } | null>(null);
 
   // Buscar pacientes do profissional
   const { data: patients = [] } = useQuery({
@@ -106,29 +115,113 @@ export const DashboardUploadZone = () => {
   };
 
   const handleUpload = async () => {
-    if (!file || !selectedPatient) {
+    if (!file) {
       toast({
         variant: "destructive",
         title: "Dados incompletos",
-        description: "Selecione um arquivo e um paciente",
+        description: "Selecione um arquivo",
+      });
+      return;
+    }
+
+    // Modo manual: requer seleção de paciente
+    if (!autoMatching && !selectedPatient) {
+      toast({
+        variant: "destructive",
+        title: "Dados incompletos",
+        description: "Selecione um paciente",
       });
       return;
     }
 
     try {
-      await uploadExam({
-        patientId: selectedPatient,
-        file,
-        examDate: examDate ? new Date(examDate) : undefined,
-        onComplete: () => {
-          setFile(null);
-          setSelectedPatient("");
-          setSelectedPatientName("");
-          setExamDate(new Date().toISOString().split("T")[0]);
-        },
-      });
+      if (autoMatching) {
+        // Upload com auto-matching
+        await uploadExamWithAutoMatching({
+          file,
+          examDate: examDate ? new Date(examDate) : undefined,
+          onComplete: () => {
+            setFile(null);
+            setExamDate(new Date().toISOString().split("T")[0]);
+          },
+          onMatchRequired: (extractedName, candidates, examId) => {
+            setMatchData({ extractedName, candidates, examId });
+            setMatchDialogOpen(true);
+          },
+        });
+      } else {
+        // Upload manual
+        await uploadExam({
+          patientId: selectedPatient,
+          file,
+          examDate: examDate ? new Date(examDate) : undefined,
+          onComplete: () => {
+            setFile(null);
+            setSelectedPatient("");
+            setSelectedPatientName("");
+            setExamDate(new Date().toISOString().split("T")[0]);
+          },
+        });
+      }
     } catch (error) {
       console.error("Erro no upload:", error);
+    }
+  };
+
+  const handleMatchSelection = async (patientId: string | null) => {
+    if (!matchData) return;
+
+    try {
+      if (patientId === null) {
+        // Criar novo paciente
+        const { data: newPatient, error: createError } = await supabase
+          .from("patients")
+          .insert({
+            full_name: matchData.extractedName,
+            professional_id: user?.id,
+          })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+
+        await supabase
+          .from("exams")
+          .update({ 
+            patient_id: newPatient.id,
+            matching_type: 'auto_created',
+          })
+          .eq("id", matchData.examId);
+
+        toast({
+          title: "Novo paciente criado!",
+          description: matchData.extractedName,
+        });
+      } else {
+        // Paciente selecionado
+        await supabase
+          .from("exams")
+          .update({ 
+            patient_id: patientId,
+            matching_type: 'auto_selected',
+          })
+          .eq("id", matchData.examId);
+
+        toast({
+          title: "Paciente vinculado!",
+        });
+      }
+
+      setMatchData(null);
+      setFile(null);
+      setExamDate(new Date().toISOString().split("T")[0]);
+
+    } catch (error) {
+      console.error("Erro ao vincular paciente:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao vincular paciente",
+      });
     }
   };
 
@@ -170,6 +263,26 @@ export const DashboardUploadZone = () => {
 
       {file && !uploading && (
         <div className="bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 p-8 space-y-6">
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10">
+            <div className="flex items-center gap-3">
+              <Switch
+                checked={autoMatching}
+                onCheckedChange={setAutoMatching}
+                className="data-[state=checked]:bg-primary"
+              />
+              <div>
+                <Label className="text-white font-medium">
+                  {autoMatching ? "🤖 Matching Automático" : "👤 Seleção Manual"}
+                </Label>
+                <p className="text-sm text-white/60">
+                  {autoMatching 
+                    ? "O sistema identifica o paciente automaticamente"
+                    : "Você seleciona manualmente o paciente"}
+                </p>
+              </div>
+            </div>
+          </div>
+
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {(() => {
@@ -221,10 +334,11 @@ export const DashboardUploadZone = () => {
           </div>
 
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="patient" className="text-white mb-2">
-                Paciente *
-              </Label>
+            {!autoMatching && (
+              <div>
+                <Label htmlFor="patient" className="text-white mb-2">
+                  Paciente *
+                </Label>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -260,7 +374,8 @@ export const DashboardUploadZone = () => {
                   </Command>
                 </PopoverContent>
               </Popover>
-            </div>
+              </div>
+            )}
 
             <div>
               <Label htmlFor="exam-date" className="text-white mb-2">
@@ -282,7 +397,7 @@ export const DashboardUploadZone = () => {
           <div className="flex gap-3 pt-4">
             <Button
               onClick={handleUpload}
-              disabled={!selectedPatient}
+              disabled={!autoMatching && !selectedPatient}
               className="flex-1 bg-gradient-to-r from-rest-blue to-rest-cyan hover:opacity-90"
             >
               Processar Exame
@@ -310,6 +425,14 @@ export const DashboardUploadZone = () => {
           </div>
         </div>
       )}
+
+      <PatientMatchDialog
+        open={matchDialogOpen}
+        onOpenChange={setMatchDialogOpen}
+        extractedName={matchData?.extractedName || ""}
+        candidates={matchData?.candidates || []}
+        onSelect={handleMatchSelection}
+      />
     </div>
   );
 };

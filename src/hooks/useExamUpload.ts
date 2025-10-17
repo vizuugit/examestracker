@@ -36,6 +36,7 @@ export function useExamUpload() {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState("");
 
+  // Método original (manual)
   const uploadExam = async ({ patientId, file, examDate, onComplete }: UploadOptions) => {
     try {
       setUploading(true);
@@ -263,8 +264,190 @@ export function useExamUpload() {
     if (biomarkersError) throw biomarkersError;
   };
 
+  // Método com auto-matching
+  const uploadExamWithAutoMatching = async ({ 
+    file, 
+    examDate, 
+    onComplete,
+    onMatchRequired,
+  }: {
+    file: File;
+    examDate?: Date;
+    onComplete?: () => void;
+    onMatchRequired?: (extractedName: string, candidates: any[], examId: string) => void;
+  }) => {
+    try {
+      setUploading(true);
+      setProgress(10);
+      setStatus("Preparando upload...");
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Usuário não autenticado");
+
+      // 1. Get upload URL
+      const response = await fetch(EDGE_FUNCTION_URL, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        },
+        body: JSON.stringify({
+          userId: "temp", // Temporário
+          fileName: file.name,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Erro ao gerar URL de upload");
+      const { uploadUrl, fileName, fileKey } = await response.json();
+      setProgress(20);
+
+      // 2. Create exam without patient_id (será preenchido depois)
+      const { data: exam, error: examError } = await supabase
+        .from("exams")
+        .insert({
+          patient_id: null, // NULL temporariamente
+          uploaded_by: user.id,
+          aws_file_key: fileKey,
+          aws_file_name: fileName,
+          exam_date: examDate?.toISOString().split("T")[0],
+          processing_status: "uploading",
+        })
+        .select()
+        .single();
+
+      if (examError) throw examError;
+      setProgress(30);
+
+      // 3. Upload para S3
+      setStatus("Enviando arquivo...");
+      const fileExtension = file.name.toLowerCase().split('.').pop() || '';
+      let contentType = file.type;
+
+      if (!contentType || contentType === 'application/octet-stream') {
+        const typeMap: Record<string, string> = {
+          'pdf': 'application/pdf',
+          'jpg': 'image/jpeg',
+          'jpeg': 'image/jpeg',
+          'png': 'image/png',
+          'heic': 'image/heic',
+          'heif': 'image/heif',
+        };
+        contentType = typeMap[fileExtension] || 'application/octet-stream';
+      }
+
+      const uploadResponse = await fetch(uploadUrl, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": contentType },
+      });
+
+      if (!uploadResponse.ok) throw new Error("Erro no upload do arquivo");
+      setProgress(50);
+
+      // 4. Update to processing
+      await supabase
+        .from("exams")
+        .update({ processing_status: "processing" })
+        .eq("id", exam.id);
+
+      // 5. Poll AWS até ter o nome do paciente extraído
+      setStatus("Processando com IA...");
+      await pollExamStatus("temp", fileName, exam.id);
+
+      // 6. Buscar dados processados
+      const { data: processedExam } = await supabase
+        .from("exams")
+        .select("patient_name_extracted")
+        .eq("id", exam.id)
+        .single();
+
+      if (!processedExam?.patient_name_extracted) {
+        throw new Error("Nome do paciente não foi extraído");
+      }
+
+      setProgress(70);
+      setStatus("Buscando paciente...");
+
+      // 7. Chamar edge function de matching
+      const matchResponse = await supabase.functions.invoke('match-patient', {
+        body: {
+          extractedName: processedExam.patient_name_extracted,
+          professionalId: user.id,
+        },
+      });
+
+      if (matchResponse.error) throw matchResponse.error;
+
+      const matchResult = matchResponse.data;
+      setProgress(80);
+
+      // 8. Processar resultado do matching
+      if (matchResult.action === 'exact_match') {
+        // Match automático - atualizar exame
+        await supabase
+          .from("exams")
+          .update({ 
+            patient_id: matchResult.patientId,
+            matching_type: 'auto_exact',
+          })
+          .eq("id", exam.id);
+
+        setProgress(100);
+        toast.success("Exame processado com sucesso!", {
+          description: `Paciente: ${matchResult.patientName}`,
+        });
+        onComplete?.();
+
+      } else if (matchResult.action === 'create') {
+        // Criar novo paciente
+        const { data: newPatient, error: createError } = await supabase
+          .from("patients")
+          .insert({
+            full_name: matchResult.extractedName,
+            professional_id: user.id,
+          })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+
+        await supabase
+          .from("exams")
+          .update({ 
+            patient_id: newPatient.id,
+            matching_type: 'auto_created',
+          })
+          .eq("id", exam.id);
+
+        setProgress(100);
+        toast.success("Novo paciente criado!", {
+          description: `Paciente: ${matchResult.extractedName}`,
+        });
+        onComplete?.();
+
+      } else if (matchResult.action === 'select') {
+        // Múltiplos candidatos - precisa intervenção do usuário
+        setProgress(90);
+        setStatus("Aguardando seleção...");
+        onMatchRequired?.(matchResult.extractedName, matchResult.candidates, exam.id);
+      }
+
+      return exam;
+
+    } catch (error) {
+      console.error("Erro no upload:", error);
+      toast.error("Erro no processamento", {
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+      });
+      throw error;
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return {
     uploadExam,
+    uploadExamWithAutoMatching,
     uploading,
     progress,
     status,
