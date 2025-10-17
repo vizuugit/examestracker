@@ -150,13 +150,23 @@ const PatientProfile = () => {
                   </div>
                 </div>
               </div>
-              <Button
-                onClick={() => setUploadDialogOpen(true)}
-                className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Upload de Exame
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => navigate(`/patients/${id}/dashboard`)}
+                  variant="outline"
+                  className="border-rest-blue text-rest-blue hover:bg-rest-blue/10"
+                >
+                  <Activity className="w-4 h-4 mr-2" />
+                  Ver Dashboard
+                </Button>
+                <Button
+                  onClick={() => setUploadDialogOpen(true)}
+                  className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload de Exame
+                </Button>
+              </div>
             </div>
 
             {patient.medical_conditions && patient.medical_conditions.length > 0 && (
