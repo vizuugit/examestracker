@@ -59,7 +59,7 @@ serve(async (req) => {
 
       const data = await response.json();
       console.log('[AWS Proxy] POST response:', data);
-      console.log('[AWS Proxy] Content-Type enviado para AWS:', contentType);
+      console.log('[AWS Proxy] Content-Type retornado pela AWS:', data.contentType);
       
       return new Response(JSON.stringify(data), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

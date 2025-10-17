@@ -81,7 +81,7 @@ export function useExamUpload() {
 
       if (!response.ok) throw new Error("Erro ao gerar URL de upload");
 
-      const { uploadUrl, fileName, fileKey } = await response.json();
+      const { uploadUrl, fileName, fileKey, contentType: awsContentType } = await response.json();
       setProgress(20);
 
       // 4. Create exam record in Supabase (status: uploading)
@@ -101,14 +101,14 @@ export function useExamUpload() {
       if (examError) throw examError;
       setProgress(30);
 
-      // 5. Upload para S3 com Content-Type correto
+      // 5. Upload para S3 com Content-Type retornado pela AWS
       setStatus("Enviando arquivo...");
-      console.log(`[Upload] Enviando ${file.name} como ${contentType}`);
+      console.log(`[Upload] Enviando ${file.name} com Content-Type da AWS: ${awsContentType}`);
 
       const uploadResponse = await fetch(uploadUrl, {
         method: "PUT",
         body: file,
-        headers: { "Content-Type": contentType },
+        headers: { "Content-Type": awsContentType },
       });
 
       if (!uploadResponse.ok) {
@@ -327,7 +327,7 @@ export function useExamUpload() {
       });
 
       if (!response.ok) throw new Error("Erro ao gerar URL de upload");
-      const { uploadUrl, fileName, fileKey } = await response.json();
+      const { uploadUrl, fileName, fileKey, contentType: awsContentType } = await response.json();
       setProgress(20);
 
       // 3. Create exam without patient_id (será preenchido depois)
@@ -347,14 +347,14 @@ export function useExamUpload() {
       if (examError) throw examError;
       setProgress(30);
 
-      // 4. Upload para S3 com Content-Type correto
+      // 4. Upload para S3 com Content-Type retornado pela AWS
       setStatus("Enviando arquivo...");
-      console.log(`[AutoMatch] Enviando ${file.name} como ${contentType}`);
+      console.log(`[AutoMatch] Enviando ${file.name} com Content-Type da AWS: ${awsContentType}`);
 
       const uploadResponse = await fetch(uploadUrl, {
         method: "PUT",
         body: file,
-        headers: { "Content-Type": contentType },
+        headers: { "Content-Type": awsContentType },
       });
 
       if (!uploadResponse.ok) {
