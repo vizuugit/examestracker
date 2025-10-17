@@ -1,22 +1,11 @@
-import { Upload, Users, Plus } from "lucide-react";
+import { Users, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 
-interface QuickActionsProps {
-  onUploadClick?: () => void;
-}
-
-export const QuickActions = ({ onUploadClick }: QuickActionsProps) => {
+export const QuickActions = () => {
   const navigate = useNavigate();
 
   const actions = [
-    {
-      icon: Upload,
-      title: "Upload Tradicional",
-      description: "Usar modal completo com mais opções",
-      onClick: onUploadClick,
-      gradient: "from-rest-blue to-rest-cyan",
-    },
     {
       icon: Users,
       title: "Meus Pacientes",
@@ -36,7 +25,7 @@ export const QuickActions = ({ onUploadClick }: QuickActionsProps) => {
   return (
     <div className="max-w-5xl mx-auto">
       <h2 className="text-2xl font-bold text-white mb-6">Ações Rápidas</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {actions.map((action, index) => (
           <Card
             key={index}
