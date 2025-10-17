@@ -47,7 +47,7 @@ export function useExamUpload() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      // 2. Detectar Content-Type correto
+      // 2. Detectar Content-Type correto (case-insensitive)
       const fileExtension = file.name.toLowerCase().split('.').pop() || '';
       let contentType = file.type;
 
@@ -63,7 +63,7 @@ export function useExamUpload() {
         contentType = typeMap[fileExtension] || 'application/octet-stream';
       }
 
-      console.log(`[Upload] Content-Type detectado: ${contentType} para ${file.name}`);
+      console.log(`[Upload] Arquivo: ${file.name} | Ext: ${fileExtension} | Content-Type: ${contentType}`);
 
       // 3. Get upload URL from Edge Function (proxy to AWS)
       const response = await fetch(EDGE_FUNCTION_URL, {
@@ -294,7 +294,7 @@ export function useExamUpload() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      // 1. Detectar Content-Type correto
+      // 1. Detectar Content-Type correto (case-insensitive)
       const fileExtension = file.name.toLowerCase().split('.').pop() || '';
       let contentType = file.type;
 
@@ -310,7 +310,7 @@ export function useExamUpload() {
         contentType = typeMap[fileExtension] || 'application/octet-stream';
       }
 
-      console.log(`[AutoMatch] Content-Type detectado: ${contentType} para ${file.name}`);
+      console.log(`[AutoMatch] Arquivo: ${file.name} | Ext: ${fileExtension} | Content-Type: ${contentType}`);
 
       // 2. Get upload URL
       const response = await fetch(EDGE_FUNCTION_URL, {
