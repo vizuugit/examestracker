@@ -18,17 +18,20 @@ serve(async (req) => {
     const url = new URL(req.url);
     const userId = url.searchParams.get('userId');
 
-    // GET: Fetch exam status (fazendo POST para a Lambda)
+    // GET: Fetch exam status
     if (req.method === 'GET' && userId) {
-      console.log('[AWS Proxy] GET request for userId:', userId);
-      console.log('[AWS Proxy] Fazendo POST para Lambda com action: getStatus');
+      const url = new URL(req.url);
+      const s3Key = url.searchParams.get('s3Key');
+      
+      console.log('[AWS Proxy] GET request for userId:', userId, 's3Key:', s3Key);
       
       const response = await fetch(AWS_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: 'getStatus',
+          action: 'getExamStatus',
           userId: userId,
+          s3Key: s3Key,
         }),
       });
 

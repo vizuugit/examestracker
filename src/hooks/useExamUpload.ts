@@ -132,7 +132,7 @@ export function useExamUpload() {
 
       // 7. Start polling
       setStatus("Processando com IA...");
-      await pollExamStatus(patientId, file.name, exam.id);
+      await pollExamStatus(patientId, s3Key, exam.id);
 
       setProgress(100);
       setStatus("Concluído!");
@@ -155,7 +155,7 @@ export function useExamUpload() {
     }
   };
 
-  const pollExamStatus = async (userId: string, fileName: string, examId: string) => {
+  const pollExamStatus = async (userId: string, s3Key: string, examId: string) => {
     const maxAttempts = 100; // 100 tentativas x 3 segundos = 300 segundos (5 minutos)
     let attempts = 0;
     const startTime = Date.now();
@@ -179,53 +179,37 @@ export function useExamUpload() {
 
         try {
           // Fetch status from Edge Function (proxy to AWS)
-          console.log(`[Polling] Tentativa ${attempts}/${maxAttempts} (${elapsedSeconds}s) - Verificando status para ${fileName}`);
+          console.log(`[Polling] Tentativa ${attempts}/${maxAttempts} (${elapsedSeconds}s) - Verificando status para s3Key: ${s3Key}`);
           
-          const response = await fetch(`${EDGE_FUNCTION_URL}?userId=${userId}`, {
+          const response = await fetch(`${EDGE_FUNCTION_URL}?userId=${userId}&s3Key=${encodeURIComponent(s3Key)}`, {
             headers: {
               "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             }
           });
           if (!response.ok) throw new Error("Erro ao verificar status");
 
-      const data = await response.json();
-      console.log(`[Polling] Resposta AWS:`, data);
+          const data = await response.json();
+          console.log(`[Polling] Resposta AWS:`, data);
 
-      // Validar se a resposta tem o formato esperado
-      if (!data.exams || !Array.isArray(data.exams)) {
-        console.error('[Polling] Resposta inválida da AWS:', data);
-        throw new Error(`Erro na comunicação com AWS: ${data.message || 'Resposta inválida'}`);
-      }
-
-      const awsExam = data.exams.find(
-        (e: AWSExamData) => e.file_name === fileName
-      );
-
-          if (!awsExam) {
-            console.warn(`[Polling] Exame não encontrado na resposta AWS`);
+          // Se retornou status diretamente (novo formato)
+          if (data.status) {
+            if (data.status === 'completed' && data.data) {
+              console.log(`[Polling] ✅ Processamento concluído após ${elapsedSeconds}s!`);
+              clearInterval(interval);
+              await syncExamToSupabase(examId, data.data);
+              resolve();
+              return;
+            } else if (data.status === 'processing') {
+              console.log(`[Polling] ⏳ Ainda processando...`);
+              // Continua o loop
+            }
           } else {
-            console.log(`[Polling] Status do exame: ${awsExam.status}, Total exames: ${awsExam.total_exames}`);
+            // Formato antigo (fallback)
+            console.warn('[Polling] Formato de resposta legado - migre para novo formato');
           }
 
-          // Detectar exame travado: agora espera 3 minutos (60 tentativas x 3s) antes de considerar travado
-          if (attempts > 60 && awsExam && awsExam.status === "processing" && awsExam.total_exames === 0) {
-            console.error(`[Polling] Exame travado detectado após ${elapsedSeconds}s - campos vazios`);
-            clearInterval(interval);
-            await supabase
-              .from("exams")
-              .update({ processing_status: "error" })
-              .eq("id", examId);
-            reject(new Error("O processamento parece estar travado. Por favor, tente novamente."));
-            return;
-          }
-
-          if (awsExam && awsExam.status === "completed") {
-            // Processing completed!
-            console.log(`[Polling] ✅ Processamento concluído após ${elapsedSeconds}s!`);
-            clearInterval(interval);
-            await syncExamToSupabase(examId, awsExam);
-            resolve();
-          } else if (attempts >= maxAttempts) {
+          // Timeout check
+          if (attempts >= maxAttempts) {
             // Timeout após 3 minutos
             console.error(`[Polling] ⏱️ Timeout após ${elapsedSeconds}s (${maxAttempts} tentativas)`);
             clearInterval(interval);
@@ -384,7 +368,7 @@ export function useExamUpload() {
 
       // 6. Poll AWS até ter o nome do paciente extraído
       setStatus("Processando com IA...");
-      await pollExamStatus("temp", file.name, exam.id);
+      await pollExamStatus("temp", s3Key, exam.id);
 
       // 7. Buscar dados processados
       const { data: processedExam } = await supabase
