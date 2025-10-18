@@ -19,9 +19,12 @@ export type Database = {
           biomarker_name: string
           category: string | null
           created_at: string | null
+          deviation_percentage: number | null
           exam_id: string
           id: string
+          layman_explanation: string | null
           observation: string | null
+          possible_causes: Json | null
           reference_max: number | null
           reference_min: number | null
           status: Database["public"]["Enums"]["biomarker_status"]
@@ -33,9 +36,12 @@ export type Database = {
           biomarker_name: string
           category?: string | null
           created_at?: string | null
+          deviation_percentage?: number | null
           exam_id: string
           id?: string
+          layman_explanation?: string | null
           observation?: string | null
+          possible_causes?: Json | null
           reference_max?: number | null
           reference_min?: number | null
           status: Database["public"]["Enums"]["biomarker_status"]
@@ -47,9 +53,12 @@ export type Database = {
           biomarker_name?: string
           category?: string | null
           created_at?: string | null
+          deviation_percentage?: number | null
           exam_id?: string
           id?: string
+          layman_explanation?: string | null
           observation?: string | null
+          possible_causes?: Json | null
           reference_max?: number | null
           reference_min?: number | null
           status?: Database["public"]["Enums"]["biomarker_status"]
@@ -69,10 +78,13 @@ export type Database = {
       }
       exams: {
         Row: {
+          alerts: Json | null
           aws_file_key: string
           aws_file_name: string
+          clinical_analysis: Json | null
           created_at: string | null
           exam_date: string | null
+          health_score: number | null
           id: string
           laboratory: string | null
           matching_type: string | null
@@ -83,16 +95,22 @@ export type Database = {
             | Database["public"]["Enums"]["processing_status"]
             | null
           raw_aws_response: Json | null
+          recommendations: Json | null
+          risk_category: string | null
           total_biomarkers: number | null
+          trends: Json | null
           updated_at: string | null
           upload_date: string | null
           uploaded_by: string
         }
         Insert: {
+          alerts?: Json | null
           aws_file_key: string
           aws_file_name: string
+          clinical_analysis?: Json | null
           created_at?: string | null
           exam_date?: string | null
+          health_score?: number | null
           id?: string
           laboratory?: string | null
           matching_type?: string | null
@@ -103,16 +121,22 @@ export type Database = {
             | Database["public"]["Enums"]["processing_status"]
             | null
           raw_aws_response?: Json | null
+          recommendations?: Json | null
+          risk_category?: string | null
           total_biomarkers?: number | null
+          trends?: Json | null
           updated_at?: string | null
           upload_date?: string | null
           uploaded_by: string
         }
         Update: {
+          alerts?: Json | null
           aws_file_key?: string
           aws_file_name?: string
+          clinical_analysis?: Json | null
           created_at?: string | null
           exam_date?: string | null
+          health_score?: number | null
           id?: string
           laboratory?: string | null
           matching_type?: string | null
@@ -123,7 +147,10 @@ export type Database = {
             | Database["public"]["Enums"]["processing_status"]
             | null
           raw_aws_response?: Json | null
+          recommendations?: Json | null
+          risk_category?: string | null
           total_biomarkers?: number | null
+          trends?: Json | null
           updated_at?: string | null
           upload_date?: string | null
           uploaded_by?: string

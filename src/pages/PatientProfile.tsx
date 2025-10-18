@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Upload, Calendar, Activity } from "lucide-react";
+import { ArrowLeft, Upload, Calendar, Activity, Heart } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { ExamUploadDialog } from "@/components/ExamUploadDialog";
 import { ExamResultsDialog } from "@/components/ExamResultsDialog";
 import { toast } from "sonner";
@@ -41,7 +42,7 @@ const PatientProfile = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("exams")
-        .select("*")
+        .select("*, health_score, risk_category")
         .eq("patient_id", id)
         .order("exam_date", { ascending: false });
 
@@ -232,13 +233,41 @@ const PatientProfile = () => {
                     } ${exam.processing_status === 'processing' ? 'animate-pulse' : ''}`}
                   >
                     <div className="flex items-center justify-between">
-                      <div>
+                      <div className="flex-1">
                         <p className="font-medium text-white">{exam.laboratory || "Laboratório não informado"}</p>
                         <p className="text-sm text-white/60">
                           {new Date(exam.exam_date || exam.upload_date).toLocaleDateString("pt-BR")}
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
+                        {exam.health_score && exam.processing_status === 'completed' && (
+                          <div className="flex items-center gap-2">
+                            <Heart className={`w-4 h-4 ${
+                              exam.health_score >= 80 ? 'text-green-500' : 
+                              exam.health_score >= 60 ? 'text-yellow-500' : 
+                              'text-red-500'
+                            }`} />
+                            <span className={`font-bold ${
+                              exam.health_score >= 80 ? 'text-green-500' : 
+                              exam.health_score >= 60 ? 'text-yellow-500' : 
+                              'text-red-500'
+                            }`}>
+                              {exam.health_score}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {exam.risk_category && exam.processing_status === 'completed' && (
+                          <Badge className={
+                            exam.risk_category === 'baixo' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+                            exam.risk_category === 'moderado' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
+                            exam.risk_category === 'alto' ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' :
+                            'bg-red-500/20 text-red-400 border-red-500/30'
+                          }>
+                            {exam.risk_category}
+                          </Badge>
+                        )}
+
                         <span
                           className={`px-3 py-1 rounded-full text-sm ${
                             exam.processing_status === "completed"

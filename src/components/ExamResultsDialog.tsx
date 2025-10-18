@@ -7,6 +7,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ExamInsightsPanel } from "@/components/ExamInsightsPanel";
+import type { ExamWithInsights } from "@/types/exam-insights";
 import {
   Table,
   TableBody,
@@ -46,7 +49,7 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
 
       const { data: exam, error: examError } = await supabase
         .from("exams")
-        .select("*, exam_date, laboratory")
+        .select("*, exam_date, laboratory, health_score, risk_category, clinical_analysis, alerts, trends, recommendations")
         .eq("id", examId)
         .single();
 
@@ -148,122 +151,133 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
           )}
         </DialogHeader>
 
-        <div className="space-y-4 flex-1 overflow-hidden flex flex-col">
-          {/* Filtros */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar biomarcador..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
+        <Tabs defaultValue="results" className="flex-1 overflow-hidden flex flex-col">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="results">📊 Resultados</TabsTrigger>
+            <TabsTrigger value="insights">🧠 Insights</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="results" className="flex-1 overflow-hidden flex flex-col space-y-4 mt-4">
+            {/* Filtros */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar biomarcador..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Todas as categorias" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as categorias</SelectItem>
+                  <SelectItem value="cardiovascular">Cardiovascular</SelectItem>
+                  <SelectItem value="metabolico">Metabólico</SelectItem>
+                  <SelectItem value="hematologico">Hematológico</SelectItem>
+                  <SelectItem value="hormonal">Hormonal</SelectItem>
+                  <SelectItem value="renal">Renal</SelectItem>
+                  <SelectItem value="hepatico">Hepático</SelectItem>
+                  <SelectItem value="minerais">Minerais/Vitaminas</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Todos os status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os status</SelectItem>
+                  <SelectItem value="normal">Apenas normais</SelectItem>
+                  <SelectItem value="altered">Apenas alterados</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Todas as categorias" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas as categorias</SelectItem>
-                <SelectItem value="cardiovascular">Cardiovascular</SelectItem>
-                <SelectItem value="metabolico">Metabólico</SelectItem>
-                <SelectItem value="hematologico">Hematológico</SelectItem>
-                <SelectItem value="hormonal">Hormonal</SelectItem>
-                <SelectItem value="renal">Renal</SelectItem>
-                <SelectItem value="hepatico">Hepático</SelectItem>
-                <SelectItem value="minerais">Minerais/Vitaminas</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Todos os status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os status</SelectItem>
-                <SelectItem value="normal">Apenas normais</SelectItem>
-                <SelectItem value="altered">Apenas alterados</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Tabela */}
-          <div className="flex-1 overflow-auto border rounded-lg">
-            {isLoading ? (
-              <div className="space-y-2 p-4">
-                {[...Array(10)].map((_, i) => (
-                  <Skeleton key={i} className="h-12 w-full" />
-                ))}
-              </div>
-            ) : (
-              <Table>
-                <TableHeader className="sticky top-0 bg-background z-10">
-                  <TableRow>
-                    <TableHead className="w-[30%]">Biomarcador</TableHead>
-                    <TableHead className="text-right">Valor</TableHead>
-                    <TableHead className="text-right">Referência</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
-                    <TableHead>Categoria</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredResults.length === 0 ? (
+            {/* Tabela */}
+            <div className="flex-1 overflow-auto border rounded-lg">
+              {isLoading ? (
+                <div className="space-y-2 p-4">
+                  {[...Array(10)].map((_, i) => (
+                    <Skeleton key={i} className="h-12 w-full" />
+                  ))}
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader className="sticky top-0 bg-background z-10">
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                        Nenhum resultado encontrado
-                      </TableCell>
+                      <TableHead className="w-[30%]">Biomarcador</TableHead>
+                      <TableHead className="text-right">Valor</TableHead>
+                      <TableHead className="text-right">Referência</TableHead>
+                      <TableHead className="text-center">Status</TableHead>
+                      <TableHead>Categoria</TableHead>
                     </TableRow>
-                  ) : (
-                    filteredResults.map((result) => {
-                      const category = categorizeBiomarker(result.biomarker_name);
-                      const categoryColor = getCategoryColor(category);
-                      
-                      return (
-                        <TableRow key={result.id}>
-                          <TableCell className="font-medium">
-                            {result.biomarker_name}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <span className="font-mono">
-                              {result.value} {result.unit}
-                            </span>
-                          </TableCell>
-                          <TableCell className="text-right text-muted-foreground">
-                            {result.reference_min && result.reference_max
-                              ? `${result.reference_min} - ${result.reference_max}`
-                              : "N/A"}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {getStatusBadge(result.status)}
-                          </TableCell>
-                          <TableCell>
-                            <span
-                              className="inline-block px-2 py-1 rounded text-xs font-medium"
-                              style={{
-                                backgroundColor: `${categoryColor}20`,
-                                color: categoryColor,
-                                borderColor: `${categoryColor}40`,
-                                borderWidth: "1px",
-                              }}
-                            >
-                              {category.charAt(0).toUpperCase() + category.slice(1)}
-                            </span>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
-                  )}
-                </TableBody>
-              </Table>
-            )}
-          </div>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredResults.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                          Nenhum resultado encontrado
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      filteredResults.map((result) => {
+                        const category = categorizeBiomarker(result.biomarker_name);
+                        const categoryColor = getCategoryColor(category);
+                        
+                        return (
+                          <TableRow key={result.id}>
+                            <TableCell className="font-medium">
+                              {result.biomarker_name}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <span className="font-mono">
+                                {result.value} {result.unit}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-right text-muted-foreground">
+                              {result.reference_min && result.reference_max
+                                ? `${result.reference_min} - ${result.reference_max}`
+                                : "N/A"}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              {getStatusBadge(result.status)}
+                            </TableCell>
+                            <TableCell>
+                              <span
+                                className="inline-block px-2 py-1 rounded text-xs font-medium"
+                                style={{
+                                  backgroundColor: `${categoryColor}20`,
+                                  color: categoryColor,
+                                  borderColor: `${categoryColor}40`,
+                                  borderWidth: "1px",
+                                }}
+                              >
+                                {category.charAt(0).toUpperCase() + category.slice(1)}
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                    )}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
 
-          <div className="text-xs text-muted-foreground text-center">
-            Mostrando {filteredResults.length} de {stats.total} biomarcadores
-          </div>
-        </div>
+            <div className="text-xs text-muted-foreground text-center">
+              Mostrando {filteredResults.length} de {stats.total} biomarcadores
+            </div>
+          </TabsContent>
+
+          <TabsContent value="insights" className="flex-1 overflow-auto mt-4">
+            {examData?.exam && <ExamInsightsPanel exam={examData.exam as unknown as ExamWithInsights} />}
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );
