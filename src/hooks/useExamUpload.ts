@@ -264,7 +264,24 @@ export function useExamUpload() {
   };
 
   const syncExamToSupabase = async (examId: string, awsResponse: AWSExamData) => {
+    console.log('[Sync] 1. Estrutura completa:', JSON.stringify(awsResponse, null, 2).substring(0, 500));
+    
     const awsData = awsResponse.data;
+    console.log('[Sync] 2. awsData existe?', !!awsData);
+    console.log('[Sync] 3. dados_basicos existe?', !!(awsData && awsData.dados_basicos));
+    
+    // VALIDAÇÃO CRÍTICA
+    if (!awsData) {
+      throw new Error('❌ awsResponse.data está undefined');
+    }
+    
+    if (!awsData.dados_basicos) {
+      console.error('[Sync] ❌ Estrutura inválida! awsData:', JSON.stringify(awsData).substring(0, 500));
+      throw new Error('❌ awsData.dados_basicos está undefined');
+    }
+    
+    console.log('[Sync] 4. laboratorio:', awsData.dados_basicos.laboratorio);
+    console.log('[Sync] 5. paciente:', awsData.dados_basicos.paciente);
     
     // Update exam with AWS data
     const { error: updateError } = await supabase
@@ -272,43 +289,45 @@ export function useExamUpload() {
       .update({
         processing_status: "completed",
         processed_at: awsResponse.processedAt || new Date().toISOString(),
-        laboratory: awsData.dados_basicos.laboratorio,
-        patient_name_extracted: awsData.dados_basicos.paciente,
-        total_biomarkers: awsData.metadata.total_exames,
+        laboratory: awsData.dados_basicos.laboratorio || '',
+        patient_name_extracted: awsData.dados_basicos.paciente || '',
+        total_biomarkers: awsData.metadata?.total_exames || 0,
         raw_aws_response: awsData as any,
-        clinical_analysis: awsData.analise_clinica,
-        alerts: awsData.alertas,
-        trends: awsData.tendencias,
-        recommendations: awsData.recomendacoes,
-        health_score: awsData.analise_clinica.score_saude_geral,
-        risk_category: awsData.analise_clinica.categoria_risco,
+        clinical_analysis: awsData.analise_clinica || null,
+        alerts: awsData.alertas || [],
+        trends: awsData.tendencias || {},
+        recommendations: awsData.recomendacoes || [],
+        health_score: awsData.analise_clinica?.score_saude_geral || null,
+        risk_category: awsData.analise_clinica?.categoria_risco || null,
       })
       .eq("id", examId);
 
     if (updateError) throw updateError;
 
-    // Insert biomarkers
-    const biomarkers = awsData.exames.map((b) => ({
-      exam_id: examId,
-      biomarker_name: b.nome,
-      category: b.categoria,
-      value: b.resultado,
-      value_numeric: parseFloat(b.resultado) || null,
-      unit: b.unidade,
-      reference_min: b.referencia_min,
-      reference_max: b.referencia_max,
-      status: b.status as "normal" | "alto" | "baixo" | "alterado",
-      observation: b.observacao || null,
-      deviation_percentage: b.desvio_percentual,
-      layman_explanation: b.explicacao_leiga,
-      possible_causes: b.possiveis_causas_alteracao,
-    }));
+    // Insert biomarkers (se existirem)
+    if (awsData.exames && awsData.exames.length > 0) {
+      const biomarkers = awsData.exames.map((b) => ({
+        exam_id: examId,
+        biomarker_name: b.nome,
+        category: b.categoria,
+        value: b.resultado,
+        value_numeric: parseFloat(b.resultado) || null,
+        unit: b.unidade,
+        reference_min: b.referencia_min,
+        reference_max: b.referencia_max,
+        status: b.status as "normal" | "alto" | "baixo" | "alterado",
+        observation: b.observacao || null,
+        deviation_percentage: b.desvio_percentual,
+        layman_explanation: b.explicacao_leiga,
+        possible_causes: b.possiveis_causas_alteracao,
+      }));
 
-    const { error: biomarkersError } = await supabase
-      .from("exam_results")
-      .insert(biomarkers);
+      const { error: biomarkersError } = await supabase
+        .from("exam_results")
+        .insert(biomarkers);
 
-    if (biomarkersError) throw biomarkersError;
+      if (biomarkersError) throw biomarkersError;
+    }
   };
 
   // Método com auto-matching

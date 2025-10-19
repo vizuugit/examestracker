@@ -42,16 +42,27 @@ serve(async (req) => {
       }
 
       const data = await response.json();
-      console.log('[AWS Proxy] GET (POST) response:', data);
+      console.log('[AWS Proxy] GET (POST) raw response:', JSON.stringify(data).substring(0, 500));
       
       // Se a Lambda retornou um body como string, fazer parse
       let responseBody = data;
       if (data.body && typeof data.body === 'string') {
         try {
           responseBody = JSON.parse(data.body);
-          console.log('[AWS Proxy] Body parsed successfully:', responseBody);
+          console.log('[AWS Proxy] ✅ Body parsed - status:', responseBody.status);
         } catch (e) {
-          console.error('[AWS Proxy] Failed to parse Lambda body:', e);
+          console.error('[AWS Proxy] ❌ Failed to parse Lambda body:', e);
+        }
+      } else if (data.body && typeof data.body === 'object') {
+        // Se body já é objeto, usar direto
+        responseBody = data.body;
+        console.log('[AWS Proxy] ✅ Body já é objeto - status:', responseBody.status);
+      }
+      
+      // VALIDAÇÃO: Garantir que tem a estrutura esperada
+      if (responseBody && responseBody.status === 'completed') {
+        if (!responseBody.data || !responseBody.data.dados_basicos) {
+          console.error('[AWS Proxy] ⚠️ Estrutura incompleta:', JSON.stringify(responseBody).substring(0, 300));
         }
       }
       
