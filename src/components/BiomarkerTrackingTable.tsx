@@ -147,11 +147,11 @@ export function BiomarkerTrackingTable({ data, examDates, patientName }: Biomark
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'normal':
-        return 'text-medical-success bg-medical-success/10';
+        return 'text-medical-success bg-medical-success/30 border border-medical-success/40 font-semibold';
       case 'alto':
-        return 'text-medical-critical bg-medical-critical/10';
+        return 'text-medical-critical bg-medical-critical/30 border border-medical-critical/40 font-semibold';
       case 'baixo':
-        return 'text-medical-warning bg-medical-warning/10';
+        return 'text-medical-warning bg-medical-warning/30 border border-medical-warning/40 font-semibold';
       default:
         return 'text-muted-foreground';
     }
@@ -162,8 +162,8 @@ export function BiomarkerTrackingTable({ data, examDates, patientName }: Biomark
   }
 
   return (
-    <Card className="bg-card/50 backdrop-blur-sm border-border">
-      <CardHeader className="border-b border-rest-blue/20">
+    <Card className="bg-white/90 backdrop-blur-md border-2 border-rest-blue/30 shadow-xl">
+      <CardHeader className="border-b-2 border-rest-blue/30 bg-gradient-to-r from-rest-blue/5 to-rest-cyan/5">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <CardTitle className="text-rest-blue text-xl">
@@ -206,28 +206,28 @@ export function BiomarkerTrackingTable({ data, examDates, patientName }: Biomark
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-rest-darkblue/20 hover:bg-rest-darkblue/30">
-                <TableHead className="sticky left-0 z-20 bg-rest-darkblue/90 backdrop-blur-sm text-rest-lightblue font-semibold min-w-[180px]">
+              <TableRow className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-blue/90 hover:to-rest-cyan/90">
+                <TableHead className="sticky left-0 z-20 bg-gradient-to-r from-rest-blue to-rest-blue backdrop-blur-sm text-white font-bold min-w-[180px] border-r-2 border-white/20">
                   Biomarcador
                 </TableHead>
-                <TableHead className="text-rest-lightblue font-semibold min-w-[80px]">
+                <TableHead className="text-white font-bold min-w-[80px]">
                   Unidade
                 </TableHead>
-                <TableHead className="text-rest-lightblue font-semibold min-w-[120px]">
+                <TableHead className="text-white font-bold min-w-[120px]">
                   Referência
                 </TableHead>
                 {examDates.map((date, index) => (
                   <TableHead 
                     key={date} 
                     className={cn(
-                      "text-center text-rest-lightblue font-semibold min-w-[100px]",
-                      index === examDates.length - 1 && "bg-rest-blue/10"
+                      "text-center text-white font-bold min-w-[100px]",
+                      index === examDates.length - 1 && "bg-white/10"
                     )}
                   >
                     {format(new Date(date), 'dd/MM/yy', { locale: ptBR })}
                   </TableHead>
                 ))}
-                <TableHead className="text-center text-rest-lightblue font-semibold min-w-[100px]">
+                <TableHead className="text-center text-white font-bold min-w-[100px]">
                   Tendência
                 </TableHead>
               </TableRow>
@@ -241,19 +241,19 @@ export function BiomarkerTrackingTable({ data, examDates, patientName }: Biomark
                   <TableRow 
                     key={row.biomarker_name}
                     className={cn(
-                      "hover:bg-rest-blue/5",
-                      rowIndex % 2 === 0 ? "bg-card/30" : "bg-card/10"
+                      "hover:bg-rest-blue/10 transition-colors",
+                      rowIndex % 2 === 0 ? "bg-white/50" : "bg-rest-lightblue/10"
                     )}
                   >
-                    <TableCell className="sticky left-0 z-10 bg-rest-charcoal/95 backdrop-blur-sm font-medium text-white border-r border-border">
+                    <TableCell className="sticky left-0 z-10 bg-white/95 backdrop-blur-sm font-semibold text-rest-darkblue border-r-2 border-rest-blue/30">
                       {row.biomarker_name}
                     </TableCell>
                     
-                    <TableCell className="text-rest-gray">
+                    <TableCell className="text-rest-darkblue/80 font-medium">
                       {row.unit || '-'}
                     </TableCell>
                     
-                    <TableCell className="text-rest-gray text-sm">
+                    <TableCell className="text-rest-darkblue/80 text-sm font-medium">
                       {row.reference_min !== null && row.reference_max !== null
                         ? `${row.reference_min}-${row.reference_max}`
                         : '-'}
@@ -267,9 +267,9 @@ export function BiomarkerTrackingTable({ data, examDates, patientName }: Biomark
                         <TableCell 
                           key={date}
                           className={cn(
-                            "text-center font-medium",
+                            "text-center font-semibold",
                             value && getStatusColor(value.status),
-                            isLatestExam && "ring-2 ring-inset ring-rest-cyan/50"
+                            isLatestExam && "bg-rest-cyan/15 ring-2 ring-rest-cyan border-l-2 border-r-2 border-rest-cyan"
                           )}
                         >
                           {value ? value.value : '-'}
