@@ -241,10 +241,10 @@ export default function PatientDashboard() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 bg-rest-blue/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-rest-blue/40 shadow-md">
-            <Calendar className="w-4 h-4 text-white" />
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-rest-gray" />
             <Select value={periodFilter} onValueChange={(value) => setPeriodFilter(value as PeriodFilter)}>
-              <SelectTrigger className="w-[180px] bg-white/10 border-white/20 text-white font-semibold">
+              <SelectTrigger className="w-[180px] bg-card/50 border-border">
                 <SelectValue placeholder="Selecione o período" />
               </SelectTrigger>
               <SelectContent>
