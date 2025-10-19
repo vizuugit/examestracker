@@ -217,10 +217,10 @@ const PatientCharts = () => {
         </div>
 
         {/* Seleção de Biomarcador */}
-        <Card className="bg-card/50 backdrop-blur-sm border-border">
+        <Card className="bg-white/10 backdrop-blur-md border-white/20">
           <CardHeader>
-            <CardTitle>Selecione um Biomarcador</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-white">Selecione um Biomarcador</CardTitle>
+            <CardDescription className="text-white/70">
               Escolha qual variável deseja acompanhar ao longo do tempo
             </CardDescription>
           </CardHeader>
@@ -229,10 +229,10 @@ const PatientCharts = () => {
               <Skeleton className="h-10 w-full bg-white/10" />
             ) : (
               <Select value={selectedBiomarker || ""} onValueChange={setSelectedBiomarker}>
-                <SelectTrigger className="w-full bg-card/50 border-border">
+                <SelectTrigger className="w-full bg-white/5 border-white/20 text-white">
                   <SelectValue placeholder="Selecione um biomarcador..." />
                 </SelectTrigger>
-                <SelectContent className="bg-card border-border max-h-[400px]">
+                <SelectContent className="bg-rest-charcoal border-white/20 max-h-[400px]">
                   {biomarkersByCategory && Object.entries(biomarkersByCategory).map(([category, items]) => (
                     <SelectGroup key={category}>
                       <SelectLabel className="text-rest-lightblue font-semibold">{category}</SelectLabel>
@@ -372,7 +372,7 @@ const PatientCharts = () => {
 
         {/* Estado vazio */}
         {!selectedBiomarker && !biomarkersLoading && (
-          <Card className="bg-card/50 backdrop-blur-sm border-border">
+          <Card className="bg-white/10 backdrop-blur-md border-white/20">
             <CardContent className="text-center py-16">
               <Activity className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-white mb-2">
