@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { BackButton } from "@/components/BackButton";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
@@ -102,6 +103,11 @@ const Auth = () => {
       <div className="absolute inset-0">
         <div className="absolute top-20 left-20 w-96 h-96 bg-rest-blue/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-20 w-72 h-72 bg-rest-cyan/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+
+      {/* Back Button */}
+      <div className="absolute top-6 left-6 z-20">
+        <BackButton to="/" />
       </div>
 
       <div className="relative z-10 w-full max-w-md">
