@@ -257,28 +257,28 @@ const PatientCharts = () => {
             ) : biomarkerHistory && biomarkerHistory.length > 0 ? (
               <>
                 {/* Card de Contexto Visual */}
-                <Card className="bg-gradient-to-br from-primary/5 to-primary/10 backdrop-blur-md border-primary/30">
+                <Card className="bg-white/10 backdrop-blur-md border-white/20">
                   <CardContent className="p-6">
                     <div className="grid md:grid-cols-3 gap-6">
                       <div className="text-center">
-                        <p className="text-sm text-muted-foreground mb-2">Valor Atual</p>
-                        <p className="text-3xl font-bold text-primary">
+                        <p className="text-sm text-white/70 mb-2">Valor Atual</p>
+                        <p className="text-3xl font-bold text-white">
                           {biomarkerHistory[biomarkerHistory.length - 1].value_numeric} {selectedBiomarkerData.unit}
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="text-xs text-white/70 mt-1">
                           {format(new Date(biomarkerHistory[biomarkerHistory.length - 1].exam_date), 'dd/MM/yyyy', { locale: ptBR })}
                         </p>
                       </div>
                       
                       <div className="text-center">
-                        <p className="text-sm text-muted-foreground mb-2">Faixa de Referência</p>
-                        <p className="text-xl font-semibold">
+                        <p className="text-sm text-white/70 mb-2">Faixa de Referência</p>
+                        <p className="text-xl font-semibold text-white">
                           {selectedBiomarkerData.reference_min ?? '-'} - {selectedBiomarkerData.reference_max ?? '-'} {selectedBiomarkerData.unit}
                         </p>
                       </div>
                       
                       <div className="text-center">
-                        <p className="text-sm text-muted-foreground mb-2">Status</p>
+                        <p className="text-sm text-white/70 mb-2">Status</p>
                         <Badge 
                           className={`text-lg px-4 py-2 ${
                             biomarkerHistory[biomarkerHistory.length - 1].status === 'alto' || 
@@ -310,28 +310,28 @@ const PatientCharts = () => {
 
                 {/* Estatísticas */}
                 {stats && (
-                  <Card className="bg-gradient-to-br from-background/95 to-muted/50 backdrop-blur-md border-primary/20">
+                  <Card className="bg-white/10 backdrop-blur-md border-white/20">
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
+                      <CardTitle className="flex items-center gap-2 text-white">
                         <Activity className="w-5 h-5" />
                         Estatísticas do Biomarcador
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        <div className="text-center p-4 rounded-lg bg-primary/5 border border-primary/20">
-                          <p className="text-sm text-muted-foreground mb-2">📈 Total de Medições</p>
-                          <p className="text-3xl font-bold text-primary">{stats.total}</p>
+                        <div className="text-center p-4 rounded-lg bg-white/5 border border-white/20">
+                          <p className="text-sm text-white/70 mb-2">📈 Total de Medições</p>
+                          <p className="text-3xl font-bold text-white">{stats.total}</p>
                         </div>
-                        <div className="text-center p-4 rounded-lg bg-primary/5 border border-primary/20">
-                          <p className="text-sm text-muted-foreground mb-2">📏 Valor Médio</p>
-                          <p className="text-3xl font-bold text-primary">
+                        <div className="text-center p-4 rounded-lg bg-white/5 border border-white/20">
+                          <p className="text-sm text-white/70 mb-2">📏 Valor Médio</p>
+                          <p className="text-3xl font-bold text-white">
                             {stats.average.toFixed(1)}
                           </p>
-                          <p className="text-xs text-muted-foreground">{selectedBiomarkerData.unit}</p>
+                          <p className="text-xs text-white/70">{selectedBiomarkerData.unit}</p>
                         </div>
-                        <div className="text-center p-4 rounded-lg bg-primary/5 border border-primary/20">
-                          <p className="text-sm text-muted-foreground mb-2">🎯 Tendência</p>
+                        <div className="text-center p-4 rounded-lg bg-white/5 border border-white/20">
+                          <p className="text-sm text-white/70 mb-2">🎯 Tendência</p>
                           <p className={`text-4xl font-bold ${
                             stats.trend === 'up' ? 'text-destructive' : 
                             stats.trend === 'down' ? 'text-green-500' : 
@@ -340,8 +340,8 @@ const PatientCharts = () => {
                             {stats.trend === 'up' ? '↑' : stats.trend === 'down' ? '↓' : '→'}
                           </p>
                         </div>
-                        <div className="text-center p-4 rounded-lg bg-primary/5 border border-primary/20">
-                          <p className="text-sm text-muted-foreground mb-2">✅ Dentro da Faixa</p>
+                        <div className="text-center p-4 rounded-lg bg-white/5 border border-white/20">
+                          <p className="text-sm text-white/70 mb-2">✅ Dentro da Faixa</p>
                           <p className="text-3xl font-bold text-green-500">
                             {((stats.inRange / stats.total) * 100).toFixed(0)}%
                           </p>
