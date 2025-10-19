@@ -12,23 +12,58 @@ interface UploadOptions {
 }
 
 interface AWSExamData {
-  file_name: string;
   status: string;
-  laboratorio: string;
-  paciente: string;
-  data_exame: string;
-  total_exames: number;
-  processed_at: string;
-  exames: Array<{
-    nome: string;
-    categoria: string;
-    resultado: string;
-    unidade: string;
-    referencia_min: number | null;
-    referencia_max: number | null;
-    status: string;
-    observacao: string;
-  }>;
+  data: {
+    dados_basicos: {
+      laboratorio: string;
+      paciente: string;
+      data_exame: string;
+      medico_solicitante: string | null;
+    };
+    exames: Array<{
+      nome: string;
+      categoria: string;
+      resultado: string;
+      unidade: string;
+      referencia_min: number | null;
+      referencia_max: number | null;
+      status: string;
+      desvio_percentual: number | null;
+      observacao: string | null;
+      explicacao_leiga: string;
+      possiveis_causas_alteracao: string[] | null;
+    }>;
+    analise_clinica: {
+      resumo_executivo: string;
+      areas_atencao: string[];
+      score_saude_geral: number;
+      categoria_risco: string;
+    };
+    alertas: Array<{
+      tipo: string;
+      exame: string;
+      mensagem: string;
+      acao_sugerida: string;
+    }>;
+    tendencias: {
+      melhorias: string[];
+      pioras: string[];
+      estavel: string[];
+    };
+    recomendacoes: Array<{
+      categoria: string;
+      prioridade: string;
+      descricao: string;
+    }>;
+    metadata: {
+      total_exames: number;
+      exames_normais: number;
+      exames_alterados: number;
+      exames_criticos: number;
+    };
+  };
+  processedAt: string | null;
+  s3Key: string;
 }
 
 export function useExamUpload() {
@@ -137,7 +172,7 @@ export function useExamUpload() {
       setProgress(100);
       setStatus("Concluído!");
       toast.success("Exame processado com sucesso!", {
-        description: `${exam.total_biomarkers || 0} biomarcadores extraídos.`,
+        description: `Exame analisado com sucesso`,
       });
 
       // Callback para notificar componentes externos
@@ -196,7 +231,7 @@ export function useExamUpload() {
             if (data.status === 'completed' && data.data) {
               console.log(`[Polling] ✅ Processamento concluído após ${elapsedSeconds}s!`);
               clearInterval(interval);
-              await syncExamToSupabase(examId, data.data);
+              await syncExamToSupabase(examId, data);
               resolve();
               return;
             } else if (data.status === 'processing') {
@@ -228,17 +263,25 @@ export function useExamUpload() {
     });
   };
 
-  const syncExamToSupabase = async (examId: string, awsData: AWSExamData) => {
+  const syncExamToSupabase = async (examId: string, awsResponse: AWSExamData) => {
+    const awsData = awsResponse.data;
+    
     // Update exam with AWS data
     const { error: updateError } = await supabase
       .from("exams")
       .update({
         processing_status: "completed",
-        processed_at: awsData.processed_at,
-        laboratory: awsData.laboratorio,
-        patient_name_extracted: awsData.paciente,
-        total_biomarkers: awsData.total_exames,
+        processed_at: awsResponse.processedAt || new Date().toISOString(),
+        laboratory: awsData.dados_basicos.laboratorio,
+        patient_name_extracted: awsData.dados_basicos.paciente,
+        total_biomarkers: awsData.metadata.total_exames,
         raw_aws_response: awsData as any,
+        clinical_analysis: awsData.analise_clinica,
+        alerts: awsData.alertas,
+        trends: awsData.tendencias,
+        recommendations: awsData.recomendacoes,
+        health_score: awsData.analise_clinica.score_saude_geral,
+        risk_category: awsData.analise_clinica.categoria_risco,
       })
       .eq("id", examId);
 
@@ -255,7 +298,10 @@ export function useExamUpload() {
       reference_min: b.referencia_min,
       reference_max: b.referencia_max,
       status: b.status as "normal" | "alto" | "baixo" | "alterado",
-      observation: b.observacao,
+      observation: b.observacao || null,
+      deviation_percentage: b.desvio_percentual,
+      layman_explanation: b.explicacao_leiga,
+      possible_causes: b.possiveis_causas_alteracao,
     }));
 
     const { error: biomarkersError } = await supabase
