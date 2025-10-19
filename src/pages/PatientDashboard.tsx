@@ -315,9 +315,9 @@ export default function PatientDashboard() {
                 </h2>
               )}
               {!selectedCategory && (
-                <h2 className="text-xl font-semibold text-white">
+                <span className="bg-rest-blue/80 backdrop-blur-sm px-4 py-1.5 rounded-lg font-semibold text-white border border-rest-blue/40 shadow-md">
                   Todos os Exames
-                </h2>
+                </span>
               )}
             </div>
             
