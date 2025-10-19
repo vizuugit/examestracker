@@ -317,12 +317,12 @@ export function useExamUpload() {
 
     // Insert biomarkers (se existirem)
     if (awsData.exames && awsData.exames.length > 0) {
-      const biomarkers = awsData.exames.map((b) => ({
-        exam_id: examId,
-        biomarker_name: b.nome,
-        category: b.categoria,
-        value: b.resultado,
-        value_numeric: parseFloat(b.resultado) || null,
+    const biomarkers = awsData.exames.map((b) => ({
+      exam_id: examId,
+      biomarker_name: b.nome,
+      category: b.categoria,
+      value: String(b.resultado),
+      value_numeric: parseFloat(b.resultado) || null,
         unit: b.unidade,
         reference_min: b.referencia_min,
         reference_max: b.referencia_max,
