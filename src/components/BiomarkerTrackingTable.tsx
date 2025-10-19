@@ -30,10 +30,11 @@ interface BiomarkerTrackingTableProps {
   data: BiomarkerRow[];
   examDates: string[];
   patientName?: string;
+  initialCategory?: string;
 }
 
-export function BiomarkerTrackingTable({ data, examDates, patientName }: BiomarkerTrackingTableProps) {
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+export function BiomarkerTrackingTable({ data, examDates, patientName, initialCategory }: BiomarkerTrackingTableProps) {
+  const [categoryFilter, setCategoryFilter] = useState<string>(initialCategory || 'all');
 
   // Obter categorias únicas
   const categories = Array.from(new Set(data.map(d => d.category).filter(Boolean)));

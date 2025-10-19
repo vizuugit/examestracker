@@ -39,6 +39,7 @@ export default function PatientDashboard() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey | null>(null);
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('all');
+  const [viewMode, setViewMode] = useState<'categories' | 'table'>('categories');
 
   // Buscar informações do paciente
   const { data: patient } = useQuery({
@@ -196,6 +197,10 @@ export default function PatientDashboard() {
     ? categorizedBiomarkers?.[selectedCategory] || []
     : biomarkersData || [];
 
+  const filteredData = selectedCategory 
+    ? trackingTableData?.biomarkers.filter(b => categorizeBiomarker(b.biomarker_name) === selectedCategory) || []
+    : trackingTableData?.biomarkers || [];
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rest-black via-rest-charcoal to-rest-black p-6">
@@ -253,11 +258,25 @@ export default function PatientDashboard() {
           </div>
         </div>
 
-        {/* Categorias */}
-        {!selectedCategory && categoryStats.length > 0 && (
+        {/* View: Categorias */}
+        {viewMode === 'categories' && categoryStats.length > 0 && (
           <div>
             <h2 className="text-xl font-semibold text-white mb-4">Categorias de Biomarcadores</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Card "Todos os Exames" */}
+              <BiomarkerCategoryCard
+                category={'cardiovascular' as CategoryKey}
+                categoryName="Todos os Exames"
+                totalBiomarkers={biomarkersData?.length || 0}
+                normalCount={biomarkersData?.filter(b => b.history[b.history.length - 1]?.status === 'normal').length || 0}
+                alteredCount={biomarkersData?.filter(b => b.history[b.history.length - 1]?.status !== 'normal').length || 0}
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setViewMode('table');
+                }}
+              />
+              
+              {/* Cards de Categorias */}
               {categoryStats.map(stat => (
                 <BiomarkerCategoryCard
                   key={stat.key}
@@ -266,56 +285,48 @@ export default function PatientDashboard() {
                   totalBiomarkers={stat.total}
                   normalCount={stat.normal}
                   alteredCount={stat.altered}
-                  onClick={() => setSelectedCategory(stat.key)}
+                  onClick={() => {
+                    setSelectedCategory(stat.key);
+                    setViewMode('table');
+                  }}
                 />
               ))}
             </div>
           </div>
         )}
 
-        {/* Tabela de Acompanhamento Longitudinal */}
-        {trackingTableData && trackingTableData.biomarkers.length > 0 && (
-          <BiomarkerTrackingTable 
-            data={trackingTableData.biomarkers}
-            examDates={trackingTableData.examDates}
-            patientName={patient?.full_name}
-          />
-        )}
-
-        {/* Filtro de categoria ativa */}
-        {selectedCategory && (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setSelectedCategory(null)}
-              className="border-rest-blue text-rest-blue hover:bg-rest-blue/10"
-            >
-              ← Voltar às categorias
-            </Button>
-            <h2 className="text-xl font-semibold text-white">
-              {BIOMARKER_CATEGORIES[selectedCategory].name}
-            </h2>
-          </div>
-        )}
-
-        {/* Gráficos de Evolução */}
-        {filteredBiomarkers.length > 0 && (
-          <div>
-            <h2 className="text-xl font-semibold text-white mb-4">
-              {selectedCategory ? 'Gráficos de Evolução' : 'Todos os Biomarcadores'}
-            </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {filteredBiomarkers.map(biomarker => (
-                <BiomarkerChart
-                  key={biomarker.biomarker_name}
-                  biomarkerName={biomarker.biomarker_name}
-                  data={biomarker.history}
-                  unit={biomarker.unit}
-                  referenceMin={biomarker.reference_min}
-                  referenceMax={biomarker.reference_max}
-                />
-              ))}
+        {/* View: Tabela Filtrada */}
+        {viewMode === 'table' && trackingTableData && trackingTableData.biomarkers.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setViewMode('categories');
+                }}
+                className="border-rest-blue text-rest-blue hover:bg-rest-blue/10"
+              >
+                ← Voltar às categorias
+              </Button>
+              {selectedCategory && (
+                <h2 className="text-xl font-semibold text-white">
+                  {BIOMARKER_CATEGORIES[selectedCategory].name}
+                </h2>
+              )}
+              {!selectedCategory && (
+                <h2 className="text-xl font-semibold text-white">
+                  Todos os Exames
+                </h2>
+              )}
             </div>
+            
+            <BiomarkerTrackingTable 
+              data={selectedCategory ? filteredData : trackingTableData.biomarkers}
+              examDates={trackingTableData.examDates}
+              patientName={patient?.full_name}
+              initialCategory={selectedCategory || undefined}
+            />
           </div>
         )}
 
