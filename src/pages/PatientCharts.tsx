@@ -237,14 +237,8 @@ const PatientCharts = () => {
                     <SelectGroup key={category}>
                       <SelectLabel className="text-rest-lightblue font-semibold">{category}</SelectLabel>
                       {items.map((biomarker) => (
-                        <SelectItem key={biomarker.biomarker_name} value={biomarker.biomarker_name}>
-                          <div className="flex items-center justify-between w-full">
-                            <span>{biomarker.biomarker_name}</span>
-                            <span className="text-muted-foreground ml-4 text-xs">
-                              {biomarker.unit && `(${biomarker.unit})`}
-                              {biomarker.last_value !== null && ` - ${biomarker.last_value.toFixed(2)}`}
-                            </span>
-                          </div>
+                        <SelectItem key={biomarker.biomarker_name} value={biomarker.biomarker_name} className="text-white">
+                          {biomarker.biomarker_name}
                         </SelectItem>
                       ))}
                     </SelectGroup>
