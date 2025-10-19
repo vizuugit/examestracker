@@ -54,10 +54,10 @@ export function BiomarkerChart({
   };
 
   return (
-    <Card className="bg-gradient-to-br from-background/95 to-muted/50 backdrop-blur-md border-primary/20">
+    <Card className="bg-white/10 backdrop-blur-md border-white/20">
       <CardHeader>
-        <CardTitle className="text-xl">{biomarkerName}</CardTitle>
-        <CardDescription className="text-base">
+        <CardTitle className="text-xl text-white">{biomarkerName}</CardTitle>
+        <CardDescription className="text-base text-white/70">
           Evolução ao longo do tempo {unit && `(${unit})`}
         </CardDescription>
       </CardHeader>
