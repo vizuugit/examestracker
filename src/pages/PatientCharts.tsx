@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { BiomarkerChart } from "@/components/BiomarkerChart";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface BiomarkerOption {
   biomarker_name: string;
@@ -124,12 +126,23 @@ const PatientCharts = () => {
 
       if (error) throw error;
 
-      return data?.map((item: any) => ({
-        exam_date: item.exams.exam_date,
-        value_numeric: item.value_numeric,
-        status: item.status,
-        laboratory: item.exams.laboratory,
-      })) as BiomarkerDataPoint[];
+      // Agrupar por data e pegar apenas o mais recente de cada dia
+      const grouped = data?.reduce((acc, item: any) => {
+        const date = item.exams.exam_date;
+        if (!acc[date] || new Date(item.exams.exam_date) > new Date(acc[date].exam_date)) {
+          acc[date] = {
+            exam_date: item.exams.exam_date,
+            value_numeric: item.value_numeric,
+            status: item.status,
+            laboratory: item.exams.laboratory,
+          };
+        }
+        return acc;
+      }, {} as Record<string, any>);
+
+      return grouped ? Object.values(grouped).sort((a: any, b: any) => 
+        new Date(a.exam_date).getTime() - new Date(b.exam_date).getTime()
+      ) : [];
     },
     enabled: !!selectedBiomarker && !!id,
   });
@@ -246,9 +259,52 @@ const PatientCharts = () => {
         {selectedBiomarker && selectedBiomarkerData && (
           <>
             {historyLoading ? (
-              <Skeleton className="h-[400px] bg-white/10" />
+              <Skeleton className="h-[500px] bg-white/10" />
             ) : biomarkerHistory && biomarkerHistory.length > 0 ? (
               <>
+                {/* Card de Contexto Visual */}
+                <Card className="bg-gradient-to-br from-primary/5 to-primary/10 backdrop-blur-md border-primary/30">
+                  <CardContent className="p-6">
+                    <div className="grid md:grid-cols-3 gap-6">
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground mb-2">Valor Atual</p>
+                        <p className="text-3xl font-bold text-primary">
+                          {biomarkerHistory[biomarkerHistory.length - 1].value_numeric} {selectedBiomarkerData.unit}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {format(new Date(biomarkerHistory[biomarkerHistory.length - 1].exam_date), 'dd/MM/yyyy', { locale: ptBR })}
+                        </p>
+                      </div>
+                      
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground mb-2">Faixa de Referência</p>
+                        <p className="text-xl font-semibold">
+                          {selectedBiomarkerData.reference_min ?? '-'} - {selectedBiomarkerData.reference_max ?? '-'} {selectedBiomarkerData.unit}
+                        </p>
+                      </div>
+                      
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground mb-2">Status</p>
+                        <Badge 
+                          className={`text-lg px-4 py-2 ${
+                            biomarkerHistory[biomarkerHistory.length - 1].status === 'alto' || 
+                            biomarkerHistory[biomarkerHistory.length - 1].status === 'crítico'
+                              ? 'bg-destructive text-destructive-foreground'
+                              : biomarkerHistory[biomarkerHistory.length - 1].status === 'baixo'
+                              ? 'bg-yellow-500 text-white'
+                              : 'bg-green-500 text-white'
+                          }`}
+                        >
+                          {biomarkerHistory[biomarkerHistory.length - 1].status === 'alto' && '🔴 ALTO'}
+                          {biomarkerHistory[biomarkerHistory.length - 1].status === 'crítico' && '🔴 CRÍTICO'}
+                          {biomarkerHistory[biomarkerHistory.length - 1].status === 'baixo' && '🟡 BAIXO'}
+                          {biomarkerHistory[biomarkerHistory.length - 1].status === 'normal' && '🟢 NORMAL'}
+                        </Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
                 {/* Gráfico */}
                 <BiomarkerChart
                   biomarkerName={selectedBiomarkerData.biomarker_name}
@@ -260,82 +316,49 @@ const PatientCharts = () => {
 
                 {/* Estatísticas */}
                 {stats && (
-                  <Card className="bg-card/50 backdrop-blur-sm border-border">
+                  <Card className="bg-gradient-to-br from-background/95 to-muted/50 backdrop-blur-md border-primary/20">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Activity className="w-5 h-5 text-rest-green" />
-                        Estatísticas
+                        <Activity className="w-5 h-5" />
+                        Estatísticas do Biomarcador
                       </CardTitle>
-                      <CardDescription>
-                        Resumo das medições de {selectedBiomarkerData.biomarker_name}
-                      </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-                          <p className="text-sm text-muted-foreground mb-1">Total de Medições</p>
-                          <p className="text-2xl font-bold text-white">{stats.total}</p>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div className="text-center p-4 rounded-lg bg-primary/5 border border-primary/20">
+                          <p className="text-sm text-muted-foreground mb-2">📈 Total de Medições</p>
+                          <p className="text-3xl font-bold text-primary">{stats.total}</p>
                         </div>
-
-                        <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-                          <p className="text-sm text-muted-foreground mb-1">Valor Médio</p>
-                          <p className="text-2xl font-bold text-white">
-                            {stats.average.toFixed(2)} {selectedBiomarkerData.unit}
+                        <div className="text-center p-4 rounded-lg bg-primary/5 border border-primary/20">
+                          <p className="text-sm text-muted-foreground mb-2">📏 Valor Médio</p>
+                          <p className="text-3xl font-bold text-primary">
+                            {stats.average.toFixed(1)}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{selectedBiomarkerData.unit}</p>
+                        </div>
+                        <div className="text-center p-4 rounded-lg bg-primary/5 border border-primary/20">
+                          <p className="text-sm text-muted-foreground mb-2">🎯 Tendência</p>
+                          <p className={`text-4xl font-bold ${
+                            stats.trend === 'up' ? 'text-destructive' : 
+                            stats.trend === 'down' ? 'text-green-500' : 
+                            'text-yellow-500'
+                          }`}>
+                            {stats.trend === 'up' ? '↑' : stats.trend === 'down' ? '↓' : '→'}
                           </p>
                         </div>
-
-                        <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-                          <p className="text-sm text-muted-foreground mb-1">Tendência</p>
-                          <div className="flex items-center gap-2 mt-1">
-                            {stats.trend === 'up' && (
-                              <>
-                                <TrendingUp className="w-5 h-5 text-red-500" />
-                                <span className="text-xl font-bold text-red-500">Aumentando</span>
-                              </>
-                            )}
-                            {stats.trend === 'down' && (
-                              <>
-                                <TrendingDown className="w-5 h-5 text-green-500" />
-                                <span className="text-xl font-bold text-green-500">Diminuindo</span>
-                              </>
-                            )}
-                            {stats.trend === 'stable' && (
-                              <>
-                                <Minus className="w-5 h-5 text-yellow-500" />
-                                <span className="text-xl font-bold text-yellow-500">Estável</span>
-                              </>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-                          <p className="text-sm text-muted-foreground mb-1">Dentro da Faixa</p>
-                          <p className="text-2xl font-bold text-white">
+                        <div className="text-center p-4 rounded-lg bg-primary/5 border border-primary/20">
+                          <p className="text-sm text-muted-foreground mb-2">✅ Dentro da Faixa</p>
+                          <p className="text-3xl font-bold text-green-500">
                             {((stats.inRange / stats.total) * 100).toFixed(0)}%
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {stats.inRange} de {stats.total} medições
                           </p>
                         </div>
                       </div>
-
-                      {selectedBiomarkerData.last_value !== null && (
-                        <div className="mt-4 p-4 bg-rest-blue/10 border border-rest-blue/30 rounded-lg">
-                          <p className="text-sm text-muted-foreground mb-1">Última Medição</p>
-                          <p className="text-2xl font-bold text-rest-lightblue">
-                            {selectedBiomarkerData.last_value.toFixed(2)} {selectedBiomarkerData.unit}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {new Date(selectedBiomarkerData.last_date).toLocaleDateString("pt-BR")}
-                          </p>
-                        </div>
-                      )}
                     </CardContent>
                   </Card>
                 )}
               </>
             ) : (
-              <Card className="bg-card/50 backdrop-blur-sm border-border">
+              <Card className="bg-gradient-to-br from-background/95 to-muted/50 backdrop-blur-md border-primary/20">
                 <CardContent className="text-center py-12">
                   <Activity className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground">
