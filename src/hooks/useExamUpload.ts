@@ -14,12 +14,20 @@ interface UploadOptions {
 interface AWSExamData {
   status: string;
   data: {
-    dados_basicos: {
+    // Formato novo (com dados_basicos aninhado)
+    dados_basicos?: {
       laboratorio: string;
       paciente: string;
       data_exame: string;
       medico_solicitante: string | null;
     };
+    // Formato antigo (campos diretos)
+    laboratorio?: string;
+    paciente?: string;
+    data_exame?: string;
+    medico_solicitante?: string | null;
+    total_exames?: number;
+    
     exames: Array<{
       nome: string;
       categoria: string;
@@ -33,29 +41,29 @@ interface AWSExamData {
       explicacao_leiga: string;
       possiveis_causas_alteracao: string[] | null;
     }>;
-    analise_clinica: {
+    analise_clinica?: {
       resumo_executivo: string;
       areas_atencao: string[];
       score_saude_geral: number;
       categoria_risco: string;
     };
-    alertas: Array<{
+    alertas?: Array<{
       tipo: string;
       exame: string;
       mensagem: string;
       acao_sugerida: string;
     }>;
-    tendencias: {
+    tendencias?: {
       melhorias: string[];
       pioras: string[];
       estavel: string[];
     };
-    recomendacoes: Array<{
+    recomendacoes?: Array<{
       categoria: string;
       prioridade: string;
       descricao: string;
     }>;
-    metadata: {
+    metadata?: {
       total_exames: number;
       exames_normais: number;
       exames_alterados: number;
@@ -268,20 +276,23 @@ export function useExamUpload() {
     
     const awsData = awsResponse.data;
     console.log('[Sync] 2. awsData existe?', !!awsData);
-    console.log('[Sync] 3. dados_basicos existe?', !!(awsData && awsData.dados_basicos));
     
     // VALIDAÇÃO CRÍTICA
     if (!awsData) {
       throw new Error('❌ awsResponse.data está undefined');
     }
     
-    if (!awsData.dados_basicos) {
-      console.error('[Sync] ❌ Estrutura inválida! awsData:', JSON.stringify(awsData).substring(0, 500));
-      throw new Error('❌ awsData.dados_basicos está undefined');
-    }
+    // ✅ ADAPTAR PARA FORMATO ANTIGO E NOVO
+    const dadosBasicos = awsData.dados_basicos || {
+      laboratorio: awsData.laboratorio || '',
+      paciente: awsData.paciente || '',
+      data_exame: awsData.data_exame || '',
+      medico_solicitante: awsData.medico_solicitante || null,
+    };
     
-    console.log('[Sync] 4. laboratorio:', awsData.dados_basicos.laboratorio);
-    console.log('[Sync] 5. paciente:', awsData.dados_basicos.paciente);
+    console.log('[Sync] 3. Formato detectado:', awsData.dados_basicos ? 'NOVO' : 'ANTIGO');
+    console.log('[Sync] 4. laboratorio:', dadosBasicos.laboratorio);
+    console.log('[Sync] 5. paciente:', dadosBasicos.paciente);
     
     // Update exam with AWS data
     const { error: updateError } = await supabase
@@ -289,9 +300,9 @@ export function useExamUpload() {
       .update({
         processing_status: "completed",
         processed_at: awsResponse.processedAt || new Date().toISOString(),
-        laboratory: awsData.dados_basicos.laboratorio || '',
-        patient_name_extracted: awsData.dados_basicos.paciente || '',
-        total_biomarkers: awsData.metadata?.total_exames || 0,
+        laboratory: dadosBasicos.laboratorio,
+        patient_name_extracted: dadosBasicos.paciente,
+        total_biomarkers: awsData.metadata?.total_exames || awsData.total_exames || 0,
         raw_aws_response: awsData as any,
         clinical_analysis: awsData.analise_clinica || null,
         alerts: awsData.alertas || [],
