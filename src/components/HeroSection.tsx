@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { ArrowRight, Upload, Brain, TrendingUp, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [statsCounter, setStatsCounter] = useState(0);
 
@@ -61,6 +63,7 @@ const HeroSection = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 size="lg" 
+                onClick={() => navigate("/auth")}
                 className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white font-semibold px-8 py-4 text-lg hover-scale group"
               >
                 Começar Agora
