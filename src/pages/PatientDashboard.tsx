@@ -315,7 +315,10 @@ export default function PatientDashboard() {
                 </h2>
               )}
               {!selectedCategory && (
-              <span className="!bg-rest-blue backdrop-blur-sm px-5 py-2 rounded-lg font-bold text-white border-2 border-white/30 shadow-lg">
+              <span 
+                className="backdrop-blur-sm px-5 py-2 rounded-lg font-bold text-white border-2 border-white/30 shadow-lg"
+                style={{ backgroundColor: 'hsl(199, 85%, 38%)' }}
+              >
                 Todos os Exames
               </span>
               )}
