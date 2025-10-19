@@ -109,36 +109,3 @@
   }
 }
 
-/* Efeito de película fosca - Overlay global */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 9999;
-  pointer-events: none;
-  user-select: none;
-  
-  /* Simula a difusão de luz da película */
-  backdrop-filter: saturate(0.85) contrast(0.95) brightness(0.98);
-  
-  /* Leve overlay com tons quentes (reduz luz azul) */
-  background-color: rgba(255, 248, 240, 0.015);
-  mix-blend-mode: multiply;
-  
-  /* Textura fosca sutil */
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.02)),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-}
-
-/* Suaviza textos brancos para menos agressividade */
-.text-white {
-  color: rgba(255, 255, 255, 0.95) !important;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  color: rgba(255, 255, 255, 0.97);
-}

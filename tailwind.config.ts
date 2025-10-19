@@ -68,8 +68,11 @@ export default {
 					lightblue: 'hsl(191, 60%, 77%)',
 					darkblue: 'hsl(234, 85%, 20%)',
 					cyan: 'hsl(191, 85%, 44%)',
-					light: '#000000',
-					dark: '#FFFFFF'
+					black: 'hsl(0, 0%, 0%)',
+					charcoal: 'hsl(0, 0%, 13%)',
+					gray: 'hsl(0, 0%, 60%)',
+					light: 'hsl(0, 0%, 100%)',
+					dark: 'hsl(0, 0%, 0%)'
 				},
 				medical: {
 					success: 'hsl(142, 60%, 38%)',
