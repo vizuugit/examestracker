@@ -14,8 +14,8 @@ const DirectionSection = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-4xl mx-auto mb-20">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 tracking-tight leading-tight">
-            Como
-            <span className="block bg-gradient-to-r from-rest-lightblue to-rest-cyan bg-clip-text text-transparent">
+            Como{" "}
+            <span className="bg-gradient-to-r from-rest-lightblue to-rest-cyan bg-clip-text text-transparent">
               Funciona
             </span>
           </h2>
