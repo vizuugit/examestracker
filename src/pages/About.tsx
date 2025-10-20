@@ -28,7 +28,7 @@ const About = () => {
           <section>
             <h2 className="text-3xl font-bold text-rest-cyan mb-4">Quem Somos</h2>
             <p className="text-gray-300 leading-relaxed text-lg">
-              <strong>Exame</strong> é uma ferramenta da <strong>CACTO - Cognitive Analytics for Care Technology & Outcomes</strong>. 
+              <strong>Exames</strong> é uma ferramenta da <strong>CACTO - Cognitive Analytics for Care Technology & Outcomes</strong>.
               Unimos ciência, tecnologia e cuidado para transformar a saúde. Nosso propósito é 
               simplificar a complexidade dos dados clínicos e transformá-los em soluções inteligentes 
               que melhoram a vida das pessoas.
