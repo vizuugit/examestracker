@@ -1,6 +1,9 @@
 import { Upload, Bot, BarChart3, Download } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const DirectionSection = () => {
+  const navigate = useNavigate();
   return (
     <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-zinc-900 to-black relative overflow-hidden">
       {/* Background Elements */}
@@ -54,13 +57,13 @@ const DirectionSection = () => {
           <p className="text-white/70 mb-6 text-lg">
             Pronto para revolucionar o acompanhamento dos seus pacientes?
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white font-semibold px-8 py-4 rounded-full text-lg hover-scale transition-all">
-              Começar Gratuitamente
-            </button>
-            <button className="bg-white/5 hover:bg-white/10 text-white font-semibold px-8 py-4 rounded-full text-lg border border-white/20 hover:border-rest-blue/50 transition-all">
+          <div className="flex justify-center">
+            <Button 
+              onClick={() => navigate('/demo')}
+              className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white font-semibold px-8 py-4 rounded-full text-lg hover-scale transition-all"
+            >
               Ver Demonstração
-            </button>
+            </Button>
           </div>
         </div>
       </div>
