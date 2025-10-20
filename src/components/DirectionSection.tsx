@@ -1,6 +1,7 @@
 import { Upload, Bot, BarChart3, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import cactoLogo from "@/assets/cacto-logo.png";
 
 const DirectionSection = () => {
   const navigate = useNavigate();
@@ -25,31 +26,42 @@ const DirectionSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-          {steps.map((step, index) => (
-            <div key={index} className="group relative">
-              {/* Connector Line (Desktop only) */}
-              {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-16 left-[calc(50%+4rem)] w-full h-0.5 bg-gradient-to-r from-rest-blue/50 to-transparent" />
-              )}
-              
-              <div className="bg-gradient-to-br from-zinc-900/80 to-black/80 border border-white/10 rounded-3xl p-8 backdrop-blur-md hover:border-rest-blue/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl relative z-10">
-                {/* Step Number */}
-                <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-rest-blue to-rest-cyan rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                  {index + 1}
-                </div>
-                
-                {/* Icon */}
-                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:bg-rest-blue/20 transition-colors">
-                  <step.icon className="w-8 h-8 text-rest-lightblue" />
-                </div>
-                
-                {/* Content */}
-                <h3 className="text-xl font-bold text-white mb-3 text-center">{step.title}</h3>
-                <p className="text-white/70 text-sm leading-relaxed text-center">{step.description}</p>
-              </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto items-center">
+          {/* Logo CACTO */}
+          <div className="flex justify-center lg:justify-end order-2 lg:order-1">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-rest-blue/20 to-rest-cyan/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all" />
+              <img 
+                src={cactoLogo} 
+                alt="CACTO - Cognitive Analytics for Care, Technology & Outcomes" 
+                className="relative w-full max-w-md rounded-2xl shadow-2xl hover:scale-105 transition-transform duration-500"
+              />
             </div>
-          ))}
+          </div>
+
+          {/* Steps Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 order-1 lg:order-2">
+            {steps.map((step, index) => (
+              <div key={index} className="group relative">
+                <div className="bg-gradient-to-br from-zinc-900/80 to-black/80 border border-white/10 rounded-3xl p-8 backdrop-blur-md hover:border-rest-blue/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl relative z-10">
+                  {/* Step Number */}
+                  <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-rest-blue to-rest-cyan rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    {index + 1}
+                  </div>
+                  
+                  {/* Icon */}
+                  <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:bg-rest-blue/20 transition-colors">
+                    <step.icon className="w-8 h-8 text-rest-lightblue" />
+                  </div>
+                  
+                  {/* Content */}
+                  <h3 className="text-xl font-bold text-white mb-3 text-center">{step.title}</h3>
+                  <p className="text-white/70 text-sm leading-relaxed text-center">{step.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* CTA Section */}
