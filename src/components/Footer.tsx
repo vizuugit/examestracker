@@ -13,7 +13,7 @@ const Footer = () => {
               Plataforma inteligente de gestão de exames médicos com IA. 
               Automatize a análise de laudos e visualize a evolução dos seus pacientes.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 mb-8">
               <a href="#" className="text-white/70 hover:text-white transition-colors" aria-label="LinkedIn">
                 <Linkedin size={20} />
               </a>
@@ -21,22 +21,20 @@ const Footer = () => {
                 <Mail size={20} />
               </a>
             </div>
-          </div>
-          
-          <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
-            <div className="flex-1">
-              <h3 className="text-xl font-bold mb-6 text-white tracking-tight">Links Rápidos</h3>
-              <ul className="space-y-3">
-                <li><Link to="/" className="text-white/70 hover:text-white transition-opacity">Home</Link></li>
-                <li><a href="#contact" className="text-white/70 hover:text-white transition-opacity">Contato</a></li>
-                <li><a href="#" className="text-white/70 hover:text-white transition-opacity">Sobre Nós</a></li>
-                <li><a href="#" className="text-white/70 hover:text-white transition-opacity">Funcionalidades</a></li>
-                <li><a href="#" className="text-white/70 hover:text-white transition-opacity">Preços</a></li>
-              </ul>
-            </div>
-            <div className="flex items-center justify-start pl-8 mt-12 mr-8 py-0 px-0 mx-[40px] my-[100px]">
+            <div className="flex items-center justify-start">
               <img src={cactoLogo} alt="CACTO - Cognitive Analytics for Care, Technology & Outcomes" className="w-24 h-24 md:w-28 md:h-28 object-contain opacity-80 hover:opacity-100 transition-opacity" />
             </div>
+          </div>
+          
+          <div>
+            <h3 className="text-xl font-bold mb-6 text-white tracking-tight">Links Rápidos</h3>
+            <ul className="space-y-3">
+              <li><Link to="/" className="text-white/70 hover:text-white transition-opacity">Home</Link></li>
+              <li><a href="#contact" className="text-white/70 hover:text-white transition-opacity">Contato</a></li>
+              <li><a href="#" className="text-white/70 hover:text-white transition-opacity">Sobre Nós</a></li>
+              <li><a href="#" className="text-white/70 hover:text-white transition-opacity">Funcionalidades</a></li>
+              <li><a href="#" className="text-white/70 hover:text-white transition-opacity">Preços</a></li>
+            </ul>
           </div>
           
           <div>
