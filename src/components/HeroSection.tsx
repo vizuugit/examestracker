@@ -74,8 +74,8 @@ const HeroSection = () => {
             {/* Key Features */}
             <div className="grid grid-cols-3 gap-8 pt-8 border-t border-white/10">
               <div className="text-center">
-                <div className="text-3xl font-bold text-rest-lightblue">Multi</div>
-                <div className="text-sm text-white/70">Formato</div>
+                <div className="text-2xl font-bold text-rest-lightblue">Qualquer Formato</div>
+                <div className="text-sm text-white/70">PDF / PNG / HEIC</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-rest-lightblue">IA</div>
