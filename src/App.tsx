@@ -25,6 +25,7 @@ import CookiePolicy from "./pages/CookiePolicy";
 import ReturnsPolicy from "./pages/ReturnsPolicy";
 import Redirect from "./pages/Redirect";
 import Demo from "./pages/Demo";
+import About from "./pages/About";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/demo" element={<Demo />} />
+          <Route path="/about" element={<About />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/patients" element={<ProtectedRoute><Patients /></ProtectedRoute>} />
