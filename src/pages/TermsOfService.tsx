@@ -30,27 +30,25 @@ const TermsOfService = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">3. Elegibilidade e Cadastro</h2>
-          <ul className="list-disc pl-6 mb-4 text-gray-200 space-y-2">
-            <li><strong className="text-white">Profissionais de saúde:</strong> Apenas médicos, enfermeiros, nutricionistas e outros profissionais de saúde devidamente licenciados podem utilizar a plataforma</li>
-            <li><strong className="text-white">Informações verdadeiras:</strong> Você deve fornecer dados corretos e atualizados no cadastro</li>
-            <li><strong className="text-white">Segurança de credenciais:</strong> Você é responsável por manter suas credenciais de acesso em sigilo</li>
-            <li><strong className="text-white">Consentimento dos pacientes:</strong> É sua responsabilidade obter consentimento adequado dos pacientes para upload e processamento de seus exames</li>
-          </ul>
-        </section>
+            <h2 className="text-2xl font-semibold mb-4 text-white">3. Elegibilidade e Cadastro</h2>
+            <ul className="list-disc pl-6 mb-4 text-gray-200 space-y-2">
+              <li><strong className="text-white">Profissionais de saúde:</strong> Apenas médicos, enfermeiros, nutricionistas e outros profissionais de saúde devidamente licenciados podem utilizar a plataforma</li>
+              <li><strong className="text-white">Informações verdadeiras:</strong> Você deve fornecer dados corretos e atualizados no cadastro</li>
+              <li><strong className="text-white">Segurança de credenciais:</strong> Você é responsável por manter suas credenciais de acesso em sigilo</li>
+              <li><strong className="text-white">Consentimento dos pacientes:</strong> É sua responsabilidade obter consentimento adequado dos pacientes para upload e processamento de seus exames</li>
+            </ul>
+          </section>
 
-        <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4 text-white">4. Responsabilidades do Usuário</h2>
-            <p className="mb-4">Ao utilizar a plataforma, você se compromete a:</p>
-            <ul className="list-disc pl-6 mb-4">
-              <li><strong>Obter consentimento dos pacientes</strong> antes de fazer upload de seus exames</li>
-              <li>Garantir que todos os dados inseridos são verdadeiros e precisos</li>
-              <li>Usar a plataforma apenas para fins legítimos e profissionais</li>
-              <li>Não compartilhar credenciais de acesso com terceiros</li>
-              <li>Manter a confidencialidade dos dados dos pacientes</li>
-              <li>Não usar a plataforma como substituto de diagnóstico médico profissional</li>
-              <li>Cumprir todas as leis e regulamentos aplicáveis (CFM, LGPD, etc.)</li>
-              <li>Não tentar acessar dados de outros profissionais ou pacientes não autorizados</li>
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4 text-white">4. Responsabilidades do Usuário</h2>
+            <p className="mb-4 text-gray-200">Ao utilizar a plataforma, você se compromete a:</p>
+            <ul className="list-disc pl-6 mb-4 text-gray-200 space-y-2">
+              <li><strong className="text-white">Obter consentimento dos pacientes</strong> antes de fazer upload de seus exames</li>
+              <li><strong className="text-white">Não compartilhar credenciais</strong> de acesso com terceiros</li>
+              <li><strong className="text-white">Usar a plataforma exclusivamente para fins legais</strong> e em conformidade com as regulamentações médicas vigentes</li>
+              <li><strong className="text-white">Não tentar acessar</strong> dados de outros usuários ou realizar engenharia reversa da plataforma</li>
+              <li><strong className="text-white">Manter seus dados de cadastro atualizados</strong></li>
+              <li><strong className="text-white">Reportar bugs:</strong> comunicar falhas ou vulnerabilidades de segurança à nossa equipe</li>
             </ul>
           </section>
 
