@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Linkedin, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
+import cactoLogo from "@/assets/cacto-logo.png";
 
 const Footer = () => {
   return (
@@ -24,15 +25,24 @@ const Footer = () => {
             </div>
           </div>
           
-          <div>
-            <h3 className="text-xl font-bold mb-6 text-white tracking-tight">Links Rápidos</h3>
-            <ul className="space-y-3">
-              <li><Link to="/" className="text-white/70 hover:text-white transition-opacity">Home</Link></li>
-              <li><a href="#contact" className="text-white/70 hover:text-white transition-opacity">Contato</a></li>
-              <li><a href="#" className="text-white/70 hover:text-white transition-opacity">Sobre Nós</a></li>
-              <li><a href="#" className="text-white/70 hover:text-white transition-opacity">Funcionalidades</a></li>
-              <li><a href="#" className="text-white/70 hover:text-white transition-opacity">Preços</a></li>
-            </ul>
+          <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
+            <div className="flex-1">
+              <h3 className="text-xl font-bold mb-6 text-white tracking-tight">Links Rápidos</h3>
+              <ul className="space-y-3">
+                <li><Link to="/" className="text-white/70 hover:text-white transition-opacity">Home</Link></li>
+                <li><a href="#contact" className="text-white/70 hover:text-white transition-opacity">Contato</a></li>
+                <li><a href="#" className="text-white/70 hover:text-white transition-opacity">Sobre Nós</a></li>
+                <li><a href="#" className="text-white/70 hover:text-white transition-opacity">Funcionalidades</a></li>
+                <li><a href="#" className="text-white/70 hover:text-white transition-opacity">Preços</a></li>
+              </ul>
+            </div>
+            <div className="flex items-center justify-center md:justify-end">
+              <img 
+                src={cactoLogo} 
+                alt="CACTO - Cognitive Analytics for Care, Technology & Outcomes" 
+                className="w-32 h-32 md:w-40 md:h-40 object-contain opacity-80 hover:opacity-100 transition-opacity"
+              />
+            </div>
           </div>
           
           <div>
