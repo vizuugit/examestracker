@@ -3,126 +3,178 @@ import Navbar from "@/components/Navbar";
 
 const Accessibility = () => {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-gradient-to-b from-zinc-900 via-zinc-900 to-black">
       <Navbar />
-      <div className="container mx-auto px-4 py-16">
-        <h1 className="text-4xl font-bold mb-8">Declaração de Acessibilidade</h1>
-        <div className="prose prose-invert max-w-none">
-          <p className="mb-6">Última atualização: {new Date().toLocaleDateString('pt-BR')}</p>
+      <div className="container mx-auto px-4 md:px-8 lg:px-16 py-16 md:py-24">
+        <div className="max-w-5xl mx-auto">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            <span className="text-white">Declaração de </span>
+            <span className="text-cyan-400">Acessibilidade</span>
+          </h1>
+          <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-3xl">
+            Nosso compromisso com acessibilidade digital para todos os profissionais de saúde.
+          </p>
+          <p className="text-sm text-gray-500 mb-12 pb-8 border-b border-gray-800">
+            Última atualização: {new Date().toLocaleDateString('pt-BR')}
+          </p>
 
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">1. Nosso Compromisso</h2>
-            <p className="mb-4">A plataforma Exames está comprometida em garantir acessibilidade digital para profissionais de saúde com deficiências. Trabalhamos continuamente para melhorar a experiência de todos os usuários e aplicar os padrões de acessibilidade relevantes.</p>
-            <p className="mb-4">Nosso objetivo é estar em conformidade com as <strong>Diretrizes de Acessibilidade para Conteúdo Web (WCAG) 2.1</strong> no nível AA.</p>
+          <section className="mb-16">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">
+              <span className="text-cyan-400">1.</span>
+              <span className="text-white"> Nosso Compromisso</span>
+            </h2>
+            <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
+              A plataforma Exames está comprometida em garantir acessibilidade digital para profissionais de saúde com deficiências. Trabalhamos continuamente para melhorar a experiência de todos os usuários e aplicar os padrões de acessibilidade relevantes.
+            </p>
+            <div className="bg-cyan-500/5 border border-cyan-500/20 rounded-lg p-6">
+              <p className="text-cyan-400 font-semibold mb-3 flex items-center gap-2">
+                <span className="text-2xl">♿</span>
+                Padrão WCAG 2.1 Nível AA
+              </p>
+              <p className="text-gray-300">
+                Nosso objetivo é estar em conformidade com as <strong className="text-white">Diretrizes de Acessibilidade para Conteúdo Web (WCAG) 2.1</strong> no nível AA.
+              </p>
+            </div>
           </section>
 
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">2. Recursos de Acessibilidade Implementados</h2>
-            <p className="mb-4">Nossa plataforma médica inclui os seguintes recursos de acessibilidade:</p>
+          <section className="mb-16">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">
+              <span className="text-cyan-400">2.</span>
+              <span className="text-white"> Recursos de Acessibilidade Implementados</span>
+            </h2>
             
-            <h3 className="text-xl font-semibold mb-3 mt-6">Navegação por Teclado</h3>
-            <ul className="list-disc pl-6 mb-4">
-              <li><strong>Tab:</strong> Navegar entre elementos interativos (botões, links, campos)</li>
-              <li><strong>Enter/Space:</strong> Ativar botões e selecionar opções</li>
-              <li><strong>Esc:</strong> Fechar diálogos e menus</li>
-              <li><strong>Setas:</strong> Navegar em menus dropdown e tabelas</li>
+            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-gray-100 flex items-center gap-3">
+              <span className="text-2xl">⌨️</span>
+              Navegação por Teclado
+            </h3>
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <div><strong className="text-white font-semibold">Tab:</strong> Navegar entre elementos interativos</div>
+              </li>
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <div><strong className="text-white font-semibold">Enter/Space:</strong> Ativar botões e selecionar opções</div>
+              </li>
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <div><strong className="text-white font-semibold">Esc:</strong> Fechar diálogos e menus</div>
+              </li>
             </ul>
 
-            <h3 className="text-xl font-semibold mb-3 mt-6">Compatibilidade com Leitores de Tela</h3>
-            <ul className="list-disc pl-6 mb-4">
-              <li>Atributos ARIA (Accessible Rich Internet Applications) em componentes complexos</li>
-              <li>Labels descritivos em todos os campos de formulário</li>
-              <li>Textos alternativos em gráficos e visualizações de dados</li>
-              <li>Anúncios de status para ações assíncronas (upload, processamento)</li>
-              <li>Testado com NVDA (Windows) e VoiceOver (macOS/iOS)</li>
+            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-gray-100 flex items-center gap-3 mt-8">
+              <span className="text-2xl">🔊</span>
+              Compatibilidade com Leitores de Tela
+            </h3>
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <span>Atributos ARIA em componentes complexos</span>
+              </li>
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <span>Labels descritivos em todos os campos de formulário</span>
+              </li>
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <span>Testado com NVDA (Windows) e VoiceOver (macOS/iOS)</span>
+              </li>
             </ul>
 
-            <h3 className="text-xl font-semibold mb-3 mt-6">Design Visual Acessível</h3>
-            <ul className="list-disc pl-6 mb-4">
-              <li><strong>Alto contraste:</strong> Tema escuro profissional com contraste adequado (mínimo 4.5:1)</li>
-              <li><strong>Cores:</strong> Informações não dependem apenas de cor (uso de ícones e textos)</li>
-              <li><strong>Tipografia:</strong> Fontes legíveis (Inter/Lato) com tamanhos adequados</li>
-              <li><strong>Foco visível:</strong> Indicadores claros de foco em elementos interativos</li>
-            </ul>
-
-            <h3 className="text-xl font-semibold mb-3 mt-6">Estrutura e Organização</h3>
-            <ul className="list-disc pl-6 mb-4">
-              <li>Estrutura semântica HTML (header, main, section, nav)</li>
-              <li>Hierarquia clara de cabeçalhos (H1, H2, H3)</li>
-              <li>Landmarks ARIA para navegação rápida</li>
-              <li>Tabelas com cabeçalhos apropriados para dados de exames</li>
+            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-gray-100 flex items-center gap-3 mt-8">
+              <span className="text-2xl">🎨</span>
+              Design Visual Acessível
+            </h3>
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <div><strong className="text-white font-semibold">Alto contraste:</strong> Tema com contraste mínimo 4.5:1</div>
+              </li>
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <div><strong className="text-white font-semibold">Cores:</strong> Informações não dependem apenas de cor</div>
+              </li>
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <div><strong className="text-white font-semibold">Foco visível:</strong> Indicadores claros em elementos interativos</div>
+              </li>
             </ul>
           </section>
 
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">3. Funcionalidades Específicas Acessíveis</h2>
-            <ul className="list-disc pl-6 mb-4">
-              <li><strong>Upload de Exames:</strong> Área de arrastar e soltar com alternativa por clique, feedback visual e sonoro</li>
-              <li><strong>Gráficos de Evolução:</strong> Dados disponíveis também em formato de tabela, tooltips descritivos</li>
-              <li><strong>Dashboard:</strong> Navegação por teclado completa, cards com informações estruturadas</li>
-              <li><strong>Formulários:</strong> Validação com mensagens claras, campos obrigatórios sinalizados</li>
-              <li><strong>Diálogos:</strong> Foco automático, escape para fechar, anúncio de abertura</li>
+          <section className="mb-16">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">
+              <span className="text-cyan-400">3.</span>
+              <span className="text-white"> Tecnologias Assistivas Suportadas</span>
+            </h2>
+            <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
+              A plataforma foi testada com:
+            </p>
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <div><strong className="text-white font-semibold">Leitores de Tela:</strong> NVDA, JAWS, VoiceOver, TalkBack</div>
+              </li>
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <div><strong className="text-white font-semibold">Navegadores:</strong> Chrome, Firefox, Safari, Edge</div>
+              </li>
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <div><strong className="text-white font-semibold">Ampliadores:</strong> ZoomText, Windows Magnifier</div>
+              </li>
             </ul>
           </section>
 
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">4. Recursos Planejados</h2>
-            <p className="mb-4">Estamos trabalhando para adicionar:</p>
-            <ul className="list-disc pl-6 mb-4">
-              <li>Ajuste de tamanho de fonte nas configurações do usuário</li>
-              <li>Modo de alto contraste adicional (além do tema escuro atual)</li>
-              <li>Atalhos de teclado personalizáveis para ações frequentes</li>
-              <li>Descrições de áudio para gráficos complexos</li>
-              <li>Suporte aprimorado para magnificação de tela</li>
-            </ul>
+          <section className="mb-16">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">
+              <span className="text-cyan-400">4.</span>
+              <span className="text-white"> Feedback e Suporte</span>
+            </h2>
+            <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
+              Valorizamos seu feedback sobre a acessibilidade da plataforma. Se você encontrar barreiras, entre em contato:
+            </p>
+            <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-6 space-y-3">
+              <p className="text-gray-300">
+                <strong className="text-white font-semibold">Email:</strong>{" "}
+                <a href="mailto:acessibilidade@exames.app" className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 transition-colors font-medium">
+                  acessibilidade@exames.app
+                </a>
+              </p>
+              <p className="text-gray-300">
+                <strong className="text-white font-semibold">Tempo de Resposta:</strong> Até 5 dias úteis
+              </p>
+            </div>
           </section>
 
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">5. Tecnologias Assistivas Suportadas</h2>
-            <p className="mb-4">A plataforma foi testada com:</p>
-            <ul className="list-disc pl-6 mb-4">
-              <li><strong>Leitores de Tela:</strong> NVDA, JAWS (Windows), VoiceOver (macOS/iOS), TalkBack (Android)</li>
-              <li><strong>Navegadores:</strong> Chrome, Firefox, Safari, Edge (versões recentes)</li>
-              <li><strong>Ampliadores de Tela:</strong> ZoomText, Windows Magnifier</li>
-              <li><strong>Reconhecimento de Voz:</strong> Dragon NaturallySpeaking, Windows Speech Recognition</li>
+          <section className="mb-16">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">
+              <span className="text-cyan-400">5.</span>
+              <span className="text-white"> Melhoria Contínua</span>
+            </h2>
+            <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
+              Nosso compromisso com acessibilidade é contínuo:
+            </p>
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <span>Testes regulares com usuários de tecnologias assistivas</span>
+              </li>
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <span>Auditoria anual de acessibilidade por especialistas</span>
+              </li>
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <span>Treinamento da equipe em práticas de acessibilidade</span>
+              </li>
+              <li className="flex items-start gap-3 text-gray-300">
+                <span className="text-cyan-400 mt-1.5">•</span>
+                <span>Atualizações de acordo com feedback dos usuários</span>
+              </li>
             </ul>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">6. Feedback e Suporte</h2>
-            <p className="mb-4">Valorizamos seu feedback sobre a acessibilidade da plataforma. Se você encontrar barreiras de acessibilidade ou tiver sugestões, por favor entre em contato:</p>
-            <p className="mb-2"><strong>Email:</strong> acessibilidade@exames.app</p>
-            <p className="mb-2"><strong>Tempo de Resposta:</strong> Nos comprometemos a responder em até 5 dias úteis</p>
-            <p className="mb-4">Ao reportar problemas, inclua:</p>
-            <ul className="list-disc pl-6 mb-4">
-              <li>Descrição do problema encontrado</li>
-              <li>Página ou funcionalidade afetada</li>
-              <li>Tecnologia assistiva utilizada (se aplicável)</li>
-              <li>Navegador e sistema operacional</li>
-            </ul>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">7. Limitações Conhecidas</h2>
-            <p className="mb-4">Estamos cientes das seguintes limitações e trabalhando para resolvê-las:</p>
-            <ul className="list-disc pl-6 mb-4">
-              <li>Alguns gráficos complexos podem ter descrições limitadas em leitores de tela</li>
-              <li>Upload de arquivos por arrastar e soltar pode ter suporte limitado em alguns leitores de tela (use a alternativa por clique)</li>
-              <li>PDFs de exames originais podem não ser acessíveis (dependem do laboratório que os gerou)</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">8. Melhoria Contínua</h2>
-            <p className="mb-4">Nosso compromisso com acessibilidade é contínuo:</p>
-            <ul className="list-disc pl-6 mb-4">
-              <li>Testes regulares com usuários de tecnologias assistivas</li>
-              <li>Auditoria anual de acessibilidade por especialistas</li>
-              <li>Treinamento da equipe de desenvolvimento em práticas de acessibilidade</li>
-              <li>Monitoramento de novas diretrizes e tecnologias</li>
-              <li>Atualizações de acordo com feedback dos usuários</li>
-            </ul>
-            <p className="mt-4">Esta declaração foi criada em {new Date().toLocaleDateString('pt-BR')} e é revisada a cada 6 meses.</p>
+            <p className="text-gray-300 leading-relaxed">
+              Esta declaração foi criada em {new Date().toLocaleDateString('pt-BR')} e é revisada a cada 6 meses.
+            </p>
           </section>
         </div>
       </div>
