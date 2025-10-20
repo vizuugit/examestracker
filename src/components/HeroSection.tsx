@@ -71,19 +71,19 @@ const HeroSection = () => {
               </Button>
             </div>
 
-            {/* Social Proof Stats */}
+            {/* Key Features */}
             <div className="grid grid-cols-3 gap-8 pt-8 border-t border-white/10">
               <div className="text-center">
-                <div className="text-3xl font-bold text-rest-lightblue">1000+</div>
-                <div className="text-sm text-white/70">Exames Processados</div>
+                <div className="text-3xl font-bold text-rest-lightblue">PDF+IMG</div>
+                <div className="text-sm text-white/70">Qualquer Formato</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-rest-lightblue">50+</div>
-                <div className="text-sm text-white/70">Profissionais</div>
+                <div className="text-3xl font-bold text-rest-lightblue">IA Claude</div>
+                <div className="text-sm text-white/70">Análise Inteligente</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-rest-lightblue">&lt; 60s</div>
-                <div className="text-sm text-white/70">Processamento</div>
+                <div className="text-3xl font-bold text-rest-lightblue">100%</div>
+                <div className="text-sm text-white/70">Seguro</div>
               </div>
             </div>
           </div>
