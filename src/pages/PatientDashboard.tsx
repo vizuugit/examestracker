@@ -281,7 +281,7 @@ export default function PatientDashboard() {
                   setSelectedCategory(null);
                   setViewMode('categories');
                 }}
-                className="border-rest-blue text-rest-blue hover:bg-rest-blue/10"
+                className="border-white/20 text-white hover:bg-white/10"
               >
                 ← Voltar às categorias
               </Button>

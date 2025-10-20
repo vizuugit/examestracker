@@ -70,13 +70,13 @@ export function BiomarkerChart({
               <XAxis 
                 dataKey="date" 
                 className="text-sm"
-                tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                tick={{ fill: 'rgba(255, 255, 255, 0.7)' }}
                 height={60}
               />
               
               <YAxis 
                 className="text-sm"
-                tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                tick={{ fill: 'rgba(255, 255, 255, 0.7)' }}
                 width={60}
               />
               
@@ -85,30 +85,30 @@ export function BiomarkerChart({
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
                     return (
-                      <div className="rounded-lg border bg-background p-3 shadow-xl">
+                      <div className="rounded-lg border border-white/20 bg-white/10 backdrop-blur-md p-3 shadow-xl">
                         <div className="grid gap-2">
                           <div className="flex items-center justify-between gap-2">
-                            <span className="text-sm text-muted-foreground">Data:</span>
-                            <span className="text-sm font-medium">{data.fullDate}</span>
+                            <span className="text-sm text-white/70">Data:</span>
+                            <span className="text-sm font-medium text-white">{data.fullDate}</span>
                           </div>
                           <div className="flex items-center justify-between gap-2">
-                            <span className="text-sm text-muted-foreground">Valor:</span>
-                            <span className="text-sm font-bold">{data.value} {unit}</span>
+                            <span className="text-sm text-white/70">Valor:</span>
+                            <span className="text-sm font-bold text-white">{data.value} {unit}</span>
                           </div>
                           {data.laboratory && (
                             <div className="flex items-center justify-between gap-2">
-                              <span className="text-sm text-muted-foreground">Lab:</span>
-                              <span className="text-sm">{data.laboratory}</span>
+                              <span className="text-sm text-white/70">Lab:</span>
+                              <span className="text-sm text-white">{data.laboratory}</span>
                             </div>
                           )}
                           <div className="flex items-center justify-between gap-2">
-                            <span className="text-sm text-muted-foreground">Status:</span>
+                            <span className="text-sm text-white/70">Status:</span>
                             <span className={`text-sm font-medium ${
                               data.status === 'alto' || data.status === 'crítico' 
-                                ? 'text-destructive' 
+                                ? 'text-yellow-400' 
                                 : data.status === 'baixo'
-                                ? 'text-yellow-500'
-                                : 'text-green-500'
+                                ? 'text-yellow-400'
+                                : 'text-green-400'
                             }`}>
                               {data.status.toUpperCase()}
                             </span>

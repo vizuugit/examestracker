@@ -148,13 +148,13 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'normal':
-        return 'text-medical-success bg-medical-success/30 border border-medical-success/40 font-semibold';
+        return 'text-green-400 font-semibold';
       case 'alto':
-        return 'text-medical-critical bg-medical-critical/30 border border-medical-critical/40 font-semibold';
+        return 'text-yellow-400 font-semibold';
       case 'baixo':
-        return 'text-medical-warning bg-medical-warning/30 border border-medical-warning/40 font-semibold';
+        return 'text-yellow-400 font-semibold';
       default:
-        return 'text-muted-foreground';
+        return 'text-white/50';
     }
   };
 
@@ -163,14 +163,14 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
   }
 
   return (
-    <Card className="bg-white/90 backdrop-blur-md border-2 border-rest-blue/30 shadow-xl">
-      <CardHeader className="border-b-2 border-rest-blue/30 bg-gradient-to-r from-rest-blue/5 to-rest-cyan/5">
+    <Card className="bg-white/5 backdrop-blur-sm border-white/10 shadow-xl">
+      <CardHeader className="border-b border-white/10">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <CardTitle className="text-rest-blue text-xl">
+            <CardTitle className="text-white text-xl">
               Tabela de Acompanhamento Longitudinal
             </CardTitle>
-            <CardDescription className="text-rest-gray">
+            <CardDescription className="text-white/70">
               Evolução completa de todos os biomarcadores ao longo do tempo
             </CardDescription>
           </div>
@@ -178,7 +178,7 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
           <div className="flex items-center gap-2">
             {categories.length > 0 && (
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-[200px] bg-card/50 border-rest-blue/30">
+                <SelectTrigger className="w-[200px] bg-white/5 border-white/20 text-white">
                   <SelectValue placeholder="Todas as Categorias" />
                 </SelectTrigger>
                 <SelectContent>
@@ -207,17 +207,14 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-blue/90 hover:to-rest-cyan/90">
-                <TableHead className="sticky left-0 z-20 bg-gradient-to-r from-rest-blue to-rest-blue backdrop-blur-sm text-white font-bold min-w-[180px] border-r-2 border-white/20">
+              <TableRow className="bg-white/10 backdrop-blur-sm">
+                <TableHead className="sticky left-0 z-20 bg-white/10 backdrop-blur-sm text-white font-bold min-w-[180px] border-r border-white/10">
                   Biomarcador
                 </TableHead>
                 {examDates.map((date, index) => (
                   <TableHead 
                     key={date} 
-                    className={cn(
-                      "text-center text-white font-bold min-w-[100px]",
-                      index === examDates.length - 1 && "bg-white/10"
-                    )}
+                    className="text-center text-white font-bold min-w-[100px]"
                   >
                     {format(new Date(date), 'dd/MM/yy', { locale: ptBR })}
                   </TableHead>
@@ -241,12 +238,9 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
                 return (
                   <TableRow 
                     key={row.biomarker_name}
-                    className={cn(
-                      "hover:bg-rest-blue/10 transition-colors",
-                      rowIndex % 2 === 0 ? "bg-white/50" : "bg-rest-lightblue/10"
-                    )}
+                    className="bg-transparent border-b border-white/5 hover:bg-white/5 transition-colors"
                   >
-                    <TableCell className="sticky left-0 z-10 bg-white/95 backdrop-blur-sm font-semibold text-rest-darkblue border-r-2 border-rest-blue/30">
+                    <TableCell className="sticky left-0 z-10 bg-white/5 backdrop-blur-sm font-semibold text-white border-r border-white/10">
                       {row.biomarker_name}
                     </TableCell>
                     
@@ -267,11 +261,11 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
                       );
                     })}
                     
-                    <TableCell className="text-rest-darkblue/80 font-medium">
+                    <TableCell className="text-white/70 font-medium">
                       {row.unit || '-'}
                     </TableCell>
                     
-                    <TableCell className="text-rest-darkblue/80 text-sm font-medium">
+                    <TableCell className="text-white/70 text-sm font-medium">
                       {row.reference_min !== null && row.reference_max !== null
                         ? `${row.reference_min}-${row.reference_max}`
                         : '-'}
