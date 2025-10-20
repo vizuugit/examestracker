@@ -64,9 +64,9 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
     // Preparar dados da tabela
     const headers = [
       'Biomarcador',
+      ...examDates.map(d => format(new Date(d), 'dd/MM/yy', { locale: ptBR })),
       'Unidade',
-      'Referência',
-      ...examDates.map(d => format(new Date(d), 'dd/MM/yy', { locale: ptBR }))
+      'Referência'
     ];
 
     const rows = filteredData.map(row => {
@@ -81,9 +81,9 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
 
       return [
         row.biomarker_name,
+        ...values,
         row.unit || '-',
-        refText,
-        ...values
+        refText
       ];
     });
     
@@ -211,12 +211,6 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
                 <TableHead className="sticky left-0 z-20 bg-gradient-to-r from-rest-blue to-rest-blue backdrop-blur-sm text-white font-bold min-w-[180px] border-r-2 border-white/20">
                   Biomarcador
                 </TableHead>
-                <TableHead className="text-white font-bold min-w-[80px]">
-                  Unidade
-                </TableHead>
-                <TableHead className="text-white font-bold min-w-[120px]">
-                  Referência
-                </TableHead>
                 {examDates.map((date, index) => (
                   <TableHead 
                     key={date} 
@@ -228,6 +222,12 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
                     {format(new Date(date), 'dd/MM/yy', { locale: ptBR })}
                   </TableHead>
                 ))}
+                <TableHead className="text-white font-bold min-w-[80px]">
+                  Unidade
+                </TableHead>
+                <TableHead className="text-white font-bold min-w-[120px]">
+                  Referência
+                </TableHead>
                 <TableHead className="text-center text-white font-bold min-w-[100px]">
                   Tendência
                 </TableHead>
@@ -250,16 +250,6 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
                       {row.biomarker_name}
                     </TableCell>
                     
-                    <TableCell className="text-rest-darkblue/80 font-medium">
-                      {row.unit || '-'}
-                    </TableCell>
-                    
-                    <TableCell className="text-rest-darkblue/80 text-sm font-medium">
-                      {row.reference_min !== null && row.reference_max !== null
-                        ? `${row.reference_min}-${row.reference_max}`
-                        : '-'}
-                    </TableCell>
-                    
                     {examDates.map((date, index) => {
                       const value = row.values.find(v => v.exam_date === date);
                       const isLatestExam = index === examDates.length - 1;
@@ -277,6 +267,16 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
                         </TableCell>
                       );
                     })}
+                    
+                    <TableCell className="text-rest-darkblue/80 font-medium">
+                      {row.unit || '-'}
+                    </TableCell>
+                    
+                    <TableCell className="text-rest-darkblue/80 text-sm font-medium">
+                      {row.reference_min !== null && row.reference_max !== null
+                        ? `${row.reference_min}-${row.reference_max}`
+                        : '-'}
+                    </TableCell>
                     
                     <TableCell className="text-center">
                       {trend ? (

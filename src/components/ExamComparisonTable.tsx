@@ -80,13 +80,13 @@ export function ExamComparisonTable({ exams }: ExamComparisonTableProps) {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[200px]">Biomarcador</TableHead>
-                <TableHead className="text-center">Unidade</TableHead>
-                <TableHead className="text-center">Referência</TableHead>
                 {recentExams.map((exam, idx) => (
                   <TableHead key={idx} className="text-center">
                     {format(new Date(exam.exam_date), 'dd/MM/yyyy', { locale: ptBR })}
                   </TableHead>
                 ))}
+                <TableHead className="text-center">Unidade</TableHead>
+                <TableHead className="text-center">Referência</TableHead>
                 <TableHead className="text-center">Tendência</TableHead>
               </TableRow>
             </TableHeader>
@@ -107,12 +107,6 @@ export function ExamComparisonTable({ exams }: ExamComparisonTableProps) {
                 return (
                   <TableRow key={biomarker}>
                     <TableCell className="font-medium">{biomarker}</TableCell>
-                    <TableCell className="text-center text-muted-foreground">
-                      {firstResult?.unit || '-'}
-                    </TableCell>
-                    <TableCell className="text-center text-muted-foreground">
-                      {referenceText}
-                    </TableCell>
                     {values.map((result, idx) => (
                       <TableCell key={idx} className="text-center">
                         {result ? (
@@ -124,6 +118,12 @@ export function ExamComparisonTable({ exams }: ExamComparisonTableProps) {
                         )}
                       </TableCell>
                     ))}
+                    <TableCell className="text-center text-muted-foreground">
+                      {firstResult?.unit || '-'}
+                    </TableCell>
+                    <TableCell className="text-center text-muted-foreground">
+                      {referenceText}
+                    </TableCell>
                     <TableCell className="text-center">
                       {lastValue && previousValue && lastValue.value_numeric && previousValue.value_numeric ? (
                         <TrendIndicator 
