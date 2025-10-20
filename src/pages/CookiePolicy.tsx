@@ -19,9 +19,8 @@ const CookiePolicy = () => {
           </p>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">1.</span>
-              <span className="text-white"> O que são Cookies</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              1. O que são Cookies
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Cookies são pequenos arquivos de texto armazenados no seu computador ou dispositivo móvel quando você visita nossa plataforma. Eles nos ajudam a fornecer uma experiência melhor e permitem que determinadas funcionalidades funcionem corretamente.
@@ -32,9 +31,8 @@ const CookiePolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">2.</span>
-              <span className="text-white"> Cookies que Utilizamos</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              2. Cookies que Utilizamos
             </h2>
             
             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-gray-100 flex items-center gap-3">
@@ -110,9 +108,8 @@ const CookiePolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">3.</span>
-              <span className="text-white"> Como Usamos Cookies</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              3. Como Usamos Cookies
             </h2>
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3 text-gray-300">
@@ -149,9 +146,8 @@ const CookiePolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">4.</span>
-              <span className="text-white"> Gerenciamento de Cookies</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              4. Gerenciamento de Cookies
             </h2>
             
             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-gray-100">
@@ -204,9 +200,8 @@ const CookiePolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">5.</span>
-              <span className="text-white"> Dúvidas sobre Cookies</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              5. Dúvidas sobre Cookies
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Se você tiver perguntas sobre nossa utilização de cookies, entre em contato:

@@ -19,9 +19,8 @@ const PrivacyPolicy = () => {
           </p>
           
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">1.</span>
-              <span className="text-white"> Informações que Coletamos</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              1. Informações que Coletamos
             </h2>
             <div className="bg-cyan-500/5 border border-cyan-500/20 rounded-lg p-6 mb-6">
               <p className="text-cyan-400 font-semibold mb-3 flex items-center gap-2">
@@ -72,9 +71,8 @@ const PrivacyPolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">2.</span>
-              <span className="text-white"> Como Coletamos os Dados</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              2. Como Coletamos os Dados
             </h2>
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3 text-gray-300">
@@ -107,9 +105,8 @@ const PrivacyPolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">3.</span>
-              <span className="text-white"> Como Usamos Seus Dados</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              3. Como Usamos Seus Dados
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Utilizamos os dados coletados para:
@@ -139,9 +136,8 @@ const PrivacyPolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">4.</span>
-              <span className="text-white"> Compartilhamento de Dados</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              4. Compartilhamento de Dados
             </h2>
             <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-6 mb-6">
               <p className="text-yellow-400 font-bold mb-2 flex items-center gap-2">
@@ -198,9 +194,8 @@ const PrivacyPolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">5.</span>
-              <span className="text-white"> Segurança e Proteção</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              5. Segurança e Proteção
             </h2>
             <div className="bg-cyan-500/5 border border-cyan-500/20 rounded-lg p-6 mb-6">
               <p className="text-cyan-400 font-semibold mb-3 flex items-center gap-2">
@@ -240,9 +235,8 @@ const PrivacyPolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">6.</span>
-              <span className="text-white"> Seus Direitos (LGPD)</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              6. Seus Direitos (LGPD)
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Conforme a Lei Geral de Proteção de Dados (LGPD), você tem direito a:
@@ -306,9 +300,8 @@ const PrivacyPolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">7.</span>
-              <span className="text-white"> Retenção de Dados</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              7. Retenção de Dados
             </h2>
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3 text-gray-300">
@@ -343,9 +336,8 @@ const PrivacyPolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">8.</span>
-              <span className="text-white"> Cookies e Tecnologias de Rastreamento</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              8. Cookies e Tecnologias de Rastreamento
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Utilizamos cookies para autenticação e análise de uso. Consulte nossa{" "}
@@ -357,9 +349,8 @@ const PrivacyPolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">9.</span>
-              <span className="text-white"> Transferência Internacional de Dados</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              9. Transferência Internacional de Dados
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Seus dados podem ser processados em servidores localizados nos Estados Unidos (AWS). Garantimos que essas transferências estão em conformidade com a LGPD e utilizam cláusulas contratuais padrão aprovadas.
@@ -367,9 +358,8 @@ const PrivacyPolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">10.</span>
-              <span className="text-white"> Base Legal para Tratamento</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              10. Base Legal para Tratamento
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Processamos dados de saúde com base nas seguintes hipóteses legais da LGPD:
@@ -395,9 +385,8 @@ const PrivacyPolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">11.</span>
-              <span className="text-white"> Menores de Idade</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              11. Menores de Idade
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               A plataforma é destinada exclusivamente a profissionais de saúde maiores de 18 anos. Dados de pacientes menores de idade devem ser inseridos apenas com consentimento dos responsáveis legais.
@@ -405,9 +394,8 @@ const PrivacyPolicy = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">12.</span>
-              <span className="text-white"> Contato e DPO</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              12. Contato e DPO
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Para questões sobre privacidade e proteção de dados, entre em contato:

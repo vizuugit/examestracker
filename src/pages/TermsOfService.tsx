@@ -25,9 +25,8 @@ const TermsOfService = () => {
           </p>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">1.</span>
-              <span className="text-white"> Aceitação dos Termos</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              1. Aceitação dos Termos
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Ao acessar e utilizar a plataforma Exames, você concorda com estes Termos de Uso. Se você não concorda com qualquer parte destes termos, não utilize nossos serviços.
@@ -35,9 +34,8 @@ const TermsOfService = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">2.</span>
-              <span className="text-white"> Descrição do Serviço</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              2. Descrição do Serviço
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               A plataforma Exames é um software como serviço (SaaS) que oferece:
@@ -81,9 +79,8 @@ const TermsOfService = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">3.</span>
-              <span className="text-white"> Elegibilidade e Cadastro</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              3. Elegibilidade e Cadastro
             </h2>
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3 text-gray-300">
@@ -118,9 +115,8 @@ const TermsOfService = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">4.</span>
-              <span className="text-white"> Responsabilidades do Usuário</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              4. Responsabilidades do Usuário
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Ao utilizar a plataforma, você se compromete a:
@@ -171,9 +167,8 @@ const TermsOfService = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">5.</span>
-              <span className="text-white"> Responsabilidades da Plataforma</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              5. Responsabilidades da Plataforma
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Nos comprometemos a:
@@ -203,9 +198,8 @@ const TermsOfService = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">6.</span>
-              <span className="text-white"> Limitações de Responsabilidade</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              6. Limitações de Responsabilidade
             </h2>
             <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-6 mb-6">
               <p className="text-yellow-400 font-bold mb-3 flex items-center gap-2">
@@ -247,9 +241,8 @@ const TermsOfService = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">7.</span>
-              <span className="text-white"> Propriedade Intelectual</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              7. Propriedade Intelectual
             </h2>
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3 text-gray-300">
@@ -278,9 +271,8 @@ const TermsOfService = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">8.</span>
-              <span className="text-white"> Modificações do Serviço</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              8. Modificações do Serviço
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Reservamos o direito de modificar, suspender ou descontinuar qualquer funcionalidade mediante aviso prévio de 30 dias. Melhorias e correções podem ser implementadas sem aviso.
@@ -288,9 +280,8 @@ const TermsOfService = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">9.</span>
-              <span className="text-white"> Planos e Pagamento</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              9. Planos e Pagamento
             </h2>
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3 text-gray-300">
@@ -313,9 +304,8 @@ const TermsOfService = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">10.</span>
-              <span className="text-white"> Rescisão e Cancelamento</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              10. Rescisão e Cancelamento
             </h2>
             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-gray-100">
               Por você:
@@ -354,9 +344,8 @@ const TermsOfService = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">11.</span>
-              <span className="text-white"> Isenção de Garantias</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              11. Isenção de Garantias
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               A plataforma é fornecida "como está" e "conforme disponível". Não garantimos que:
@@ -378,9 +367,8 @@ const TermsOfService = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">12.</span>
-              <span className="text-white"> Lei Aplicável e Foro</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              12. Lei Aplicável e Foro
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Estes Termos são regidos pelas leis da República Federativa do Brasil. Qualquer disputa será resolvida no foro da comarca de São Paulo/SP, com exclusão de qualquer outro, por mais privilegiado que seja.

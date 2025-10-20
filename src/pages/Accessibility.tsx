@@ -19,9 +19,8 @@ const Accessibility = () => {
           </p>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">1.</span>
-              <span className="text-white"> Nosso Compromisso</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              1. Nosso Compromisso
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               A plataforma Exames está comprometida em garantir acessibilidade digital para profissionais de saúde com deficiências. Trabalhamos continuamente para melhorar a experiência de todos os usuários e aplicar os padrões de acessibilidade relevantes.
@@ -38,9 +37,8 @@ const Accessibility = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">2.</span>
-              <span className="text-white"> Recursos de Acessibilidade Implementados</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              2. Recursos de Acessibilidade Implementados
             </h2>
             
             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-gray-100 flex items-center gap-3">
@@ -102,9 +100,8 @@ const Accessibility = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">3.</span>
-              <span className="text-white"> Tecnologias Assistivas Suportadas</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              3. Tecnologias Assistivas Suportadas
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               A plataforma foi testada com:
@@ -126,9 +123,8 @@ const Accessibility = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">4.</span>
-              <span className="text-white"> Feedback e Suporte</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              4. Feedback e Suporte
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Valorizamos seu feedback sobre a acessibilidade da plataforma. Se você encontrar barreiras, entre em contato:
@@ -147,9 +143,8 @@ const Accessibility = () => {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              <span className="text-cyan-400">5.</span>
-              <span className="text-white"> Melhoria Contínua</span>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-cyan-400">
+              5. Melhoria Contínua
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               Nosso compromisso com acessibilidade é contínuo:
