@@ -8,9 +8,6 @@ const About = () => {
       <Navbar />
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="mb-8 text-center">
-          <Badge variant="outline" className="mb-4 border-rest-cyan text-rest-cyan">
-            🌵 Nossa Identidade
-          </Badge>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             <span className="text-white">Quem </span>
             <span className="text-rest-cyan">Somos</span>
