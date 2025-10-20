@@ -18,6 +18,8 @@ interface ExamResult {
   value_numeric: number | null;
   unit: string | null;
   status: string;
+  reference_min: number | null;
+  reference_max: number | null;
 }
 
 interface ExamComparisonTableProps {
@@ -78,6 +80,8 @@ export function ExamComparisonTable({ exams }: ExamComparisonTableProps) {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[200px]">Biomarcador</TableHead>
+                <TableHead className="text-center">Unidade</TableHead>
+                <TableHead className="text-center">Referência</TableHead>
                 {recentExams.map((exam, idx) => (
                   <TableHead key={idx} className="text-center">
                     {format(new Date(exam.exam_date), 'dd/MM/yyyy', { locale: ptBR })}
@@ -95,22 +99,26 @@ export function ExamComparisonTable({ exams }: ExamComparisonTableProps) {
                 const lastValue = values[values.length - 1];
                 const previousValue = values[values.length - 2];
 
+                const firstResult = values.find(v => v !== undefined);
+                const referenceText = firstResult?.reference_min !== null && firstResult?.reference_max !== null
+                  ? `${firstResult.reference_min}-${firstResult.reference_max}`
+                  : '-';
+
                 return (
                   <TableRow key={biomarker}>
                     <TableCell className="font-medium">{biomarker}</TableCell>
+                    <TableCell className="text-center text-muted-foreground">
+                      {firstResult?.unit || '-'}
+                    </TableCell>
+                    <TableCell className="text-center text-muted-foreground">
+                      {referenceText}
+                    </TableCell>
                     {values.map((result, idx) => (
                       <TableCell key={idx} className="text-center">
                         {result ? (
-                          <div className="flex flex-col items-center gap-1">
-                            <span className={cn("font-medium", getStatusColor(result.status))}>
-                              {result.value}
-                            </span>
-                            {result.unit && (
-                              <span className="text-xs text-muted-foreground">
-                                {result.unit}
-                              </span>
-                            )}
-                          </div>
+                          <span className={cn("font-medium", getStatusColor(result.status))}>
+                            {result.value}
+                          </span>
                         ) : (
                           <span className="text-muted-foreground">-</span>
                         )}
