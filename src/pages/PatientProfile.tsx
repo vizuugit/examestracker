@@ -152,16 +152,14 @@ const PatientProfile = () => {
               <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                 <Button
                   onClick={() => navigate(`/patients/${id}/dashboard`)}
-                  variant="outline"
-                  className="w-full md:w-auto border-rest-blue text-rest-blue hover:bg-rest-blue/10"
+                  className="w-full md:w-auto bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white"
                 >
                   <Activity className="w-4 h-4 mr-2" />
                   Ver Dashboard
                 </Button>
                 <Button
                   onClick={() => navigate(`/patients/${id}/charts`)}
-                  variant="outline"
-                  className="w-full md:w-auto border-rest-green text-rest-green hover:bg-rest-green/10"
+                  className="w-full md:w-auto bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white"
                 >
                   <Activity className="w-4 h-4 mr-2" />
                   Gráficos
