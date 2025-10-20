@@ -129,7 +129,7 @@ const PatientProfile = () => {
 
           {/* Patient Info */}
           <div className="bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 p-8 mb-8">
-            <div className="flex items-start justify-between mb-6">
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
               <div className="flex items-center gap-6">
                 <div className="w-24 h-24 bg-gradient-to-br from-rest-blue to-rest-cyan rounded-full flex items-center justify-center text-white text-3xl font-bold">
                   {patient.full_name.charAt(0)}
@@ -149,11 +149,11 @@ const PatientProfile = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                 <Button
                   onClick={() => navigate(`/patients/${id}/dashboard`)}
                   variant="outline"
-                  className="border-rest-blue text-rest-blue hover:bg-rest-blue/10"
+                  className="w-full md:w-auto border-rest-blue text-rest-blue hover:bg-rest-blue/10"
                 >
                   <Activity className="w-4 h-4 mr-2" />
                   Ver Dashboard
@@ -161,14 +161,14 @@ const PatientProfile = () => {
                 <Button
                   onClick={() => navigate(`/patients/${id}/charts`)}
                   variant="outline"
-                  className="border-rest-green text-rest-green hover:bg-rest-green/10"
+                  className="w-full md:w-auto border-rest-green text-rest-green hover:bg-rest-green/10"
                 >
                   <Activity className="w-4 h-4 mr-2" />
                   Gráficos
                 </Button>
                 <Button
                   onClick={() => setUploadDialogOpen(true)}
-                  className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white"
+                  className="w-full md:w-auto bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white"
                 >
                   <Upload className="w-4 h-4 mr-2" />
                   Upload de Exame
