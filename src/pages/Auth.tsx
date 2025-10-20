@@ -24,7 +24,6 @@ const signupSchema = z.object({
   password: z.string().min(8, { message: "Senha deve ter no mínimo 8 caracteres" }),
   confirmPassword: z.string(),
   specialty: z.string().optional(),
-  crm: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "As senhas não coincidem",
   path: ["confirmPassword"],
@@ -78,7 +77,6 @@ const Auth = () => {
           data: {
             full_name: data.fullName,
             specialty: data.specialty,
-            crm: data.crm,
           },
         },
       });
@@ -182,7 +180,7 @@ const Auth = () => {
                   <Label htmlFor="signup-name" className="text-white">Nome Completo</Label>
                   <Input
                     id="signup-name"
-                    placeholder="Dr(a). Seu Nome"
+                    placeholder="Seu Nome Completo"
                     className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                     {...signupForm.register("fullName")}
                   />
@@ -206,10 +204,10 @@ const Auth = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="signup-specialty" className="text-white">Especialidade (opcional)</Label>
+                  <Label htmlFor="signup-specialty" className="text-white">Profissão (opcional)</Label>
                   <Select onValueChange={(value) => signupForm.setValue("specialty", value)}>
                     <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                      <SelectValue placeholder="Selecione sua especialidade" />
+                      <SelectValue placeholder="Selecione sua profissão" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="cardiologia">Cardiologia</SelectItem>
@@ -220,16 +218,6 @@ const Auth = () => {
                       <SelectItem value="outro">Outro</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="signup-crm" className="text-white">CRM (opcional)</Label>
-                  <Input
-                    id="signup-crm"
-                    placeholder="12345/SP"
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-                    {...signupForm.register("crm")}
-                  />
                 </div>
 
                 <div>
