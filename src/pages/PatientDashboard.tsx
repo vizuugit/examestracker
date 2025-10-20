@@ -3,7 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Activity, Calendar } from 'lucide-react';
-import { BackButton } from '@/components/BackButton';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import { BiomarkerChart } from '@/components/BiomarkerChart';
 import { BiomarkerCategoryCard } from '@/components/BiomarkerCategoryCard';
 import { ExamComparisonTable } from '@/components/ExamComparisonTable';
@@ -204,25 +205,29 @@ export default function PatientDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rest-black via-rest-charcoal to-rest-black p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
-          <Skeleton className="h-12 w-64" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3, 4, 5, 6].map(i => (
-              <Skeleton key={i} className="h-32" />
-            ))}
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-rest-black via-rest-charcoal to-rest-black">
+        <Navbar showBackButton={true} backButtonPath={`/patients/${id}`} />
+        <main className="flex-1 p-6">
+          <div className="max-w-7xl mx-auto space-y-6">
+            <Skeleton className="h-12 w-64" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[1, 2, 3, 4, 5, 6].map(i => (
+                <Skeleton key={i} className="h-32" />
+              ))}
+            </div>
           </div>
-        </div>
+        </main>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rest-black via-rest-charcoal to-rest-black p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center gap-4">
-          <BackButton to={`/patients/${id}`} />
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-rest-black via-rest-charcoal to-rest-black">
+      <Navbar showBackButton={true} backButtonPath={`/patients/${id}`} />
+      <main className="flex-1 p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Header */}
           <div>
             <h1 className="text-3xl font-bold text-white flex items-center gap-2">
               <Activity className="w-8 h-8 text-rest-blue" />
@@ -232,7 +237,6 @@ export default function PatientDashboard() {
               {patient?.full_name}
             </p>
           </div>
-        </div>
 
         {/* View: Categorias */}
         {viewMode === 'categories' && categoryStats.length > 0 && (
@@ -314,7 +318,9 @@ export default function PatientDashboard() {
             </p>
           </div>
         )}
-      </div>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 }

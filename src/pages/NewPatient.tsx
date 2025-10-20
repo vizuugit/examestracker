@@ -66,14 +66,9 @@ const NewPatient = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-black via-zinc-900 to-black">
-      <Navbar />
+      <Navbar showBackButton={true} backButtonPath="/patients" />
       <main className="flex-1 container mx-auto px-4 py-4">
         <div className="max-w-2xl mx-auto">
-          {/* Back Button */}
-          <div className="mb-6">
-            <BackButton to="/patients" />
-          </div>
-
           <h1 className="text-4xl font-bold text-white mb-8">
             Adicionar Paciente
           </h1>

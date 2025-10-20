@@ -5,7 +5,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { BackButton } from "@/components/BackButton";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -174,31 +175,39 @@ const PatientCharts = () => {
 
   if (patientLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rest-black via-rest-charcoal to-rest-black p-6">
-        <Skeleton className="h-96 bg-white/10" />
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-rest-black via-rest-charcoal to-rest-black">
+        <Navbar showBackButton={true} backButtonPath={`/patients/${id}`} />
+        <main className="flex-1 p-6">
+          <Skeleton className="h-96 bg-white/10" />
+        </main>
+        <Footer />
       </div>
     );
   }
 
   if (!patient) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rest-black via-rest-charcoal to-rest-black p-6 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-white">Paciente não encontrado</h2>
-          <Button onClick={() => navigate("/patients")} className="mt-4">
-            Voltar para pacientes
-          </Button>
-        </div>
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-rest-black via-rest-charcoal to-rest-black">
+        <Navbar showBackButton={true} backButtonPath="/patients" />
+        <main className="flex-1 p-6 flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-white">Paciente não encontrado</h2>
+            <Button onClick={() => navigate("/patients")} className="mt-4">
+              Voltar para pacientes
+            </Button>
+          </div>
+        </main>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rest-black via-rest-charcoal to-rest-black p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center gap-4">
-          <BackButton to={`/patients/${id}`} />
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-rest-black via-rest-charcoal to-rest-black">
+      <Navbar showBackButton={true} backButtonPath={`/patients/${id}`} />
+      <main className="flex-1 p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Header */}
           <div>
             <h1 className="text-3xl font-bold text-white flex items-center gap-2">
               <Activity className="w-8 h-8 text-rest-green" />
@@ -208,7 +217,6 @@ const PatientCharts = () => {
               {patient.full_name}
             </p>
           </div>
-        </div>
 
         {/* Seleção de Biomarcador */}
         <Card className="bg-white/10 backdrop-blur-md border-white/20">
@@ -372,7 +380,9 @@ const PatientCharts = () => {
             </CardContent>
           </Card>
         )}
-      </div>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 };
