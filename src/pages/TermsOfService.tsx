@@ -31,17 +31,16 @@ const TermsOfService = () => {
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">3. Elegibilidade e Cadastro</h2>
-            <ul className="list-disc pl-6 mb-4">
-              <li>A plataforma é destinada exclusivamente a <strong>profissionais de saúde licenciados</strong></li>
-              <li>Você deve fornecer informações verdadeiras e precisas ao se cadastrar</li>
-              <li>É responsável por manter a confidencialidade de suas credenciais de acesso</li>
-              <li>Deve ter pelo menos 18 anos de idade</li>
-              <li>Não pode compartilhar sua conta com terceiros</li>
-            </ul>
-          </section>
+          <ul className="list-disc pl-6 mb-4 text-gray-200 space-y-2">
+            <li><strong className="text-white">Profissionais de saúde:</strong> Apenas médicos, enfermeiros, nutricionistas e outros profissionais de saúde devidamente licenciados podem utilizar a plataforma</li>
+            <li><strong className="text-white">Informações verdadeiras:</strong> Você deve fornecer dados corretos e atualizados no cadastro</li>
+            <li><strong className="text-white">Segurança de credenciais:</strong> Você é responsável por manter suas credenciais de acesso em sigilo</li>
+            <li><strong className="text-white">Consentimento dos pacientes:</strong> É sua responsabilidade obter consentimento adequado dos pacientes para upload e processamento de seus exames</li>
+          </ul>
+        </section>
 
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">4. Responsabilidades do Usuário</h2>
+        <section className="mb-8">
+          <h2 className="text-2xl font-semibold mb-4 text-white">4. Responsabilidades do Usuário</h2>
             <p className="mb-4">Ao utilizar a plataforma, você se compromete a:</p>
             <ul className="list-disc pl-6 mb-4">
               <li><strong>Obter consentimento dos pacientes</strong> antes de fazer upload de seus exames</li>
