@@ -230,14 +230,14 @@ const PatientProfile = () => {
                         : 'hover:border-rest-blue/30'
                     } ${exam.processing_status === 'processing' ? 'animate-pulse' : ''}`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                       <div className="flex-1">
                         <p className="font-medium text-white">{exam.laboratory || "Laboratório não informado"}</p>
                         <p className="text-sm text-white/60">
                           {new Date(exam.exam_date || exam.upload_date).toLocaleDateString("pt-BR")}
                         </p>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-2 md:gap-3">
                         {exam.health_score && exam.processing_status === 'completed' && (
                           <div className="flex items-center gap-2">
                             <Heart className={`w-4 h-4 ${
@@ -282,7 +282,7 @@ const PatientProfile = () => {
                             : "Aguardando"}
                         </span>
                         {exam.total_biomarkers && (
-                          <span className="text-white/60">{exam.total_biomarkers} biomarcadores</span>
+                          <span className="text-sm text-white/60 whitespace-nowrap">{exam.total_biomarkers} biomarcadores</span>
                         )}
                       </div>
                     </div>
