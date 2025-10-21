@@ -305,72 +305,129 @@ export function useExamUpload() {
   };
 
   const syncExamToSupabase = async (examId: string, awsResponse: AWSExamData) => {
-    console.log('[Sync] 1. Estrutura completa:', JSON.stringify(awsResponse, null, 2).substring(0, 500));
-    
-    const awsData = awsResponse.data;
-    console.log('[Sync] 2. awsData existe?', !!awsData);
-    
-    // VALIDAÇÃO CRÍTICA
-    if (!awsData) {
-      throw new Error('❌ awsResponse.data está undefined');
+    // 🔒 Proteção contra múltiplas sincronizações simultâneas
+    const syncKey = `sync_${examId}`;
+    if (sessionStorage.getItem(syncKey)) {
+      console.log('[syncExamToSupabase] ⚠️ Sincronização já em andamento, ignorando...');
+      return;
     }
+    sessionStorage.setItem(syncKey, 'true');
     
-    // ✅ ADAPTAR PARA FORMATO ANTIGO E NOVO
-    const dadosBasicos = awsData.dados_basicos || {
-      laboratorio: awsData.laboratorio || '',
-      paciente: awsData.paciente || '',
-      data_exame: awsData.data_exame || '',
-      medico_solicitante: awsData.medico_solicitante || null,
-    };
-    
-    console.log('[Sync] 3. Formato detectado:', awsData.dados_basicos ? 'NOVO' : 'ANTIGO');
-    console.log('[Sync] 4. laboratorio:', dadosBasicos.laboratorio);
-    console.log('[Sync] 5. paciente:', dadosBasicos.paciente);
-    
-    // Update exam with AWS data
-    const { error: updateError } = await supabase
-      .from("exams")
-      .update({
-        processing_status: "completed",
-        processed_at: awsResponse.processedAt || new Date().toISOString(),
-        laboratory: dadosBasicos.laboratorio,
-        patient_name_extracted: dadosBasicos.paciente,
-        total_biomarkers: awsData.metadata?.total_exames || awsData.total_exames || 0,
-        raw_aws_response: awsData as any,
-        clinical_analysis: awsData.analise_clinica || null,
-        alerts: awsData.alertas || [],
-        trends: awsData.tendencias || {},
-        recommendations: awsData.recomendacoes || [],
-        health_score: awsData.analise_clinica?.score_saude_geral || null,
-        risk_category: awsData.analise_clinica?.categoria_risco || null,
-      })
-      .eq("id", examId);
+    try {
+      console.log('[Sync] 1. Estrutura completa:', JSON.stringify(awsResponse, null, 2).substring(0, 500));
+      
+      const awsData = awsResponse.data;
+      console.log('[Sync] 2. awsData existe?', !!awsData);
+      
+      // VALIDAÇÃO CRÍTICA
+      if (!awsData) {
+        sessionStorage.removeItem(syncKey);
+        throw new Error('❌ awsResponse.data está undefined');
+      }
+      
+      // ✅ ADAPTAR PARA FORMATO ANTIGO E NOVO
+      const dadosBasicos = awsData.dados_basicos || {
+        laboratorio: awsData.laboratorio || '',
+        paciente: awsData.paciente || '',
+        data_exame: awsData.data_exame || '',
+        medico_solicitante: awsData.medico_solicitante || null,
+      };
+      
+      console.log('[Sync] 3. Formato detectado:', awsData.dados_basicos ? 'NOVO' : 'ANTIGO');
+      console.log('[Sync] 4. laboratorio:', dadosBasicos.laboratorio);
+      console.log('[Sync] 5. paciente:', dadosBasicos.paciente);
+      
+      // 🗑️ PASSO 1: Deletar resultados antigos para evitar duplicação
+      console.log('[syncExamToSupabase] 🗑️ Deletando resultados antigos...');
+      const { error: deleteError } = await supabase
+        .from('exam_results')
+        .delete()
+        .eq('exam_id', examId);
+      
+      if (deleteError) {
+        console.error('[syncExamToSupabase] ❌ Erro ao deletar resultados antigos:', deleteError);
+      }
+      
+      // Update exam with AWS data
+      const { error: updateError } = await supabase
+        .from("exams")
+        .update({
+          processing_status: "completed",
+          processed_at: awsResponse.processedAt || new Date().toISOString(),
+          laboratory: dadosBasicos.laboratorio,
+          patient_name_extracted: dadosBasicos.paciente,
+          total_biomarkers: awsData.metadata?.total_exames || awsData.total_exames || 0,
+          raw_aws_response: awsData as any,
+          clinical_analysis: awsData.analise_clinica || null,
+          alerts: awsData.alertas || [],
+          trends: awsData.tendencias || {},
+          recommendations: awsData.recomendacoes || [],
+          health_score: awsData.analise_clinica?.score_saude_geral || null,
+          risk_category: awsData.analise_clinica?.categoria_risco || null,
+        })
+        .eq("id", examId);
 
-    if (updateError) throw updateError;
+      if (updateError) {
+        sessionStorage.removeItem(syncKey);
+        throw updateError;
+      }
 
-    // Insert biomarkers (se existirem)
-    if (awsData.exames && awsData.exames.length > 0) {
-    const biomarkers = awsData.exames.map((b) => ({
-      exam_id: examId,
-      biomarker_name: b.nome,
-      category: b.categoria,
-      value: String(b.resultado),
-      value_numeric: parseFloat(b.resultado) || null,
-        unit: b.unidade,
-        reference_min: b.referencia_min,
-        reference_max: b.referencia_max,
-        status: b.status as "normal" | "alto" | "baixo" | "alterado",
-        observation: b.observacao || null,
-        deviation_percentage: b.desvio_percentual,
-        layman_explanation: b.explicacao_leiga,
-        possible_causes: b.possiveis_causas_alteracao,
-      }));
+      // 🔍 PASSO 2: Deduplicar e inserir biomarcadores
+      if (awsData.exames && awsData.exames.length > 0) {
+        const originalCount = awsData.exames.length;
+        
+        // Deduplicar usando Map com chave normalizada
+        const uniqueBiomarkers = new Map();
+        awsData.exames.forEach(exame => {
+          const key = exame.nome.toLowerCase().trim();
+          if (!uniqueBiomarkers.has(key)) {
+            uniqueBiomarkers.set(key, exame);
+          } else {
+            console.warn(`[syncExamToSupabase] ⚠️ Duplicata ignorada: "${exame.nome}"`);
+          }
+        });
+        
+        const dedupedExams = Array.from(uniqueBiomarkers.values());
+        const removedCount = originalCount - dedupedExams.length;
+        
+        console.log(`[syncExamToSupabase] 📊 Biomarcadores: ${originalCount} → ${dedupedExams.length} (${removedCount} duplicata${removedCount !== 1 ? 's' : ''} removida${removedCount !== 1 ? 's' : ''})`);
+        
+        const biomarkers = dedupedExams.map((b) => ({
+          exam_id: examId,
+          biomarker_name: b.nome,
+          category: b.categoria,
+          value: String(b.resultado),
+          value_numeric: parseFloat(b.resultado) || null,
+          unit: b.unidade,
+          reference_min: b.referencia_min,
+          reference_max: b.referencia_max,
+          status: b.status as "normal" | "alto" | "baixo" | "alterado",
+          observation: b.observacao || null,
+          deviation_percentage: b.desvio_percentual,
+          layman_explanation: b.explicacao_leiga,
+          possible_causes: b.possiveis_causas_alteracao,
+        }));
 
-      const { error: biomarkersError } = await supabase
-        .from("exam_results")
-        .insert(biomarkers);
+        const { error: biomarkersError } = await supabase
+          .from("exam_results")
+          .insert(biomarkers);
 
-      if (biomarkersError) throw biomarkersError;
+        if (biomarkersError) {
+          sessionStorage.removeItem(syncKey);
+          throw biomarkersError;
+        }
+        
+        console.log(`[syncExamToSupabase] ✅ ${dedupedExams.length} biomarcadores salvos com sucesso`);
+      }
+      
+      // ✅ Liberar flag de sincronização
+      sessionStorage.removeItem(syncKey);
+      
+    } catch (error) {
+      // 🚨 Liberar flag em caso de erro
+      sessionStorage.removeItem(syncKey);
+      console.error('[syncExamToSupabase] ❌ Erro geral:', error);
+      throw error;
     }
   };
 
