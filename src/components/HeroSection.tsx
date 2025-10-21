@@ -92,7 +92,7 @@ const HeroSection = () => {
                 <div className="text-center space-y-4">
                   <img src={exLogo} alt="EX Logo" className="w-64 h-64 object-contain mx-auto" />
                   <h3 className="text-2xl font-bold text-white">Processamento com IA</h3>
-                  <p className="text-white/70">Extração inteligente de dados médicos</p>
+                  <p className="text-white/70">Extração inteligente de dados</p>
                 </div>
               </div>
             </div>

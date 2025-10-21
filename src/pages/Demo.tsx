@@ -163,7 +163,7 @@ const Demo = () => {
               <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-bold text-white mb-4">2. Processamento com IA</h2>
-                  <p className="text-white/70">Extração inteligente de dados médicos</p>
+                  <p className="text-white/70">Extração inteligente de dados</p>
                 </div>
                 
                 <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
