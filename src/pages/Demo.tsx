@@ -304,21 +304,21 @@ const Demo = () => {
                     <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
                       <Button 
                         onClick={handleExportClick}
-                        className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white font-semibold px-8 py-6 text-lg group"
+                        className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white font-semibold px-8 py-6 text-lg group w-full md:w-[220px]"
                       >
                         <FileText className="w-5 h-5 mr-2" />
                         Exportar PDF
                         <Download className="w-5 h-5 ml-2 group-hover:translate-y-1 transition-transform" />
                       </Button>
                       
-                <Button 
-                  onClick={handleExportClick}
-                  className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white font-semibold px-8 py-6 text-lg group"
-                >
-                  <FileSpreadsheet className="w-5 h-5 mr-2" />
-                  Exportar Excel
-                  <Download className="w-5 h-5 ml-2 group-hover:translate-y-1 transition-transform" />
-                </Button>
+                      <Button 
+                        onClick={handleExportClick}
+                        className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white font-semibold px-8 py-6 text-lg group w-full md:w-[220px]"
+                      >
+                        <FileSpreadsheet className="w-5 h-5 mr-2" />
+                        Exportar Excel
+                        <Download className="w-5 h-5 ml-2 group-hover:translate-y-1 transition-transform" />
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
