@@ -203,7 +203,7 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
             </div>
 
             {/* Tabela */}
-            <div className="flex-1 overflow-x-auto overflow-y-auto border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm">
+            <div className="flex-1 overflow-y-auto border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm">
               {isLoading ? (
                 <div className="space-y-2 p-4">
                   {[...Array(10)].map((_, i) => (
@@ -214,10 +214,10 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
                 <Table>
                   <TableHeader className="sticky top-0 bg-white/10 backdrop-blur-sm z-10">
                     <TableRow>
-                      <TableHead className="sticky left-0 z-20 bg-white/10 backdrop-blur-sm text-white font-bold min-w-[140px] border-r border-white/10">Biomarcador</TableHead>
-                      <TableHead className="text-right text-white font-bold min-w-[80px]">Valor</TableHead>
-                      <TableHead className="text-right text-white font-bold min-w-[100px]">Referência</TableHead>
-                      <TableHead className="text-center text-white font-bold min-w-[80px]">Status</TableHead>
+                      <TableHead className="text-white font-bold">Biomarcador</TableHead>
+                      <TableHead className="text-right text-white font-bold">Valor</TableHead>
+                      <TableHead className="text-right text-white font-bold">Referência</TableHead>
+                      <TableHead className="text-center text-white font-bold">Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -231,7 +231,7 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
                       filteredResults.map((result) => {
                         return (
                           <TableRow key={result.id} className="border-b border-white/5 hover:bg-white/5">
-                            <TableCell className="sticky left-0 z-10 bg-white/5 backdrop-blur-sm font-medium text-white border-r border-white/10">
+                            <TableCell className="font-medium text-white">
                               {result.biomarker_name}
                             </TableCell>
                             <TableCell className="text-right">
