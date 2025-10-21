@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Upload, Calendar, Activity, Heart } from "lucide-react";
+import { Upload, Calendar, Activity, Heart, Edit } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { ExamUploadDialog } from "@/components/ExamUploadDialog";
 import { ExamResultsDialog } from "@/components/ExamResultsDialog";
+import { ExamCorrectionDialog } from "@/components/ExamCorrectionDialog";
 import { toast } from "sonner";
 import { BackButton } from "@/components/BackButton";
 
@@ -20,6 +21,8 @@ const PatientProfile = () => {
   const navigate = useNavigate();
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [selectedExamId, setSelectedExamId] = useState<string | null>(null);
+  const [correctionDialogOpen, setCorrectionDialogOpen] = useState(false);
+  const [examToCorrect, setExamToCorrect] = useState<any>(null);
   const queryClient = useQueryClient();
 
   const { data: patient, isLoading } = useQuery({
@@ -266,7 +269,7 @@ const PatientProfile = () => {
                           </Badge>
                         )}
 
-                        <span
+                         <span
                           className={`px-3 py-1 rounded-full text-sm ${
                             exam.processing_status === "completed"
                               ? "bg-green-500/20 text-green-400"
@@ -283,6 +286,26 @@ const PatientProfile = () => {
                         </span>
                         {exam.total_biomarkers && (
                           <span className="text-sm text-white/60 whitespace-nowrap">{exam.total_biomarkers} biomarcadores</span>
+                        )}
+                        {exam.processing_status === 'completed' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExamToCorrect({
+                                id: exam.id,
+                                paciente: exam.patient_name_extracted,
+                                laboratorio: exam.laboratory,
+                                data_exame: exam.exam_date,
+                              });
+                              setCorrectionDialogOpen(true);
+                            }}
+                            className="border-white/20 hover:bg-white/10"
+                          >
+                            <Edit className="h-3 w-3 mr-1" />
+                            Corrigir
+                          </Button>
                         )}
                       </div>
                     </div>
@@ -312,7 +335,22 @@ const PatientProfile = () => {
         patientId={patient.id}
         patientName={patient.full_name}
         onSuccess={() => {
-          // Refetch exams
+          queryClient.invalidateQueries({ queryKey: ['patient-exams', id] });
+        }}
+      />
+
+      <ExamCorrectionDialog
+        open={correctionDialogOpen}
+        onOpenChange={setCorrectionDialogOpen}
+        examId={examToCorrect?.id || ''}
+        currentData={{
+          paciente: examToCorrect?.paciente,
+          laboratorio: examToCorrect?.laboratorio,
+          data_exame: examToCorrect?.data_exame,
+        }}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ['patient-exams', id] });
+          setCorrectionDialogOpen(false);
         }}
       />
 

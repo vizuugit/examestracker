@@ -7,6 +7,7 @@ import { DashboardUploadZone } from "@/components/DashboardUploadZone";
 import { QuickActions } from "@/components/QuickActions";
 import { DashboardStats } from "@/components/DashboardStats";
 import { RecentExams } from "@/components/RecentExams";
+import { AIAccuracyStats } from "@/components/AIAccuracyStats";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -103,11 +104,21 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-black via-zinc-900 to-black">
       <Navbar />
-      <main className="flex-1 container mx-auto px-4 py-4 space-y-12">
-        <DashboardUploadZone />
-        <QuickActions />
-        <DashboardStats stats={stats} />
-        <RecentExams exams={recentExams} />
+      <main className="flex-1 container mx-auto px-4 py-4 space-y-6">
+        <div className="grid gap-6 lg:grid-cols-3">
+          {/* Coluna principal (2/3) */}
+          <div className="lg:col-span-2 space-y-6">
+            <DashboardUploadZone />
+            <DashboardStats stats={stats} />
+            <RecentExams exams={recentExams} />
+          </div>
+
+          {/* Sidebar (1/3) */}
+          <div className="space-y-6">
+            <QuickActions />
+            <AIAccuracyStats />
+          </div>
+        </div>
       </main>
       <Footer />
     </div>

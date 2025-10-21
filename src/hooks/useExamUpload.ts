@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { deduplicateExams } from "@/utils/examDeduplication";
 
 const EDGE_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/aws-proxy`;
 
@@ -376,18 +377,8 @@ export function useExamUpload() {
       if (awsData.exames && awsData.exames.length > 0) {
         const originalCount = awsData.exames.length;
         
-        // Deduplicar usando Map com chave normalizada
-        const uniqueBiomarkers = new Map();
-        awsData.exames.forEach(exame => {
-          const key = exame.nome.toLowerCase().trim();
-          if (!uniqueBiomarkers.has(key)) {
-            uniqueBiomarkers.set(key, exame);
-          } else {
-            console.warn(`[syncExamToSupabase] ⚠️ Duplicata ignorada: "${exame.nome}"`);
-          }
-        });
-        
-        const dedupedExams = Array.from(uniqueBiomarkers.values());
+        // ✅ USAR DEDUPLICAÇÃO AVANÇADA
+        const dedupedExams = deduplicateExams(awsData.exames);
         const removedCount = originalCount - dedupedExams.length;
         
         console.log(`[syncExamToSupabase] 📊 Biomarcadores: ${originalCount} → ${dedupedExams.length} (${removedCount} duplicata${removedCount !== 1 ? 's' : ''} removida${removedCount !== 1 ? 's' : ''})`);
