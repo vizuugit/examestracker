@@ -37,19 +37,19 @@ const HeroSection = () => {
       {/* Grid Pattern Overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.1)_1px,transparent_1px)] [background-size:50px_50px] opacity-20" />
 
-      <div className="relative z-10 container mx-auto px-4 pt-2 pb-16 min-h-screen flex items-start">
+      <div className="relative z-10 container mx-auto px-4 pt-24 pb-8 min-h-screen flex items-center">
         <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
           {/* Left Content */}
-          <div className={`space-y-8 ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}>
+          <div className={`space-y-6 ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}>
             {/* Main Headline */}
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight tracking-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight">
                 Transforme o
                 <span className="block bg-gradient-to-r from-rest-lightblue to-rest-cyan bg-clip-text text-transparent">
                   Acompanhamento dos Seus Pacientes
                 </span>
               </h1>
-              <p className="text-xl md:text-2xl text-white/80 max-w-2xl leading-relaxed">
+              <p className="text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed">
                 Plataforma Inteligente de gestão de exames com IA. Automatize a análise de laudos e visualize a evolução dos seus pacientes.
               </p>
             </div>
@@ -88,11 +88,11 @@ const HeroSection = () => {
             {/* Enhanced Visual */}
             <div className="relative group">
               <div className="absolute -inset-8 bg-gradient-to-r from-rest-blue/20 to-white/10 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-700" />
-              <div className="relative rounded-3xl overflow-hidden border border-white/20 backdrop-blur-sm bg-white/5 p-12 hover-scale flex items-center justify-center min-h-[300px]">
-                <div className="text-center space-y-4">
-                  <img src={exLogo} alt="EX Logo" className="w-64 h-64 object-contain mx-auto" />
-                  <h3 className="text-2xl font-bold text-white">Processamento com IA</h3>
-                  <p className="text-white/70">Extração inteligente de dados</p>
+              <div className="relative rounded-3xl overflow-hidden border border-white/20 backdrop-blur-sm bg-white/5 p-8 hover-scale flex items-center justify-center">
+                <div className="text-center space-y-3">
+                  <img src={exLogo} alt="EX Logo" className="w-48 h-48 object-contain mx-auto" />
+                  <h3 className="text-xl font-bold text-white">Processamento com IA</h3>
+                  <p className="text-sm text-white/70">Extração inteligente de dados</p>
                 </div>
               </div>
             </div>
