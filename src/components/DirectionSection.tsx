@@ -1,7 +1,6 @@
 import { Upload, Bot, BarChart3, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import cactoLogo from "@/assets/cacto-logo.png";
 const DirectionSection = () => {
   const navigate = useNavigate();
   return <section id="como-funciona" className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-zinc-900 to-black relative overflow-hidden">
@@ -25,17 +24,9 @@ const DirectionSection = () => {
         </div>
 
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto items-center">
-          {/* Logo CACTO */}
-          <div className="flex justify-center lg:justify-end order-2 lg:order-1">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-rest-blue/20 to-rest-cyan/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all" />
-              
-            </div>
-          </div>
-
+        <div className="max-w-6xl mx-auto">
           {/* Steps Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 order-1 lg:order-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {steps.map((step, index) => <div key={index} className="group relative">
                 <div className="bg-gradient-to-br from-zinc-900/80 to-black/80 border border-white/10 rounded-3xl p-8 backdrop-blur-md hover:border-rest-blue/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl relative z-10">
                   {/* Step Number */}
