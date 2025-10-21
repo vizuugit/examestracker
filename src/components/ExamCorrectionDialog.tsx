@@ -14,6 +14,7 @@ interface ExamCorrectionDialogProps {
     paciente?: string;
     laboratorio?: string;
     data_exame?: string;
+    data_nascimento?: string;
   };
   onSuccess?: () => void;
 }
@@ -31,6 +32,7 @@ export function ExamCorrectionDialog({
     paciente: currentData.paciente || '',
     laboratorio: currentData.laboratorio || '',
     data_exame: currentData.data_exame || '',
+    data_nascimento: currentData.data_nascimento || '',
   });
 
   const handleSubmit = async () => {
@@ -61,6 +63,15 @@ export function ExamCorrectionDialog({
         fieldName: 'data_exame' as const,
         aiValue: currentData.data_exame || '',
         userValue: correctedData.data_exame,
+      });
+    }
+
+    if (correctedData.data_nascimento !== currentData.data_nascimento) {
+      corrections.push({
+        examId,
+        fieldName: 'data_nascimento' as const,
+        aiValue: currentData.data_nascimento || '',
+        userValue: correctedData.data_nascimento,
       });
     }
 
@@ -139,6 +150,21 @@ export function ExamCorrectionDialog({
             {currentData.data_exame !== correctedData.data_exame && (
               <p className="text-xs text-muted-foreground">
                 Original: <span className="line-through">{currentData.data_exame}</span>
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="data_nascimento">Data de Nascimento</Label>
+            <Input
+              id="data_nascimento"
+              type="date"
+              value={correctedData.data_nascimento}
+              onChange={(e) => setCorrectedData(prev => ({ ...prev, data_nascimento: e.target.value }))}
+            />
+            {currentData.data_nascimento !== correctedData.data_nascimento && (
+              <p className="text-xs text-muted-foreground">
+                Original: <span className="line-through">{currentData.data_nascimento}</span>
               </p>
             )}
           </div>

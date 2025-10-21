@@ -60,6 +60,8 @@ export function useExamCorrection() {
         updateData.laboratory = data.userValue;
       } else if (data.fieldName === 'data_exame') {
         updateData.exam_date = data.userValue;
+      } else if (data.fieldName === 'data_nascimento') {
+        updateData.birth_date = data.userValue;
       }
 
       if (Object.keys(updateData).length > 0) {
