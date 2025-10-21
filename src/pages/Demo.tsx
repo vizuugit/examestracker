@@ -311,15 +311,14 @@ const Demo = () => {
                         <Download className="w-5 h-5 ml-2 group-hover:translate-y-1 transition-transform" />
                       </Button>
                       
-                      <Button 
-                        onClick={handleExportClick}
-                        variant="outline"
-                        className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-lg group"
-                      >
-                        <FileSpreadsheet className="w-5 h-5 mr-2" />
-                        Exportar Excel
-                        <Download className="w-5 h-5 ml-2 group-hover:translate-y-1 transition-transform" />
-                      </Button>
+                <Button 
+                  onClick={handleExportClick}
+                  className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white font-semibold px-8 py-6 text-lg group"
+                >
+                  <FileSpreadsheet className="w-5 h-5 mr-2" />
+                  Exportar Excel
+                  <Download className="w-5 h-5 ml-2 group-hover:translate-y-1 transition-transform" />
+                </Button>
                     </div>
                   </CardContent>
                 </Card>
