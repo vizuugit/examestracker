@@ -12,6 +12,17 @@ interface UploadOptions {
   onComplete?: () => void;
 }
 
+export interface FileQueueItem {
+  file: File;
+  id: string;
+  status: 'pending' | 'uploading' | 'completed' | 'error';
+  progress: number;
+  statusMessage: string;
+  examId?: string;
+  patientId?: string;
+  error?: string;
+}
+
 interface AWSExamData {
   status: string;
   data: {
@@ -621,9 +632,94 @@ export function useExamUpload() {
     }
   };
 
+  // Upload múltiplo com processamento sequencial
+  const uploadMultipleExams = async ({
+    files,
+    patientId,
+    examDate,
+    onComplete,
+    onMatchRequired,
+    onProgressUpdate,
+  }: {
+    files: File[];
+    patientId?: string;
+    examDate?: Date;
+    onComplete?: () => void;
+    onMatchRequired?: (extractedName: string, candidates: any[], examId: string, fileId: string) => void;
+    onProgressUpdate?: (queue: FileQueueItem[]) => void;
+  }) => {
+    // Criar fila inicial
+    const queue: FileQueueItem[] = files.map(file => ({
+      file,
+      id: crypto.randomUUID(),
+      status: 'pending' as const,
+      progress: 0,
+      statusMessage: 'Aguardando...',
+    }));
+
+    // Notificar UI da fila inicial
+    onProgressUpdate?.(queue);
+
+    // Processar sequencialmente
+    for (let i = 0; i < queue.length; i++) {
+      const item = queue[i];
+      
+      try {
+        // Atualizar status para "uploading"
+        item.status = 'uploading';
+        item.statusMessage = 'Enviando arquivo...';
+        onProgressUpdate?.([...queue]);
+
+        if (patientId) {
+          // Upload manual com paciente conhecido
+          await uploadExam({
+            patientId,
+            file: item.file,
+            examDate,
+            onComplete: () => {
+              item.status = 'completed';
+              item.progress = 100;
+              item.statusMessage = 'Processado!';
+              onProgressUpdate?.([...queue]);
+            },
+          });
+        } else {
+          // Upload com auto-matching
+          await uploadExamWithAutoMatching({
+            file: item.file,
+            examDate,
+            onComplete: () => {
+              item.status = 'completed';
+              item.progress = 100;
+              item.statusMessage = 'Processado!';
+              onProgressUpdate?.([...queue]);
+            },
+            onMatchRequired: (name, candidates, examId) => {
+              item.statusMessage = 'Aguardando seleção...';
+              onProgressUpdate?.([...queue]);
+              onMatchRequired?.(name, candidates, examId, item.id);
+            },
+          });
+        }
+
+      } catch (error) {
+        item.status = 'error';
+        item.error = error instanceof Error ? error.message : 'Erro desconhecido';
+        item.statusMessage = 'Erro no processamento';
+        onProgressUpdate?.([...queue]);
+        console.error(`Erro no arquivo ${item.file.name}:`, error);
+        // Continuar para próximo arquivo mesmo com erro
+      }
+    }
+
+    // Todos processados
+    onComplete?.();
+  };
+
   return {
     uploadExam,
     uploadExamWithAutoMatching,
+    uploadMultipleExams,
     uploading,
     progress,
     status,

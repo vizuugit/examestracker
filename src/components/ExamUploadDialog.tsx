@@ -30,39 +30,15 @@ export function ExamUploadDialog({
   patientName,
   onSuccess,
 }: ExamUploadDialogProps) {
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [uploadQueue, setUploadQueue] = useState<any[]>([]);
   const [examDate, setExamDate] = useState<Date>();
-  const { uploadExam, uploading, progress, status } = useExamUpload();
+  const { uploadMultipleExams, uploading } = useExamUpload();
   const queryClient = useQueryClient();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    const uploadedFile = acceptedFiles[0];
-    
-    if (!uploadedFile) return;
-    
-    // Validar tamanho do arquivo (50MB máximo)
-    const maxSize = 50 * 1024 * 1024; // 50MB
-    if (uploadedFile.size > maxSize) {
-      toast({
-        variant: "destructive",
-        title: "Arquivo muito grande",
-        description: `O arquivo deve ter no máximo 50MB. Tamanho atual: ${(uploadedFile.size / 1024 / 1024).toFixed(2)}MB`,
-      });
-      return;
-    }
-    
-    // Validar nome do arquivo (sem caracteres especiais problemáticos)
-    const invalidCharsRegex = /[^\w\s.-]/g;
-    if (invalidCharsRegex.test(uploadedFile.name)) {
-      toast({
-        variant: "destructive",
-        title: "Nome de arquivo inválido",
-        description: "O nome do arquivo contém caracteres especiais (acentos, símbolos, etc.). Por favor, renomeie o arquivo usando apenas letras, números, pontos e hífens.",
-      });
-      return;
-    }
-    
-    // Lista de tipos permitidos
+    if (acceptedFiles.length === 0) return;
+
     const allowedTypes = [
       "application/pdf",
       "image/jpeg",
@@ -70,26 +46,51 @@ export function ExamUploadDialog({
       "image/heic",
       "image/heif"
     ];
-    
-    // HEIC pode vir com type vazio ou "application/octet-stream" em alguns navegadores
-    const fileExtension = uploadedFile.name.toLowerCase().split('.').pop() || '';
-    const isAllowedExtension = ['pdf', 'jpg', 'jpeg', 'png', 'heic', 'heif'].includes(fileExtension);
-    
-    if (allowedTypes.includes(uploadedFile.type) || isAllowedExtension) {
-      setFile(uploadedFile);
-      
-      // Avisar se for HEIC (processamento pode demorar mais)
-      if (fileExtension === 'heic' || fileExtension === 'heif') {
+
+    // Validar cada arquivo
+    const validFiles = acceptedFiles.filter(file => {
+      if (file.size > 50 * 1024 * 1024) {
         toast({
-          title: "Arquivo HEIC detectado",
-          description: "Será convertido automaticamente. O processamento pode levar alguns segundos extras."
+          variant: "destructive",
+          title: `Arquivo muito grande: ${file.name}`,
+          description: "Máximo de 50MB por arquivo",
         });
+        return false;
       }
-    } else {
+
+      const fileExtension = file.name.toLowerCase().split('.').pop() || '';
+      const isAllowedExtension = ['pdf', 'jpg', 'jpeg', 'png', 'heic', 'heif'].includes(fileExtension);
+      
+      if (!allowedTypes.includes(file.type) && !isAllowedExtension) {
+        toast({
+          variant: "destructive",
+          title: `Formato não suportado: ${file.name}`,
+          description: "Use apenas PDF, JPG, PNG ou HEIC"
+        });
+        return false;
+      }
+
+      return true;
+    });
+
+    if (validFiles.length > 10) {
       toast({
-        variant: "destructive",
-        title: "Formato não suportado",
-        description: "Use apenas PDF, JPG, PNG ou HEIC"
+        title: "Limite de arquivos",
+        description: "Máximo de 10 exames por vez. Selecionando os primeiros 10.",
+      });
+      setFiles(validFiles.slice(0, 10));
+    } else {
+      setFiles(validFiles);
+    }
+
+    const hasHEIC = validFiles.some(f => {
+      const ext = f.name.toLowerCase().split(".").pop() || "";
+      return ext === "heic" || ext === "heif";
+    });
+    if (hasHEIC) {
+      toast({
+        title: "Arquivo(s) HEIC detectado(s)",
+        description: "Serão convertidos automaticamente.",
       });
     }
   }, []);
@@ -103,37 +104,47 @@ export function ExamUploadDialog({
       "image/heic": [".heic"],
       "image/heif": [".heif"],
     },
-    maxFiles: 1,
-    maxSize: 50 * 1024 * 1024, // 50MB
+    maxFiles: 10,
+    maxSize: 50 * 1024 * 1024,
     disabled: uploading,
   });
 
   const handleUpload = async () => {
-    if (!file) return;
+    if (files.length === 0) return;
 
     try {
-      await uploadExam({
+      await uploadMultipleExams({
+        files,
         patientId,
-        file,
         examDate,
+        onProgressUpdate: (queue) => {
+          setUploadQueue([...queue]);
+        },
         onComplete: () => {
-          // Invalidar cache de exames quando processamento terminar
           queryClient.invalidateQueries({ queryKey: ['patient-exams', patientId] });
+          toast({
+            title: "Upload concluído!",
+            description: `${files.length} exame(s) processado(s)`,
+          });
+          setFiles([]);
+          setUploadQueue([]);
+          setExamDate(undefined);
+          onSuccess?.();
+          onOpenChange(false);
         },
       });
-
-      // Reset form
-      setFile(null);
-      setExamDate(undefined);
-      onSuccess?.();
-      onOpenChange(false);
     } catch (error) {
       console.error("Upload error:", error);
     }
   };
 
-  const handleRemoveFile = () => {
-    setFile(null);
+  const handleRemoveFile = (index: number) => {
+    setFiles(files.filter((_, i) => i !== index));
+  };
+
+  const handleClearAll = () => {
+    setFiles([]);
+    setUploadQueue([]);
   };
 
   return (
@@ -147,7 +158,7 @@ export function ExamUploadDialog({
 
         <div className="space-y-6">
           {/* Dropzone */}
-          {!file && (
+          {files.length === 0 && !uploading && (
             <div
               {...getRootProps()}
               className={cn(
@@ -172,87 +183,110 @@ export function ExamUploadDialog({
           )}
 
           {/* File Preview */}
-          {file && !uploading && (
-            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  {/* Preview diferente para cada tipo de arquivo */}
-                  {(() => {
-                    const fileExt = file.name.toLowerCase().split('.').pop() || '';
-                    const isImage = ['jpg', 'jpeg', 'png'].includes(fileExt);
-                    const isHEIC = ['heic', 'heif'].includes(fileExt);
-                    
-                    if (isImage) {
-                      // JPG/PNG: Mostrar thumbnail real
-                      return (
+          {files.length > 0 && !uploading && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-sm font-bold text-white">
+                  {files.length} arquivo{files.length > 1 ? 's' : ''} selecionado{files.length > 1 ? 's' : ''}
+                </h3>
+                <Button variant="ghost" size="sm" onClick={handleClearAll} className="text-white/70 hover:text-white h-8 text-xs">
+                  Limpar tudo
+                </Button>
+              </div>
+
+              <div className="grid gap-2 max-h-64 overflow-y-auto">
+                {files.map((file, idx) => {
+                  const fileExt = file.name.toLowerCase().split('.').pop() || '';
+                  const isImage = ['jpg', 'jpeg', 'png'].includes(fileExt);
+                  const isHEIC = ['heic', 'heif'].includes(fileExt);
+                  
+                  return (
+                    <div key={idx} className="bg-white/5 rounded-lg p-3 border border-white/10 flex items-center gap-3">
+                      {isImage ? (
                         <img 
                           src={URL.createObjectURL(file)} 
-                          alt="Preview do exame" 
-                          className="w-12 h-12 object-cover rounded-lg border border-white/20"
+                          alt="Preview" 
+                          className="w-10 h-10 object-cover rounded border border-white/20"
                         />
-                      );
-                    } else if (isHEIC) {
-                      // HEIC: Ícone especial (navegador não suporta preview nativo)
-                      return (
-                        <div className="w-12 h-12 bg-rest-cyan/20 rounded-lg flex items-center justify-center">
-                          <FileText className="w-6 h-6 text-rest-cyan" />
+                      ) : isHEIC ? (
+                        <div className="w-10 h-10 bg-rest-cyan/20 rounded flex items-center justify-center">
+                          <FileText className="w-5 h-5 text-rest-cyan" />
                         </div>
-                      );
-                    } else {
-                      // PDF: Ícone de documento
-                      return (
-                        <div className="w-12 h-12 bg-rest-blue/20 rounded-lg flex items-center justify-center">
-                          <FileText className="w-6 h-6 text-rest-lightblue" />
+                      ) : (
+                        <div className="w-10 h-10 bg-rest-blue/20 rounded flex items-center justify-center">
+                          <FileText className="w-5 h-5 text-rest-lightblue" />
                         </div>
-                      );
-                    }
-                  })()}
-                  
-                  <div>
-                    <p className="font-medium">{file.name}</p>
-                    <p className="text-sm text-white/60">
-                      {(file.size / 1024 / 1024).toFixed(2)} MB
-                      {file.name.toLowerCase().endsWith('.pdf') && " • PDF"}
-                      {file.name.toLowerCase().match(/\.(jpg|jpeg|png)$/i) && " • Imagem"}
-                      {file.name.toLowerCase().match(/\.(heic|heif)$/i) && " • HEIC (iPhone)"}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleRemoveFile}
-                  className="text-white/70 hover:text-white hover:bg-white/10"
-                >
-                  <X className="w-5 h-5" />
-                </Button>
+                      )}
+                      
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{file.name}</p>
+                        <p className="text-xs text-white/60">
+                          {(file.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveFile(idx)}
+                        className="text-white/70 hover:text-white hover:bg-white/10 h-8 w-8"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
 
           {/* Upload Progress */}
-          {uploading && (
-            <div className="space-y-4">
-              <div className="bg-white/5 rounded-xl p-6 border border-white/10">
-                <div className="flex items-center gap-3 mb-4">
-                  <Loader2 className="w-5 h-5 animate-spin text-rest-lightblue" />
-                  <div className="flex-1">
-                    <p className="font-medium">{status}</p>
-                    {progress > 50 && (
-                      <p className="text-xs text-white/50 mt-1">
-                        Aguarde, o processamento pode levar até 3 minutos
-                      </p>
+          {uploading && uploadQueue.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-white">
+                Processando {uploadQueue.length} exame{uploadQueue.length > 1 ? 's' : ''}...
+              </h3>
+
+              <div className="grid gap-2 max-h-64 overflow-y-auto">
+                {uploadQueue.map((item) => (
+                  <div key={item.id} className="p-3 bg-white/5 rounded-lg border border-white/10">
+                    <div className="flex items-center gap-3 mb-2">
+                      {item.status === 'pending' && (
+                        <div className="w-4 h-4 rounded-full border-2 border-white/40" />
+                      )}
+                      {item.status === 'uploading' && (
+                        <Loader2 className="w-4 h-4 animate-spin text-rest-cyan" />
+                      )}
+                      {item.status === 'completed' && (
+                        <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
+                          <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                      )}
+                      {item.status === 'error' && (
+                        <div className="w-4 h-4 rounded-full bg-red-500 flex items-center justify-center">
+                          <X className="w-2.5 h-2.5 text-white" />
+                        </div>
+                      )}
+                      
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium truncate">{item.file.name}</p>
+                        <p className="text-xs text-white/60">{item.statusMessage}</p>
+                        {item.error && <p className="text-xs text-red-400 mt-1">{item.error}</p>}
+                      </div>
+                    </div>
+
+                    {item.status === 'uploading' && (
+                      <Progress value={item.progress} className="h-1" />
                     )}
                   </div>
-                </div>
-                <Progress value={progress} className="h-2" />
-                <p className="text-sm text-white/60 mt-2">{progress}%</p>
+                ))}
               </div>
             </div>
           )}
 
           {/* Optional Metadata */}
-          {file && !uploading && (
+          {files.length > 0 && !uploading && (
             <div className="space-y-4">
               <div>
                 <Label className="text-white mb-2 block">
@@ -301,10 +335,10 @@ export function ExamUploadDialog({
               </Button>
               <Button
                 onClick={handleUpload}
-                disabled={!file}
+                disabled={files.length === 0}
                 className="flex-1 bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white"
               >
-                Processar Exame
+                Processar {files.length} Exame{files.length > 1 ? 's' : ''}
               </Button>
             </div>
           )}

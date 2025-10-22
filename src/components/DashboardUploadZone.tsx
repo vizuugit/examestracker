@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, FileText, X, Calendar } from "lucide-react";
+import { Upload, FileText, X, Calendar, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,8 +29,9 @@ import { Progress } from "@/components/ui/progress";
 export const DashboardUploadZone = () => {
   const { toast } = useToast();
   const { user } = useAuth();
-  const { uploadExam, uploadExamWithAutoMatching, uploading, progress, status } = useExamUpload();
-  const [file, setFile] = useState<File | null>(null);
+  const { uploadMultipleExams, uploading } = useExamUpload();
+  const [files, setFiles] = useState<File[]>([]);
+  const [uploadQueue, setUploadQueue] = useState<any[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<string>("");
   const [selectedPatientName, setSelectedPatientName] = useState<string>("");
   const [examDate, setExamDate] = useState<string>(
@@ -43,6 +44,7 @@ export const DashboardUploadZone = () => {
     extractedName: string;
     candidates: any[];
     examId: string;
+    fileId?: string;
   } | null>(null);
 
   // Buscar pacientes do profissional
@@ -62,8 +64,7 @@ export const DashboardUploadZone = () => {
   });
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    const uploadedFile = acceptedFiles[0];
-    if (!uploadedFile) return;
+    if (acceptedFiles.length === 0) return;
 
     const allowedTypes = [
       "application/pdf",
@@ -73,25 +74,52 @@ export const DashboardUploadZone = () => {
       "image/heif",
     ];
 
-    const fileExtension = uploadedFile.name.toLowerCase().split(".").pop() || "";
-    const isAllowedExtension = ["pdf", "jpg", "jpeg", "png", "heic", "heif"].includes(
-      fileExtension
-    );
-
-    if (allowedTypes.includes(uploadedFile.type) || isAllowedExtension) {
-      setFile(uploadedFile);
-
-      if (fileExtension === "heic" || fileExtension === "heif") {
+    // Validar cada arquivo
+    const validFiles = acceptedFiles.filter(file => {
+      const fileExtension = file.name.toLowerCase().split(".").pop() || "";
+      const isAllowedExtension = ["pdf", "jpg", "jpeg", "png", "heic", "heif"].includes(fileExtension);
+      
+      if (!allowedTypes.includes(file.type) && !isAllowedExtension) {
         toast({
-          title: "Arquivo HEIC detectado",
-          description: "Será convertido automaticamente. O processamento pode levar alguns segundos extras.",
+          variant: "destructive",
+          title: `Formato não suportado: ${file.name}`,
+          description: "Use apenas PDF, JPG, PNG ou HEIC",
         });
+        return false;
       }
-    } else {
+
+      if (file.size > 20 * 1024 * 1024) {
+        toast({
+          variant: "destructive",
+          title: `Arquivo muito grande: ${file.name}`,
+          description: "Máximo de 20MB por arquivo",
+        });
+        return false;
+      }
+
+      return true;
+    });
+
+    // Limitar a 10 arquivos
+    if (validFiles.length > 10) {
       toast({
-        variant: "destructive",
-        title: "Formato não suportado",
-        description: "Use apenas PDF, JPG, PNG ou HEIC",
+        title: "Limite de arquivos excedido",
+        description: "Você pode processar até 10 exames por vez. Selecionando apenas os primeiros 10.",
+      });
+      setFiles(validFiles.slice(0, 10));
+    } else {
+      setFiles(validFiles);
+    }
+
+    // Avisar sobre HEIC
+    const hasHEIC = validFiles.some(f => {
+      const ext = f.name.toLowerCase().split(".").pop() || "";
+      return ext === "heic" || ext === "heif";
+    });
+    if (hasHEIC) {
+      toast({
+        title: "Arquivo(s) HEIC detectado(s)",
+        description: "Serão convertidos automaticamente.",
       });
     }
   }, [toast]);
@@ -105,26 +133,30 @@ export const DashboardUploadZone = () => {
       "image/heic": [".heic"],
       "image/heif": [".heif"],
     },
-    maxFiles: 1,
+    maxFiles: 10,
     maxSize: 20 * 1024 * 1024,
     disabled: uploading,
   });
 
-  const handleRemoveFile = () => {
-    setFile(null);
+  const handleRemoveFile = (index: number) => {
+    setFiles(files.filter((_, i) => i !== index));
+  };
+
+  const handleClearAll = () => {
+    setFiles([]);
+    setUploadQueue([]);
   };
 
   const handleUpload = async () => {
-    if (!file) {
+    if (files.length === 0) {
       toast({
         variant: "destructive",
         title: "Dados incompletos",
-        description: "Selecione um arquivo",
+        description: "Selecione pelo menos um arquivo",
       });
       return;
     }
 
-    // Modo manual: requer seleção de paciente
     if (!autoMatching && !selectedPatient) {
       toast({
         variant: "destructive",
@@ -135,34 +167,29 @@ export const DashboardUploadZone = () => {
     }
 
     try {
-      if (autoMatching) {
-        // Upload com auto-matching
-        await uploadExamWithAutoMatching({
-          file,
-          examDate: examDate ? new Date(examDate) : undefined,
-          onComplete: () => {
-            setFile(null);
-            setExamDate(new Date().toISOString().split("T")[0]);
-          },
-          onMatchRequired: (extractedName, candidates, examId) => {
-            setMatchData({ extractedName, candidates, examId });
-            setMatchDialogOpen(true);
-          },
-        });
-      } else {
-        // Upload manual
-        await uploadExam({
-          patientId: selectedPatient,
-          file,
-          examDate: examDate ? new Date(examDate) : undefined,
-          onComplete: () => {
-            setFile(null);
-            setSelectedPatient("");
-            setSelectedPatientName("");
-            setExamDate(new Date().toISOString().split("T")[0]);
-          },
-        });
-      }
+      await uploadMultipleExams({
+        files,
+        patientId: autoMatching ? undefined : selectedPatient,
+        examDate: examDate ? new Date(examDate) : undefined,
+        onProgressUpdate: (queue) => {
+          setUploadQueue([...queue]);
+        },
+        onMatchRequired: (name, candidates, examId, fileId) => {
+          setMatchData({ extractedName: name, candidates, examId, fileId });
+          setMatchDialogOpen(true);
+        },
+        onComplete: () => {
+          toast({
+            title: "Upload concluído!",
+            description: `${files.length} exame(s) processado(s) com sucesso`,
+          });
+          setFiles([]);
+          setUploadQueue([]);
+          setSelectedPatient("");
+          setSelectedPatientName("");
+          setExamDate(new Date().toISOString().split("T")[0]);
+        },
+      });
     } catch (error) {
       console.error("Erro no upload:", error);
     }
@@ -213,7 +240,7 @@ export const DashboardUploadZone = () => {
       }
 
       setMatchData(null);
-      setFile(null);
+      setFiles([]);
       setExamDate(new Date().toISOString().split("T")[0]);
 
     } catch (error) {
@@ -236,7 +263,7 @@ export const DashboardUploadZone = () => {
         </p>
       </div>
 
-      {!file && !uploading && (
+      {files.length === 0 && !uploading && (
         <div
           {...getRootProps()}
           className={`relative border-2 border-dashed rounded-3xl p-12 transition-all cursor-pointer
@@ -261,7 +288,7 @@ export const DashboardUploadZone = () => {
         </div>
       )}
 
-      {file && !uploading && (
+      {files.length > 0 && !uploading && (
         <div className="bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 p-8 space-y-6">
           <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10">
             <div className="flex items-center gap-3">
@@ -283,54 +310,52 @@ export const DashboardUploadZone = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {(() => {
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-bold text-white">
+                {files.length} arquivo{files.length > 1 ? 's' : ''} selecionado{files.length > 1 ? 's' : ''}
+              </h3>
+              <Button variant="ghost" onClick={handleClearAll} className="text-white/70 hover:text-white">
+                Limpar tudo
+              </Button>
+            </div>
+
+            <div className="grid gap-3">
+              {files.map((file, idx) => {
                 const fileExt = file.name.toLowerCase().split(".").pop() || "";
                 const isImage = ["jpg", "jpeg", "png"].includes(fileExt);
                 const isHEIC = ["heic", "heif"].includes(fileExt);
 
-                if (isImage) {
-                  return (
-                    <img
-                      src={URL.createObjectURL(file)}
-                      alt="Preview do exame"
-                      className="w-16 h-16 object-cover rounded-lg border border-white/20"
-                    />
-                  );
-                } else if (isHEIC) {
-                  return (
-                    <div className="w-16 h-16 bg-rest-cyan/20 rounded-lg flex items-center justify-center">
-                      <FileText className="w-8 h-8 text-rest-cyan" />
+                return (
+                  <div key={idx} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10">
+                    {isImage ? (
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt="Preview"
+                        className="w-12 h-12 object-cover rounded-lg border border-white/20"
+                      />
+                    ) : isHEIC ? (
+                      <div className="w-12 h-12 bg-rest-cyan/20 rounded-lg flex items-center justify-center">
+                        <FileText className="w-6 h-6 text-rest-cyan" />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 bg-rest-blue/20 rounded-lg flex items-center justify-center">
+                        <FileText className="w-6 h-6 text-rest-lightblue" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-white truncate">{file.name}</p>
+                      <p className="text-xs text-white/60">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
                     </div>
-                  );
-                } else {
-                  return (
-                    <div className="w-16 h-16 bg-rest-blue/20 rounded-lg flex items-center justify-center">
-                      <FileText className="w-8 h-8 text-rest-lightblue" />
-                    </div>
-                  );
-                }
-              })()}
-
-              <div>
-                <p className="font-medium text-white">{file.name}</p>
-                <p className="text-sm text-white/60">
-                  {(file.size / 1024 / 1024).toFixed(2)} MB
-                  {file.name.toLowerCase().endsWith(".pdf") && " • PDF"}
-                  {file.name.toLowerCase().match(/\.(jpg|jpeg|png)$/i) && " • Imagem"}
-                  {file.name.toLowerCase().match(/\.(heic|heif)$/i) && " • HEIC (iPhone)"}
-                </p>
-              </div>
+                    <Button size="icon" variant="ghost" onClick={() => handleRemoveFile(idx)} className="text-white/70 hover:text-white">
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                );
+              })}
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleRemoveFile}
-              className="text-white/70 hover:text-white hover:bg-white/10"
-            >
-              <X className="w-5 h-5" />
-            </Button>
           </div>
 
           <div className="space-y-4">
@@ -400,10 +425,10 @@ export const DashboardUploadZone = () => {
               disabled={!autoMatching && !selectedPatient}
               className="flex-1 bg-gradient-to-r from-rest-blue to-rest-cyan hover:opacity-90"
             >
-              Processar Exame
+              Processar {files.length} Exame{files.length > 1 ? 's' : ''}
             </Button>
             <Button
-              onClick={handleRemoveFile}
+              onClick={handleClearAll}
               variant="outline"
               className="border-white/20 text-white hover:bg-white/10"
             >
@@ -413,16 +438,46 @@ export const DashboardUploadZone = () => {
         </div>
       )}
 
-      {uploading && (
-        <div className="bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 p-8">
-          <div className="space-y-4">
-            <div className="flex items-center justify-center gap-3">
-              <div className="w-8 h-8 border-4 border-rest-cyan border-t-transparent rounded-full animate-spin" />
-              <p className="text-lg font-medium text-white">Processando...</p>
+      {uploading && uploadQueue.length > 0 && (
+        <div className="bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 p-8 space-y-4">
+          <h3 className="text-lg font-bold text-white">
+            Processando {uploadQueue.length} exame{uploadQueue.length > 1 ? 's' : ''}...
+          </h3>
+
+          {uploadQueue.map((item) => (
+            <div key={item.id} className="p-4 bg-white/5 rounded-lg border border-white/10">
+              <div className="flex items-center gap-3 mb-2">
+                {item.status === 'pending' && (
+                  <div className="w-5 h-5 rounded-full border-2 border-white/40" />
+                )}
+                {item.status === 'uploading' && (
+                  <Loader2 className="w-5 h-5 animate-spin text-rest-cyan" />
+                )}
+                {item.status === 'completed' && (
+                  <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                )}
+                {item.status === 'error' && (
+                  <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
+                    <X className="w-3 h-3 text-white" />
+                  </div>
+                )}
+                
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">{item.file.name}</p>
+                  <p className="text-xs text-white/60">{item.statusMessage}</p>
+                  {item.error && <p className="text-xs text-red-400 mt-1">{item.error}</p>}
+                </div>
+              </div>
+
+              {item.status === 'uploading' && (
+                <Progress value={item.progress} className="h-1" />
+              )}
             </div>
-            <Progress value={progress} className="h-2" />
-            <p className="text-center text-sm text-white/60">{status}</p>
-          </div>
+          ))}
         </div>
       )}
 
