@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Download, TrendingUp, TrendingDown, Minus, AlertCircle, Pencil } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Badge } from '@/components/ui/badge';
 import { ExamDateEditDialog } from './ExamDateEditDialog';
+import { BiomarkerEditDialog } from './BiomarkerEditDialog';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -13,11 +15,13 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 interface BiomarkerValue {
+  result_id: string;
   exam_id: string;
   exam_date: string;
   value: string;
   value_numeric: number | null;
   status: 'normal' | 'alto' | 'baixo';
+  manually_corrected?: boolean;
 }
 
 interface BiomarkerRow {
@@ -40,6 +44,18 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
   const [categoryFilter, setCategoryFilter] = useState<string>(initialCategory || 'all');
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedExam, setSelectedExam] = useState<{ id: string; date: string; isEstimated: boolean } | null>(null);
+  const [biomarkerEditOpen, setBiomarkerEditOpen] = useState(false);
+  const [selectedBiomarker, setSelectedBiomarker] = useState<{
+    result_id: string;
+    exam_id: string;
+    biomarker_name: string;
+    value: string;
+    value_numeric: number | null;
+    unit: string | null;
+    reference_min: number | null;
+    reference_max: number | null;
+    status: 'normal' | 'alto' | 'baixo' | 'crítico';
+  } | null>(null);
 
   // Obter categorias únicas
   const categories = Array.from(new Set(data.map(d => d.category).filter(Boolean)));
@@ -163,6 +179,22 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
       default:
         return 'text-white/50';
     }
+  };
+
+  // Handler para editar biomarcador
+  const handleEditBiomarker = (row: BiomarkerRow, value: BiomarkerValue) => {
+    setSelectedBiomarker({
+      result_id: value.result_id,
+      exam_id: value.exam_id,
+      biomarker_name: row.biomarker_name,
+      value: value.value,
+      value_numeric: value.value_numeric,
+      unit: row.unit,
+      reference_min: row.reference_min,
+      reference_max: row.reference_max,
+      status: value.status as 'normal' | 'alto' | 'baixo' | 'crítico',
+    });
+    setBiomarkerEditOpen(true);
   };
 
   if (data.length === 0) {
@@ -301,11 +333,31 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
                         <TableCell 
                           key={examId}
                           className={cn(
-                            "text-center font-semibold",
+                            "text-center font-semibold cursor-pointer hover:bg-white/10 transition-colors group relative",
                             value && getStatusColor(value.status)
                           )}
+                          onClick={() => value && handleEditBiomarker(row, value)}
                         >
-                          {value ? value.value : '-'}
+                          {value ? (
+                            <div className="flex items-center justify-center gap-1">
+                              <span>{value.value}</span>
+                              {value.manually_corrected && (
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Badge className="ml-1 text-[8px] bg-green-500 hover:bg-green-600">✓</Badge>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Corrigido manualmente</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              )}
+                              <Pencil className="h-3 w-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+                            </div>
+                          ) : (
+                            '-'
+                          )}
                         </TableCell>
                       );
                     })}
@@ -362,6 +414,17 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
           examId={selectedExam.id}
           currentDate={selectedExam.date}
           isEstimated={selectedExam.isEstimated}
+        />
+      )}
+
+      {selectedBiomarker && (
+        <BiomarkerEditDialog
+          open={biomarkerEditOpen}
+          onOpenChange={setBiomarkerEditOpen}
+          biomarker={selectedBiomarker}
+          onSuccess={() => {
+            // A query será invalidada automaticamente pelo hook
+          }}
         />
       )}
     </Card>

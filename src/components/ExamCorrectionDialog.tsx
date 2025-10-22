@@ -168,6 +168,16 @@ export function ExamCorrectionDialog({
               </p>
             )}
           </div>
+
+          {/* Seção sobre biomarcadores */}
+          <div className="border-t pt-4 mt-4 space-y-2">
+            <h3 className="font-semibold text-sm">Corrigir Biomarcadores Individuais</h3>
+            <p className="text-xs text-muted-foreground">
+              Para corrigir valores de exames individuais (como "Colesterol LDL: 150 mg/dL"), 
+              acesse a <strong>Tabela de Acompanhamento</strong> no dashboard do paciente e clique 
+              diretamente no valor que deseja corrigir.
+            </p>
+          </div>
         </div>
 
         <div className="flex justify-end gap-2">

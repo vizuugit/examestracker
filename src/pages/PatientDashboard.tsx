@@ -120,7 +120,16 @@ export default function PatientDashboard() {
       const { data, error } = await supabase
         .from('exam_results')
         .select(`
-          *,
+          id,
+          biomarker_name,
+          value,
+          value_numeric,
+          unit,
+          reference_min,
+          reference_max,
+          status,
+          category,
+          manually_corrected,
           exams!inner (
             id,
             exam_date,
@@ -164,11 +173,13 @@ export default function PatientDashboard() {
         // Cada exam_id gera um valor único (mesmo que a data seja igual)
         if (!biomarkerData.values.has(examId)) {
           biomarkerData.values.set(examId, {
+            result_id: result.id, // ✅ ID único do exam_result
             exam_id: examId,
             exam_date: examDate,
             value: result.value,
             value_numeric: result.value_numeric,
-            status: result.status
+            status: result.status,
+            manually_corrected: result.manually_corrected || false,
           });
         }
       });
