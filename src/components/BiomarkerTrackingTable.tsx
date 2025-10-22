@@ -76,7 +76,8 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
         : '-';
       
       const values = examDates.map(dateKey => {
-        const [examId] = dateKey.split('|');
+        const [examId] = dateKey?.split('|') || [];
+        if (!examId) return '-';
         const value = row.values.find(v => v.exam_id === examId);
         return value ? value.value : '-';
       });
@@ -215,6 +216,8 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
                 </TableHead>
                 {examDates.map((dateKey, index) => {
                   const [examId, date] = dateKey.split('|');
+                  if (!date) return null;
+                  
                   return (
                     <TableHead 
                       key={examId} 
