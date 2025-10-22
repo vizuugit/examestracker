@@ -216,14 +216,18 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
                 </TableHead>
                 {examDates.map((dateKey, index) => {
                   const [examId, date] = dateKey.split('|');
-                  if (!date) return null;
+                  if (!date || !examId) return null;
+                  
+                  // Validar se a data é válida antes de formatar
+                  const parsedDate = new Date(date);
+                  if (isNaN(parsedDate.getTime())) return null;
                   
                   return (
                     <TableHead 
                       key={examId} 
                       className="text-center text-white font-bold min-w-[100px]"
                     >
-                      {format(new Date(date), 'dd/MM/yy', { locale: ptBR })}
+                      {format(parsedDate, 'dd/MM/yy', { locale: ptBR })}
                     </TableHead>
                   );
                 })}
