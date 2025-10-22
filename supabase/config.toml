@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.match-patient]
 verify_jwt = false
+
+[functions.aws-webhook]
+verify_jwt = false

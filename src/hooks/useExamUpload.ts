@@ -233,7 +233,7 @@ export function useExamUpload() {
   };
 
   const pollExamStatus = async (userId: string, s3Key: string, examId: string) => {
-    const maxAttempts = 100; // 100 tentativas x 3 segundos = 300 segundos (5 minutos)
+    const maxAttempts = 60; // 60 tentativas x 3 segundos = 180 segundos (3 minutos)
     let attempts = 0;
     const startTime = Date.now();
 
@@ -287,14 +287,17 @@ export function useExamUpload() {
 
           // Timeout check
           if (attempts >= maxAttempts) {
-            // Timeout após 3 minutos
-            console.error(`[Polling] ⏱️ Timeout após ${elapsedSeconds}s (${maxAttempts} tentativas)`);
+            // Timeout após 3 minutos - deixar em background
+            console.log(`[Polling] ⏱️ Timeout após ${elapsedSeconds}s - processamento continuará em background via webhook`);
             clearInterval(interval);
-            await supabase
-              .from("exams")
-              .update({ processing_status: "error" })
-              .eq("id", examId);
-            reject(new Error(`Timeout no processamento (${Math.floor(elapsedSeconds / 60)}min). O processamento está demorando mais que o esperado.`));
+            
+            // NÃO marcar como erro - o webhook cuidará da atualização
+            toast.info("Processamento em andamento", {
+              description: "Seu exame está sendo processado em background. Você pode sair do app - atualizaremos automaticamente quando estiver pronto.",
+              duration: 6000,
+            });
+            
+            resolve(); // Resolver sem erro para não bloquear UI
           }
         } catch (error) {
           console.error(`[Polling] Erro na tentativa ${attempts}:`, error);
