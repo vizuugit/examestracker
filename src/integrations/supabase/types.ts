@@ -68,11 +68,13 @@ export type Database = {
         Row: {
           biomarker_name: string
           category: string | null
+          corrected_at: string | null
           created_at: string | null
           deviation_percentage: number | null
           exam_id: string
           id: string
           layman_explanation: string | null
+          manually_corrected: boolean | null
           observation: string | null
           possible_causes: Json | null
           reference_max: number | null
@@ -85,11 +87,13 @@ export type Database = {
         Insert: {
           biomarker_name: string
           category?: string | null
+          corrected_at?: string | null
           created_at?: string | null
           deviation_percentage?: number | null
           exam_id: string
           id?: string
           layman_explanation?: string | null
+          manually_corrected?: boolean | null
           observation?: string | null
           possible_causes?: Json | null
           reference_max?: number | null
@@ -102,11 +106,13 @@ export type Database = {
         Update: {
           biomarker_name?: string
           category?: string | null
+          corrected_at?: string | null
           created_at?: string | null
           deviation_percentage?: number | null
           exam_id?: string
           id?: string
           layman_explanation?: string | null
+          manually_corrected?: boolean | null
           observation?: string | null
           possible_causes?: Json | null
           reference_max?: number | null
