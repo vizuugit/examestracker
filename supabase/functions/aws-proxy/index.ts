@@ -154,11 +154,14 @@ serve(async (req) => {
         }
 
         // Validar fieldName permitido
-        const ALLOWED_FIELDS = ['paciente', 'laboratorio', 'data_exame', 'data_nascimento'];
-        if (!ALLOWED_FIELDS.includes(body.fieldName)) {
+        const ALLOWED_HEADER_FIELDS = ['paciente', 'laboratorio', 'data_exame', 'data_nascimento'];
+        const ALLOWED_BIOMARKER_FIELDS = ['biomarker_name', 'biomarker_value', 'biomarker_unit', 'reference_min', 'reference_max', 'biomarker_status'];
+        const ALL_ALLOWED_FIELDS = [...ALLOWED_HEADER_FIELDS, ...ALLOWED_BIOMARKER_FIELDS];
+        
+        if (!ALL_ALLOWED_FIELDS.includes(body.fieldName)) {
           console.error('[AWS Proxy] Invalid field name:', body.fieldName);
           return new Response(
-            JSON.stringify({ error: `Invalid field name. Allowed: ${ALLOWED_FIELDS.join(', ')}` }),
+            JSON.stringify({ error: `Invalid field name. Allowed: ${ALL_ALLOWED_FIELDS.join(', ')}` }),
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
@@ -174,6 +177,7 @@ serve(async (req) => {
             aiValue: body.aiValue || null,
             userValue: body.userValue,
             textSample: body.textSample || null,
+            biomarkerId: body.biomarkerId || null, // ✅ NOVO: suporte para biomarkerId
           }),
         });
 
@@ -193,6 +197,130 @@ serve(async (req) => {
             console.log('[AWS Proxy] ✅ Correction saved successfully');
           } catch (e) {
             console.error('[AWS Proxy] ❌ Failed to parse correction response:', e);
+          }
+        } else if (data.body && typeof data.body === 'object') {
+          responseBody = data.body;
+        }
+        
+        return new Response(JSON.stringify(responseBody), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      // ============================================
+      // POST: Save biomarker corrections (batch)
+      // ============================================
+      if (body.action === 'saveBiomarkerCorrections') {
+        console.log('[AWS Proxy] Saving biomarker corrections batch:', body);
+        
+        // Validar campos obrigatórios
+        if (!body.userId || !body.examId || !Array.isArray(body.corrections)) {
+          console.error('[AWS Proxy] Missing required fields for biomarker corrections');
+          return new Response(
+            JSON.stringify({ error: 'Missing required fields: userId, examId, corrections (array)' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        // Validar cada correção no array
+        const ALLOWED_BIOMARKER_FIELDS = ['biomarker_name', 'biomarker_value', 'biomarker_unit', 'reference_min', 'reference_max', 'biomarker_status'];
+        for (const correction of body.corrections) {
+          if (!correction.biomarkerId || !correction.fieldName || !correction.userValue) {
+            return new Response(
+              JSON.stringify({ error: 'Each correction must have: biomarkerId, fieldName, userValue' }),
+              { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+          if (!ALLOWED_BIOMARKER_FIELDS.includes(correction.fieldName)) {
+            return new Response(
+              JSON.stringify({ error: `Invalid biomarker field: ${correction.fieldName}. Allowed: ${ALLOWED_BIOMARKER_FIELDS.join(', ')}` }),
+              { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+        }
+        
+        const response = await fetch(AWS_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'saveBiomarkerCorrections',
+            userId: body.userId,
+            examId: body.examId,
+            corrections: body.corrections,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('[AWS Proxy] POST saveBiomarkerCorrections error:', response.status, errorText);
+          throw new Error(`AWS Lambda error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('[AWS Proxy] Biomarker corrections response:', data);
+        
+        let responseBody = data;
+        if (data.body && typeof data.body === 'string') {
+          try {
+            responseBody = JSON.parse(data.body);
+            console.log('[AWS Proxy] ✅ Biomarker corrections saved successfully');
+          } catch (e) {
+            console.error('[AWS Proxy] ❌ Failed to parse biomarker corrections response:', e);
+          }
+        } else if (data.body && typeof data.body === 'object') {
+          responseBody = data.body;
+        }
+        
+        return new Response(JSON.stringify(responseBody), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      // ============================================
+      // POST: Export training data
+      // ============================================
+      if (body.action === 'exportTrainingData') {
+        console.log('[AWS Proxy] Exporting training data for userId:', body.userId);
+        
+        // Verificar se o usuário é admin
+        const { data: userRoles, error: roleError } = await supabaseClient
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', body.userId);
+
+        if (roleError || !userRoles || !userRoles.some(r => r.role === 'admin')) {
+          console.log('[AWS Proxy] Access denied: User is not admin');
+          return new Response(
+            JSON.stringify({ error: 'Forbidden: Admin access required' }),
+            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        
+        const response = await fetch(AWS_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'exportTrainingData',
+            userId: body.userId,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('[AWS Proxy] POST exportTrainingData error:', response.status, errorText);
+          throw new Error(`AWS Lambda error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('[AWS Proxy] Export training data response:', JSON.stringify(data).substring(0, 500));
+        
+        let responseBody = data;
+        if (data.body && typeof data.body === 'string') {
+          try {
+            responseBody = JSON.parse(data.body);
+            console.log('[AWS Proxy] ✅ Training data exported');
+          } catch (e) {
+            console.error('[AWS Proxy] ❌ Failed to parse export response:', e);
           }
         } else if (data.body && typeof data.body === 'object') {
           responseBody = data.body;
