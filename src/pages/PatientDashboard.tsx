@@ -125,11 +125,13 @@ export default function PatientDashboard() {
             id,
             exam_date,
             laboratory,
-            patient_id
+            patient_id,
+            created_at
           )
         `)
         .eq('exams.patient_id', id)
-        .order('exam_date', { ascending: true, foreignTable: 'exams' });
+        .order('exam_date', { ascending: true, foreignTable: 'exams' })
+        .order('created_at', { ascending: false, foreignTable: 'exams' });
       
       if (error) throw error;
 
@@ -139,7 +141,9 @@ export default function PatientDashboard() {
 
       data?.forEach((result: any) => {
         const key = result.biomarker_name;
-        examDatesSet.add(result.exams.exam_date);
+        const examDate = result.exams.exam_date;
+        
+        examDatesSet.add(examDate);
 
         if (!biomarkerMap.has(key)) {
           biomarkerMap.set(key, {
@@ -148,20 +152,29 @@ export default function PatientDashboard() {
             reference_min: result.reference_min,
             reference_max: result.reference_max,
             category: result.category || 'Outros',
-            values: []
+            values: new Map()
           });
         }
 
-        biomarkerMap.get(key)!.values.push({
-          exam_date: result.exams.exam_date,
-          value: result.value,
-          value_numeric: result.value_numeric,
-          status: result.status
-        });
+        const biomarkerData = biomarkerMap.get(key)!;
+        
+        // Só adiciona se ainda não existe valor para essa data
+        // (mantém o primeiro, que é o mais recente devido ao ORDER BY created_at DESC)
+        if (!biomarkerData.values.has(examDate)) {
+          biomarkerData.values.set(examDate, {
+            exam_date: examDate,
+            value: result.value,
+            value_numeric: result.value_numeric,
+            status: result.status
+          });
+        }
       });
 
       return {
-        biomarkers: Array.from(biomarkerMap.values()),
+        biomarkers: Array.from(biomarkerMap.values()).map(b => ({
+          ...b,
+          values: Array.from(b.values.values())
+        })),
         examDates: Array.from(examDatesSet).sort()
       };
     }
