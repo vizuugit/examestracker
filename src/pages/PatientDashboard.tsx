@@ -323,6 +323,7 @@ export default function PatientDashboard() {
             </div>
             
             <BiomarkerTrackingTable 
+              patientId={id!}
               data={selectedCategory ? filteredData : trackingTableData.biomarkers}
               examDates={trackingTableData.examDates}
               patientName={patient?.full_name}

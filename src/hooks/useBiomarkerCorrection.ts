@@ -12,6 +12,7 @@ interface BiomarkerCorrection {
 }
 
 interface SaveBiomarkerCorrectionsParams {
+  patientId: string;
   examId: string;
   corrections: BiomarkerCorrection[];
 }
@@ -21,6 +22,7 @@ export const useBiomarkerCorrection = () => {
   const queryClient = useQueryClient();
 
   const submitBiomarkerCorrections = async ({
+    patientId,
     examId,
     corrections,
   }: SaveBiomarkerCorrectionsParams) => {
@@ -61,8 +63,8 @@ export const useBiomarkerCorrection = () => {
       console.log('✅ Correções salvas:', data);
 
       // Invalidar cache para recarregar dados
-      queryClient.invalidateQueries({ queryKey: ['patient-tracking-table'] });
-      queryClient.invalidateQueries({ queryKey: ['patient-biomarkers'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-tracking-table', patientId] });
+      queryClient.invalidateQueries({ queryKey: ['patient-biomarkers', patientId] });
 
       toast({
         title: '✓ Correções salvas!',

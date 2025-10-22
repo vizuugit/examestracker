@@ -24,6 +24,7 @@ import { useBiomarkerCorrection } from '@/hooks/useBiomarkerCorrection';
 interface BiomarkerEditDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  patientId: string;
   biomarker: {
     result_id: string;
     exam_id: string;
@@ -51,6 +52,7 @@ interface CorrectedData {
 export function BiomarkerEditDialog({
   open,
   onOpenChange,
+  patientId,
   biomarker,
   onSuccess,
 }: BiomarkerEditDialogProps) {
@@ -176,6 +178,7 @@ export function BiomarkerEditDialog({
 
     try {
       await submitBiomarkerCorrections({
+        patientId,
         examId: biomarker.exam_id,
         corrections,
       });

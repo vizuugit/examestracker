@@ -34,13 +34,14 @@ interface BiomarkerRow {
 }
 
 interface BiomarkerTrackingTableProps {
+  patientId: string;
   data: BiomarkerRow[];
   examDates: string[];
   patientName?: string;
   initialCategory?: string;
 }
 
-export function BiomarkerTrackingTable({ data, examDates, patientName, initialCategory }: BiomarkerTrackingTableProps) {
+export function BiomarkerTrackingTable({ patientId, data, examDates, patientName, initialCategory }: BiomarkerTrackingTableProps) {
   const [categoryFilter, setCategoryFilter] = useState<string>(initialCategory || 'all');
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedExam, setSelectedExam] = useState<{ id: string; date: string; isEstimated: boolean } | null>(null);
@@ -421,6 +422,7 @@ export function BiomarkerTrackingTable({ data, examDates, patientName, initialCa
         <BiomarkerEditDialog
           open={biomarkerEditOpen}
           onOpenChange={setBiomarkerEditOpen}
+          patientId={patientId}
           biomarker={selectedBiomarker}
           onSuccess={() => {
             // A query será invalidada automaticamente pelo hook
