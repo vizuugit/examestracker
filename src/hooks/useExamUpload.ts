@@ -247,6 +247,7 @@ export function useExamUpload() {
     const maxAttempts = 60; // 60 tentativas x 3 segundos = 180 segundos (3 minutos)
     let attempts = 0;
     const startTime = Date.now();
+    let lastProgressToast = 0;
 
     return new Promise<void>((resolve, reject) => {
       const interval = setInterval(async () => {
@@ -263,6 +264,15 @@ export function useExamUpload() {
           setStatus(`Processando com IA... (${Math.floor(elapsedSeconds / 60)}min - quase lá)`);
         } else {
           setStatus(`Processando com IA... (${Math.floor(elapsedSeconds / 60)}min - aguarde mais um pouco)`);
+        }
+
+        // 🔔 Toast de progresso a cada 30 segundos
+        if (elapsedSeconds > 0 && elapsedSeconds % 30 === 0 && elapsedSeconds !== lastProgressToast) {
+          lastProgressToast = elapsedSeconds;
+          toast.info("Processamento em andamento", {
+            description: `Já se passaram ${elapsedSeconds}s. Estamos analisando seu exame com IA...`,
+            duration: 3000,
+          });
         }
 
         try {
@@ -286,6 +296,13 @@ export function useExamUpload() {
             if (examData.processing_status === 'completed') {
               console.log(`[Polling Híbrido] ✅ Exame concluído (detectado via Supabase após ${elapsedSeconds}s)!`);
               console.log(`[Polling Híbrido] Total de biomarcadores: ${examData.total_biomarkers}`);
+              
+              // 🔔 Toast de sucesso via Supabase
+              toast.success("Exame processado via Supabase!", {
+                description: `${examData.total_biomarkers} biomarcadores extraídos em ${elapsedSeconds}s`,
+                duration: 4000,
+              });
+              
               clearInterval(interval);
               resolve();
               return;
@@ -294,6 +311,13 @@ export function useExamUpload() {
             // ❌ Se falhou no Supabase, parar com erro
             if (examData.processing_status === 'error') {
               console.error(`[Polling Híbrido] ❌ Erro detectado no Supabase`);
+              
+              // 🔔 Toast de erro
+              toast.error("Erro no processamento", {
+                description: "O exame falhou ao ser processado. Tente novamente.",
+                duration: 5000,
+              });
+              
               clearInterval(interval);
               reject(new Error('Erro no processamento do exame'));
               return;
@@ -319,12 +343,31 @@ export function useExamUpload() {
             // Se AWS retornou status 'completed'
             if (data.status === 'completed' && data.data) {
               console.log(`[Polling Híbrido] ✅ Processamento concluído (detectado via AWS após ${elapsedSeconds}s)!`);
+              
+              // 🔔 Toast de sucesso via AWS
+              toast.success("Exame processado via AWS!", {
+                description: `${data.data.metadata?.total_exames || data.data.total_exames || 0} biomarcadores extraídos em ${elapsedSeconds}s`,
+                duration: 4000,
+              });
+              
               clearInterval(interval);
               await syncExamToSupabase(examId, data);
               resolve();
               return;
             } else if (data.status === 'processing') {
               console.log(`[Polling Híbrido] ⏳ AWS ainda processando...`);
+            } else if (data.status === 'failed') {
+              console.error(`[Polling Híbrido] ❌ AWS retornou status 'failed'`);
+              
+              // 🔔 Toast de erro AWS
+              toast.error("Erro no processamento AWS", {
+                description: "O exame falhou ao ser processado pela AWS. Tente novamente.",
+                duration: 5000,
+              });
+              
+              clearInterval(interval);
+              reject(new Error('Erro no processamento AWS'));
+              return;
             }
           }
 
