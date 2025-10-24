@@ -33,17 +33,17 @@ export function BiomarkerCategoryCard({
       />
       
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-3 rounded-xl bg-medical-purple/10 group-hover:bg-medical-purple/20 transition-colors">
-            <TrendingUp className="w-6 h-6 text-medical-purple" />
-          </div>
-          <Badge className="bg-medical-purple/10 text-medical-purple border-medical-purple/20 font-bold text-sm px-3 py-1">
-            {totalBiomarkers} {totalBiomarkers !== 1 ? 'exames' : 'exame'}
-          </Badge>
+      <div className="flex items-center justify-between mb-2">
+        <div className="p-3 rounded-xl bg-medical-purple/10 group-hover:bg-medical-purple/20 transition-colors">
+          <TrendingUp className="w-6 h-6 text-medical-purple" />
         </div>
-        <CardTitle className="text-xl font-bold text-gray-900">
-          {categoryName}
-        </CardTitle>
+        <Badge className="bg-medical-purple/20 text-medical-purple border-medical-purple/30 font-bold text-sm px-3 py-1">
+          {totalBiomarkers} {totalBiomarkers !== 1 ? 'exames' : 'exame'}
+        </Badge>
+      </div>
+      <CardTitle className="text-xl font-bold text-gray-900 mt-2">
+        {categoryName}
+      </CardTitle>
       </CardHeader>
       
       <CardContent>

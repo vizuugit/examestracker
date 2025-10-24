@@ -208,10 +208,10 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
       <CardHeader className="bg-gradient-to-r from-medical-purple to-medical-purple/90 text-white border-none">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <CardTitle className="text-white text-2xl font-bold">
+            <CardTitle className="text-white text-2xl font-bold tracking-tight">
               Tabela de Acompanhamento Longitudinal
             </CardTitle>
-            <CardDescription className="text-purple-100 text-base mt-1">
+            <CardDescription className="text-purple-100 text-base mt-2 font-medium">
               Evolução completa de todos os biomarcadores ao longo do tempo
             </CardDescription>
           </div>
@@ -248,8 +248,8 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gray-50 border-b border-gray-200">
-                <TableHead className="sticky left-0 z-20 bg-gray-50 text-gray-900 font-bold min-w-[180px] border-r border-gray-200">
+              <TableRow className="bg-gradient-to-r from-gray-100 to-gray-50 border-b-2 border-gray-300">
+                <TableHead className="sticky left-0 z-20 bg-gray-100 text-gray-900 font-bold text-sm uppercase tracking-wide min-w-[180px] border-r border-gray-300">
                   Biomarcador
                 </TableHead>
                 {examDates.map((dateKey, index) => {
@@ -263,7 +263,7 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                   return (
                     <TableHead 
                       key={examId} 
-                      className="text-center text-gray-900 font-bold min-w-[100px]"
+                      className="text-center text-gray-900 font-bold text-sm uppercase tracking-wide min-w-[120px] cursor-pointer hover:bg-gray-200 transition-colors relative group"
                     >
                       <TooltipProvider>
                         <div className="flex items-center justify-center gap-1">
@@ -301,13 +301,13 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                     </TableHead>
                   );
                 })}
-                <TableHead className="text-gray-900 font-bold min-w-[80px]">
+                <TableHead className="text-center text-gray-900 font-bold text-sm uppercase tracking-wide min-w-[100px]">
                   Unidade
                 </TableHead>
-                <TableHead className="text-gray-900 font-bold min-w-[120px]">
+                <TableHead className="text-center text-gray-900 font-bold text-sm uppercase tracking-wide min-w-[150px]">
                   Referência
                 </TableHead>
-                <TableHead className="text-center text-gray-900 font-bold min-w-[100px]">
+                <TableHead className="text-center text-gray-900 font-bold text-sm uppercase tracking-wide min-w-[100px]">
                   Tendência
                 </TableHead>
               </TableRow>
@@ -336,8 +336,8 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                           key={examId}
                           className={cn(
                             "text-center font-semibold cursor-pointer hover:bg-purple-100 transition-colors group relative",
-                            value && value.status === 'normal' && "text-green-600",
-                            value && (value.status === 'alto' || value.status === 'baixo') && "text-amber-600",
+                  value && value.status === 'normal' && "text-green-700 font-bold",
+                  value && (value.status === 'alto' || value.status === 'baixo') && "text-amber-700 font-bold",
                             !value && "text-gray-400"
                           )}
                           onClick={() => value && handleEditBiomarker(row, value)}

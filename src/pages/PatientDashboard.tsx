@@ -254,7 +254,7 @@ export default function PatientDashboard() {
       <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-gray-50 via-white to-gray-100">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Header */}
-          <div className="bg-white border-b border-gray-200 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-6 mb-6">
+          <div className="bg-white border-b border-gray-200 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-8 mb-8 shadow-sm">
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
               <div className="p-2 rounded-xl bg-medical-purple/10">
                 <Activity className="w-8 h-8 text-medical-purple" />
@@ -269,7 +269,12 @@ export default function PatientDashboard() {
         {/* View: Categorias */}
         {viewMode === 'categories' && categoryStats.length > 0 && (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Categorias de Biomarcadores</h2>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-1 w-12 bg-gradient-to-r from-medical-purple to-medical-purple/50 rounded-full" />
+              <h2 className="text-2xl font-bold text-gray-900">
+                Categorias de Biomarcadores
+              </h2>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Card "Todos os Exames" */}
               <BiomarkerCategoryCard
