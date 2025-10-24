@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Activity, Calendar, ArrowLeft, Heart, Activity as ActivityIcon, Zap } from 'lucide-react';
+import { Activity, ArrowLeft, Heart, Droplet, Bone, Brain, Zap } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { BiomarkerCategoryCard } from '@/components/BiomarkerCategoryCard';
@@ -12,21 +12,20 @@ import { CriticalAlertsCard } from '@/components/CriticalAlertsCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useState, useMemo } from 'react';
 import { BIOMARKER_CATEGORIES, categorizeBiomarker, CategoryKey } from '@/utils/biomarkerCategories';
-import { Heart, Activity as ActivityIcon, Droplet, Bone, Brain, Apple, Zap } from 'lucide-react';
+import { subDays } from 'date-fns';
 
 const getCategoryIcon = (category: CategoryKey) => {
   const icons: Record<CategoryKey, React.ReactNode> = {
     cardiovascular: <Heart className="w-7 h-7" />,
-    metabolico: <ActivityIcon className="w-7 h-7" />,
+    metabolico: <Activity className="w-7 h-7" />,
     hematologico: <Droplet className="w-7 h-7" />,
-    osso_mineral: <Bone className="w-7 h-7" />,
     hormonal: <Brain className="w-7 h-7" />,
-    nutricional: <Apple className="w-7 h-7" />,
-    outros: <Zap className="w-7 h-7" />,
+    hepatico: <Zap className="w-7 h-7" />,
+    renal: <Droplet className="w-7 h-7" />,
+    minerais: <Bone className="w-7 h-7" />,
   };
-  return icons[category];
+  return icons[category] || <Activity className="w-7 h-7" />;
 };
-import { subDays } from 'date-fns';
 
 type PeriodFilter = 'all' | '30' | '90' | '180' | '365';
 
