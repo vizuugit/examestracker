@@ -72,7 +72,6 @@ const PatientCharts = () => {
           exams!inner(patient_id, exam_date)
         `)
         .eq("exams.patient_id", id)
-        .not("value_numeric", "is", null)
         .order("biomarker_name", { ascending: true });
 
       if (error) throw error;
@@ -123,7 +122,6 @@ const PatientCharts = () => {
         `)
         .eq("exams.patient_id", id)
         .eq("biomarker_name", selectedBiomarker)
-        .not("value_numeric", "is", null)
         .order("exam_date", { ascending: true, foreignTable: "exams" });
 
       if (error) throw error;

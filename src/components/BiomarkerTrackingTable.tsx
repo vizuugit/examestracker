@@ -341,7 +341,7 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                         >
                           {value ? (
                             <div className="flex items-center justify-center gap-1">
-                              <span>{value.value}</span>
+                              <span>{value.value_numeric !== null ? value.value_numeric : value.value}</span>
                               {value.manually_corrected && (
                                 <TooltipProvider>
                                   <Tooltip>

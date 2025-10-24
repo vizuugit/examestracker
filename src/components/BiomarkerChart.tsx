@@ -3,6 +3,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, ReferenceLine, ResponsiveContainer, ReferenceArea } from 'recharts';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { Activity } from 'lucide-react';
 
 interface BiomarkerDataPoint {
   exam_date: string;
@@ -26,7 +27,10 @@ export function BiomarkerChart({
   referenceMin, 
   referenceMax 
 }: BiomarkerChartProps) {
-  const chartData = data.map(d => ({
+  // Filtrar apenas valores numéricos válidos
+  const validData = data.filter(d => d.value_numeric !== null && !isNaN(d.value_numeric));
+  
+  const chartData = validData.map(d => ({
     date: format(new Date(d.exam_date), 'dd/MM/yy', { locale: ptBR }),
     value: d.value_numeric,
     status: d.status,
@@ -52,6 +56,26 @@ export function BiomarkerChart({
       color: 'hsl(var(--chart-1))',
     },
   };
+
+  // Renderizar mensagem se não houver dados numéricos
+  if (validData.length === 0) {
+    return (
+      <Card className="bg-white/10 backdrop-blur-md border-white/20">
+        <CardHeader>
+          <CardTitle className="text-xl text-white">{biomarkerName}</CardTitle>
+          <CardDescription className="text-base text-white/70">
+            Evolução ao longo do tempo {unit && `(${unit})`}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="text-center py-12">
+          <Activity className="w-12 h-12 text-white/40 mx-auto mb-4" />
+          <p className="text-white/60">
+            Este biomarcador não possui valores numéricos para gráfico
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-white/10 backdrop-blur-md border-white/20">

@@ -73,7 +73,6 @@ export default function PatientDashboard() {
           )
         `)
         .eq('exams.patient_id', id)
-        .not('value_numeric', 'is', null)
         .order('exam_date', { ascending: true, foreignTable: 'exams' });
 
       // Aplicar filtro de período
