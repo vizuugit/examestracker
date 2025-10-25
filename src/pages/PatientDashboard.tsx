@@ -384,8 +384,9 @@ export default function PatientDashboard() {
           
           const { absolute, percent } = leukocyteData;
           
-          // 3️⃣ Calcular valor absoluto se ausente
+          // 3️⃣ NOVO: Calcular valor absoluto se ausente
           let calculatedAbsolute = absolute;
+          let originalPercent = percent; // ✅ Preservar percentual original
           
           if (!absolute && percent && totalLeukocytes) {
             const percentValue = Number(percent.value_numeric || percent.value);
@@ -417,7 +418,7 @@ export default function PatientDashboard() {
             exam_date: examDate,
             value: calculatedAbsolute?.value || percent?.value,
             value_numeric: calculatedAbsolute?.value_numeric || percent?.value_numeric,
-            percentValue: percent ? (percent.value_numeric || percent.value) : null,
+            percentValue: originalPercent ? (originalPercent.value_numeric || originalPercent.value) : null, // ✅ Usar percentual preservado
             status: primaryResult.status,
             manually_corrected: primaryResult.manually_corrected || false,
           });
