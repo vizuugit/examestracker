@@ -408,12 +408,17 @@ export default function PatientDashboard() {
               
               console.log('✅ [CALC]', biomarkerKey, ':', percentValue, '% ×', totalLeukocytes, '=', absoluteValue);
               
-              // Criar objeto "result" sintético com valor calculado
+              // ✅ FIX: Criar objeto simplificado (não copiar toda estrutura de percent)
               calculatedAbsolute = {
-                ...percent,
+                id: percent.id,
+                exam_id: percent.exams.id,  // ✅ Extrair diretamente
+                exam_date: percent.exams.exam_date || percent.exams.created_at,  // ✅ Extrair diretamente
                 value: String(absoluteValue),
                 value_numeric: absoluteValue,
-                unit: '/mm³'
+                unit: '/mm³',
+                status: percent.status,
+                manually_corrected: percent.manually_corrected || false,
+                exams: percent.exams  // Manter para compatibilidade
               };
             }
           }
@@ -422,17 +427,18 @@ export default function PatientDashboard() {
           const primaryResult = calculatedAbsolute || percent;
           if (!primaryResult) return;
           
-          const examId = primaryResult.exams.id;
-          const examDate = primaryResult.exams.exam_date || primaryResult.exams.created_at;
+          // ✅ FIX: Usar campos já extraídos do calculatedAbsolute
+          const examId = primaryResult.exam_id || primaryResult.exams?.id;
+          const examDate = primaryResult.exam_date || primaryResult.exams?.exam_date || primaryResult.exams?.created_at;
           
           // Adicionar valor consolidado
           biomarkerInfo.values.set(examId, {
             result_id: primaryResult.id,
             exam_id: examId,
             exam_date: examDate,
-            value: calculatedAbsolute?.value || percent?.value,
-            value_numeric: calculatedAbsolute?.value_numeric || percent?.value_numeric,
-            percentValue: originalPercent ? (originalPercent.value_numeric || originalPercent.value) : null, // ✅ Usar percentual preservado
+            value: primaryResult.value,
+            value_numeric: primaryResult.value_numeric,
+            percentValue: originalPercent ? (originalPercent.value_numeric || originalPercent.value) : null,
             status: primaryResult.status,
             manually_corrected: primaryResult.manually_corrected || false,
           });
