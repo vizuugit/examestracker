@@ -217,14 +217,14 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
           
           <div className="flex items-center gap-3 flex-wrap">
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-[220px] h-12 bg-white border-2 border-gray-200 hover:border-medical-purple-600 rounded-xl font-semibold">
-                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-medical-purple-600 to-purple-600 mr-2" />
+              <SelectTrigger className="w-[220px] h-12 bg-white border-2 border-gray-200 hover:border-rest-blue rounded-xl font-semibold">
+                <div className="w-2 h-2 rounded-full bg-rest-blue mr-2" />
                 <SelectValue placeholder="Filtrar categoria" />
               </SelectTrigger>
               <SelectContent className="rounded-xl shadow-2xl">
                 <SelectItem value="all" className="rounded-lg">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-medical-purple-600 to-purple-600" />
+                    <div className="w-2 h-2 rounded-full bg-rest-blue" />
                     Todas as Categorias
                   </div>
                 </SelectItem>
