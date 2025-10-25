@@ -4,7 +4,6 @@
 export const CATEGORY_DISPLAY_ORDER = [
   'hematologico',
   'metabolico',
-  'lipidico',
   'hepatico',
   'renal',
   'hormonal',
@@ -36,65 +35,94 @@ export const BIOMARKER_DISPLAY_ORDER: Record<string, string[]> = {
     'Plaquetas'
   ],
   metabolico: [
-    'Glicose',
-    'Insulina (Basal)',
-    'Ácido Úrico'
-  ],
-  lipidico: [
-    'Colesterol Total',
-    'HDL',
-    'LDL',
-    'Triglicérides',
     'Apolipoproteína A1',
     'Apolipoproteína B',
-    'Lipoproteína (a)'
+    'Colesterol LDL',
+    'Colesterol Total',
+    'Glicose',
+    'HDL',
+    'Insulina (Basal)',
+    'Lipoproteína (a)',
+    'Triglicérides',
+    'Ácido Úrico'
   ],
   hepatico: [
+    'Bilirrubina Direta',
+    'Bilirrubina Indireta',
+    'Bilirrubina Total',
+    'Fosfatase Alcalina',
+    'Gama Glutamil Transferase',
+    'Gama GT',
     'TGO',
     'TGP',
-    'Gama GT',
-    'Fosfatase Alcalina',
-    'Bilirrubina Total',
-    'Bilirrubina Direta',
-    'Bilirrubina Indireta'
+    'Transaminase Pirúvica (TGP/ALT)'
   ],
   renal: [
     'Creatinina',
-    'Ureia',
-    'TFG'
+    'Taxa de Filtração Glomerular (TFG)',
+    'TFG',
+    'Ureia'
   ],
   hormonal: [
-    'TSH',
+    'Cortisol',
+    'Dihidrotestosterona',
+    'Estradiol',
+    'FSH (Hormônio Folículo Estimulante)',
+    'FSH',
+    'LH (Hormônio Luteinizante)',
+    'LH',
+    'Paratormônio (PTH)',
+    'Progesterona',
+    'Prolactina',
+    'Sulfato de Dehidroepiandrosterona (DHEA-S)',
     'T3',
+    'T3 Livre',
     'T4',
     'T4 Livre',
-    'Cortisol',
     'Testosterona',
-    'Estradiol',
-    'Progesterona'
+    'Testosterona Livre',
+    'Testosterona Total',
+    'TSH (Hormônio Tireoestimulante)',
+    'TSH'
   ],
   vitaminas_minerais: [
-    'Vitamina D',
-    'Vitamina B12',
-    'Ácido Fólico',
-    'Ferro',
-    'Ferritina',
+    'Alumínio',
+    'Capacidade Latente de Ligação de Ferro',
+    'Capacidade Total de Ligação de Ferro',
+    'Cobre',
     'Cálcio',
+    'Cálcio Iônico',
+    'Ferritina',
+    'Ferro',
+    'Ferro Sérico',
+    'Fósforo',
     'Magnésio',
     'Potássio',
-    'Sódio'
+    'Selênio',
+    'Sódio',
+    'Transferrina',
+    'Vitamina B12',
+    'Vitamina D',
+    'Vitamina D (25-OH)',
+    'Zinco',
+    'Ácido Fólico',
+    'Índice de Saturação de Transferrina'
   ],
   marcadores_inflamatorios: [
+    'Homocisteína',
     'PCR',
-    'VHS'
+    'Proteína C Reativa (PCR) Ultrassensível',
+    'VHS',
+    'VHS 1ª Hora'
   ],
   marcadores_musculares: [
     'CPK',
+    'CPK - Creatina Fosfoquinase',
     'LDH'
   ],
   marcadores_prostaticos: [
-    'PSA Total',
-    'PSA Livre'
+    'PSA Livre',
+    'PSA Total'
   ]
 };
 

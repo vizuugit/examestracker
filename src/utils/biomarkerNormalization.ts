@@ -58,30 +58,167 @@ export const BIOMARKER_REFERENCE_TABLE: Record<string, {
   'glicose': { normalizedName: 'Glicose', category: 'metabolico', unit: 'mg/dL' },
   'glicemia': { normalizedName: 'Glicose', category: 'metabolico', unit: 'mg/dL' },
   
-  'colesterol total': { normalizedName: 'Colesterol Total', category: 'lipidico', unit: 'mg/dL' },
-  'col total': { normalizedName: 'Colesterol Total', category: 'lipidico', unit: 'mg/dL' },
+  'colesterol total': { normalizedName: 'Colesterol Total', category: 'metabolico', unit: 'mg/dL' },
+  'col total': { normalizedName: 'Colesterol Total', category: 'metabolico', unit: 'mg/dL' },
   
-  'hdl': { normalizedName: 'HDL', category: 'lipidico', unit: 'mg/dL' },
-  'colesterol hdl': { normalizedName: 'HDL', category: 'lipidico', unit: 'mg/dL' },
+  'hdl': { normalizedName: 'HDL', category: 'metabolico', unit: 'mg/dL' },
+  'colesterol hdl': { normalizedName: 'HDL', category: 'metabolico', unit: 'mg/dL' },
   
-  'ldl': { normalizedName: 'LDL', category: 'lipidico', unit: 'mg/dL' },
-  'colesterol ldl': { normalizedName: 'LDL', category: 'lipidico', unit: 'mg/dL' },
+  'ldl': { normalizedName: 'LDL', category: 'metabolico', unit: 'mg/dL' },
+  'colesterol ldl': { normalizedName: 'LDL', category: 'metabolico', unit: 'mg/dL' },
+  'colesterol ldl (metodo enzimatico)': { normalizedName: 'Colesterol LDL', category: 'metabolico', unit: 'mg/dL' },
   
-  'triglicerides': { normalizedName: 'Triglicérides', category: 'lipidico', unit: 'mg/dL' },
-  'triglicerideos': { normalizedName: 'Triglicérides', category: 'lipidico', unit: 'mg/dL' },
+  'triglicerides': { normalizedName: 'Triglicérides', category: 'metabolico', unit: 'mg/dL' },
+  'triglicerideos': { normalizedName: 'Triglicérides', category: 'metabolico', unit: 'mg/dL' },
+  
+  'apolipoproteina a1': { normalizedName: 'Apolipoproteína A1', category: 'metabolico', unit: 'mg/dL' },
+  'apo a1': { normalizedName: 'Apolipoproteína A1', category: 'metabolico', unit: 'mg/dL' },
+  
+  'apolipoproteina b': { normalizedName: 'Apolipoproteína B', category: 'metabolico', unit: 'mg/dL' },
+  'apo b': { normalizedName: 'Apolipoproteína B', category: 'metabolico', unit: 'mg/dL' },
+  
+  'lipoproteina (a)': { normalizedName: 'Lipoproteína (a)', category: 'metabolico', unit: 'mg/dL' },
+  'lp(a)': { normalizedName: 'Lipoproteína (a)', category: 'metabolico', unit: 'mg/dL' },
+  
+  'insulina basal': { normalizedName: 'Insulina (Basal)', category: 'metabolico', unit: 'µU/mL' },
+  'insulina': { normalizedName: 'Insulina (Basal)', category: 'metabolico', unit: 'µU/mL' },
   
   'creatinina': { normalizedName: 'Creatinina', category: 'renal', unit: 'mg/dL' },
   
   'ureia': { normalizedName: 'Ureia', category: 'renal', unit: 'mg/dL' },
+  
+  'tfg': { normalizedName: 'TFG', category: 'renal', unit: 'mL/min/1.73m²' },
+  'taxa de filtracao glomerular': { normalizedName: 'Taxa de Filtração Glomerular (TFG)', category: 'renal', unit: 'mL/min/1.73m²' },
+  
+  'acido urico': { normalizedName: 'Ácido Úrico', category: 'metabolico', unit: 'mg/dL' },
   
   'tgo': { normalizedName: 'TGO', category: 'hepatico', unit: 'U/L' },
   'ast': { normalizedName: 'TGO', category: 'hepatico', unit: 'U/L' },
   
   'tgp': { normalizedName: 'TGP', category: 'hepatico', unit: 'U/L' },
   'alt': { normalizedName: 'TGP', category: 'hepatico', unit: 'U/L' },
+  'transaminase piruva (tgp/alt)': { normalizedName: 'Transaminase Pirúvica (TGP/ALT)', category: 'hepatico', unit: 'U/L' },
+  'transaminase piruvica': { normalizedName: 'Transaminase Pirúvica (TGP/ALT)', category: 'hepatico', unit: 'U/L' },
   
   'gama gt': { normalizedName: 'Gama GT', category: 'hepatico', unit: 'U/L' },
   'ggt': { normalizedName: 'Gama GT', category: 'hepatico', unit: 'U/L' },
+  'gama glutamil transferase': { normalizedName: 'Gama Glutamil Transferase', category: 'hepatico', unit: 'U/L' },
+  
+  'fosfatase alcalina': { normalizedName: 'Fosfatase Alcalina', category: 'hepatico', unit: 'U/L' },
+  
+  'bilirrubina total': { normalizedName: 'Bilirrubina Total', category: 'hepatico', unit: 'mg/dL' },
+  'bilirrubina direta': { normalizedName: 'Bilirrubina Direta', category: 'hepatico', unit: 'mg/dL' },
+  'bilirrubina indireta': { normalizedName: 'Bilirrubina Indireta', category: 'hepatico', unit: 'mg/dL' },
+  
+  // Hormônios
+  'tsh': { normalizedName: 'TSH', category: 'hormonal', unit: 'µUI/mL' },
+  'hormonio tireoestimulante': { normalizedName: 'TSH (Hormônio Tireoestimulante)', category: 'hormonal', unit: 'µUI/mL' },
+  
+  't3': { normalizedName: 'T3', category: 'hormonal', unit: 'ng/dL' },
+  't3 livre': { normalizedName: 'T3 Livre', category: 'hormonal', unit: 'pg/mL' },
+  
+  't4': { normalizedName: 'T4', category: 'hormonal', unit: 'µg/dL' },
+  't4 livre': { normalizedName: 'T4 Livre', category: 'hormonal', unit: 'ng/dL' },
+  
+  'cortisol': { normalizedName: 'Cortisol', category: 'hormonal', unit: 'µg/dL' },
+  
+  'testosterona': { normalizedName: 'Testosterona', category: 'hormonal', unit: 'ng/dL' },
+  'testosterona total': { normalizedName: 'Testosterona Total', category: 'hormonal', unit: 'ng/dL' },
+  'testosterona livre': { normalizedName: 'Testosterona Livre', category: 'hormonal', unit: 'pg/mL' },
+  
+  'dihidrotestosterona': { normalizedName: 'Dihidrotestosterona', category: 'hormonal', unit: 'ng/dL' },
+  'dht': { normalizedName: 'Dihidrotestosterona', category: 'hormonal', unit: 'ng/dL' },
+  
+  'estradiol': { normalizedName: 'Estradiol', category: 'hormonal', unit: 'pg/mL' },
+  
+  'progesterona': { normalizedName: 'Progesterona', category: 'hormonal', unit: 'ng/mL' },
+  
+  'prolactina': { normalizedName: 'Prolactina', category: 'hormonal', unit: 'ng/mL' },
+  
+  'fsh': { normalizedName: 'FSH', category: 'hormonal', unit: 'mUI/mL' },
+  'hormonio foliculo estimulante': { normalizedName: 'FSH (Hormônio Folículo Estimulante)', category: 'hormonal', unit: 'mUI/mL' },
+  
+  'lh': { normalizedName: 'LH', category: 'hormonal', unit: 'mUI/mL' },
+  'hormonio luteinizante': { normalizedName: 'LH (Hormônio Luteinizante)', category: 'hormonal', unit: 'mUI/mL' },
+  
+  'paratormonio': { normalizedName: 'Paratormônio (PTH)', category: 'hormonal', unit: 'pg/mL' },
+  'pth': { normalizedName: 'Paratormônio (PTH)', category: 'hormonal', unit: 'pg/mL' },
+  
+  'dhea-s': { normalizedName: 'Sulfato de Dehidroepiandrosterona (DHEA-S)', category: 'hormonal', unit: 'µg/dL' },
+  'sulfato de dehidroepiandrosterona': { normalizedName: 'Sulfato de Dehidroepiandrosterona (DHEA-S)', category: 'hormonal', unit: 'µg/dL' },
+  
+  // Vitaminas e Minerais
+  'vitamina d': { normalizedName: 'Vitamina D', category: 'vitaminas_minerais', unit: 'ng/mL' },
+  'vitamina d (25-oh)': { normalizedName: 'Vitamina D (25-OH)', category: 'vitaminas_minerais', unit: 'ng/mL' },
+  '25-hidroxivitamina d': { normalizedName: 'Vitamina D (25-OH)', category: 'vitaminas_minerais', unit: 'ng/mL' },
+  '25 hidroxivitamina d': { normalizedName: 'Vitamina D (25-OH)', category: 'vitaminas_minerais', unit: 'ng/mL' },
+  
+  'vitamina b12': { normalizedName: 'Vitamina B12', category: 'vitaminas_minerais', unit: 'pg/mL' },
+  'cobalamina': { normalizedName: 'Vitamina B12', category: 'vitaminas_minerais', unit: 'pg/mL' },
+  
+  'acido folico': { normalizedName: 'Ácido Fólico', category: 'vitaminas_minerais', unit: 'ng/mL' },
+  'folato': { normalizedName: 'Ácido Fólico', category: 'vitaminas_minerais', unit: 'ng/mL' },
+  
+  'ferro': { normalizedName: 'Ferro', category: 'vitaminas_minerais', unit: 'µg/dL' },
+  'ferro serico': { normalizedName: 'Ferro Sérico', category: 'vitaminas_minerais', unit: 'µg/dL' },
+  
+  'ferritina': { normalizedName: 'Ferritina', category: 'vitaminas_minerais', unit: 'ng/mL' },
+  
+  'transferrina': { normalizedName: 'Transferrina', category: 'vitaminas_minerais', unit: 'mg/dL' },
+  
+  'indice de saturacao de transferrina': { normalizedName: 'Índice de Saturação de Transferrina', category: 'vitaminas_minerais', unit: '%' },
+  
+  'capacidade total de ligacao de ferro': { normalizedName: 'Capacidade Total de Ligação de Ferro', category: 'vitaminas_minerais', unit: 'µg/dL' },
+  'tibc': { normalizedName: 'Capacidade Total de Ligação de Ferro', category: 'vitaminas_minerais', unit: 'µg/dL' },
+  
+  'capacidade latente de ligacao de ferro': { normalizedName: 'Capacidade Latente de Ligação de Ferro', category: 'vitaminas_minerais', unit: 'µg/dL' },
+  'uibc': { normalizedName: 'Capacidade Latente de Ligação de Ferro', category: 'vitaminas_minerais', unit: 'µg/dL' },
+  
+  'calcio': { normalizedName: 'Cálcio', category: 'vitaminas_minerais', unit: 'mg/dL' },
+  'calcio ionico': { normalizedName: 'Cálcio Iônico', category: 'vitaminas_minerais', unit: 'mmol/L' },
+  
+  'magnesio': { normalizedName: 'Magnésio', category: 'vitaminas_minerais', unit: 'mg/dL' },
+  
+  'fosforo': { normalizedName: 'Fósforo', category: 'vitaminas_minerais', unit: 'mg/dL' },
+  
+  'potassio': { normalizedName: 'Potássio', category: 'vitaminas_minerais', unit: 'mEq/L' },
+  
+  'sodio': { normalizedName: 'Sódio', category: 'vitaminas_minerais', unit: 'mEq/L' },
+  
+  'zinco': { normalizedName: 'Zinco', category: 'vitaminas_minerais', unit: 'µg/dL' },
+  
+  'cobre': { normalizedName: 'Cobre', category: 'vitaminas_minerais', unit: 'µg/dL' },
+  
+  'selenio': { normalizedName: 'Selênio', category: 'vitaminas_minerais', unit: 'µg/L' },
+  
+  'aluminio': { normalizedName: 'Alumínio', category: 'vitaminas_minerais', unit: 'µg/L' },
+  
+  // Marcadores Inflamatórios
+  'pcr': { normalizedName: 'PCR', category: 'marcadores_inflamatorios', unit: 'mg/L' },
+  'proteina c reativa': { normalizedName: 'PCR', category: 'marcadores_inflamatorios', unit: 'mg/L' },
+  'proteina c reativa (pcr) ultrassensivel': { normalizedName: 'Proteína C Reativa (PCR) Ultrassensível', category: 'marcadores_inflamatorios', unit: 'mg/L' },
+  'pcr ultrassensivel': { normalizedName: 'Proteína C Reativa (PCR) Ultrassensível', category: 'marcadores_inflamatorios', unit: 'mg/L' },
+  
+  'vhs': { normalizedName: 'VHS', category: 'marcadores_inflamatorios', unit: 'mm/h' },
+  'vhs 1a hora': { normalizedName: 'VHS 1ª Hora', category: 'marcadores_inflamatorios', unit: 'mm/h' },
+  'velocidade de hemossedimentacao': { normalizedName: 'VHS', category: 'marcadores_inflamatorios', unit: 'mm/h' },
+  
+  'homocisteina': { normalizedName: 'Homocisteína', category: 'marcadores_inflamatorios', unit: 'µmol/L' },
+  
+  // Marcadores Musculares
+  'cpk': { normalizedName: 'CPK', category: 'marcadores_musculares', unit: 'U/L' },
+  'cpk - creatina fosfoquinase': { normalizedName: 'CPK - Creatina Fosfoquinase', category: 'marcadores_musculares', unit: 'U/L' },
+  'creatina fosfoquinase': { normalizedName: 'CPK - Creatina Fosfoquinase', category: 'marcadores_musculares', unit: 'U/L' },
+  'ck': { normalizedName: 'CPK', category: 'marcadores_musculares', unit: 'U/L' },
+  
+  'ldh': { normalizedName: 'LDH', category: 'marcadores_musculares', unit: 'U/L' },
+  'desidrogenase latica': { normalizedName: 'LDH', category: 'marcadores_musculares', unit: 'U/L' },
+  
+  // Marcadores Prostáticos
+  'psa total': { normalizedName: 'PSA Total', category: 'marcadores_prostaticos', unit: 'ng/mL' },
+  'psa': { normalizedName: 'PSA Total', category: 'marcadores_prostaticos', unit: 'ng/mL' },
+  
+  'psa livre': { normalizedName: 'PSA Livre', category: 'marcadores_prostaticos', unit: 'ng/mL' },
 };
 
 /**
