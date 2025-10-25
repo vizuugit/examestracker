@@ -20,8 +20,8 @@ export function formatBiomarkerValue(
   const decimalPlaces = getDecimalPlaces(biomarkerName, unit);
   const formatted = numValue.toFixed(decimalPlaces);
   
-  // Remover zeros desnecessários: 4903.00 → 4903, mas 7.7 permanece 7.7
-  return formatted.replace(/\.0+$/, '');
+  // Remover zeros desnecessários após o ponto: 4.50 → 4.5, 4.00 → 4, 7.7 → 7.7
+  return formatted.replace(/(\.\d*[1-9])0+$|\.0+$/, '$1');
 }
 
 function getDecimalPlaces(biomarkerName: string, unit?: string): number {
