@@ -85,8 +85,27 @@ const HEMOGRAMA_ORDER = [
  */
 function getHemogramaOrder(biomarkerName: string): number {
   const normalized = biomarkerName.toLowerCase().trim();
-  const index = HEMOGRAMA_ORDER.findIndex(item => normalized.includes(item));
-  return index === -1 ? 999 : index;
+  
+  // Buscar match exato primeiro
+  const exactIndex = HEMOGRAMA_ORDER.findIndex(item => normalized === item);
+  if (exactIndex !== -1) return exactIndex;
+  
+  // Buscar match que comece com o termo
+  const startsWithIndex = HEMOGRAMA_ORDER.findIndex(item => 
+    normalized.startsWith(item) || normalized.includes(` ${item}`)
+  );
+  if (startsWithIndex !== -1) return startsWithIndex;
+  
+  // Buscar palavras-chave específicas para evitar false positives
+  if (normalized.includes('hemoglobin')) return 0; // Hemoglobina
+  if (normalized.includes('hemácia') || normalized.includes('hemacia')) return 1; // Hemácias
+  if (normalized.includes('hematócrito') || normalized.includes('hematocrito')) return 2; // Hematócrito
+  if (normalized.includes('vcm')) return 3; // VCM
+  if (normalized.includes('chcm')) return 4; // CHCM (antes de HCM!)
+  if (normalized.includes('hcm') && !normalized.includes('chcm')) return 5; // HCM
+  if (normalized.includes('rdw')) return 6; // RDW
+  
+  return 999; // Não encontrado
 }
 
 export default function PatientDashboard() {
