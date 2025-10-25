@@ -238,7 +238,7 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
 
             <Button
               onClick={exportToPDF}
-              className="h-12 bg-gradient-to-r from-medical-purple-600 to-purple-600 hover:from-purple-700 hover:to-purple-700 text-white font-semibold px-6 rounded-xl shadow-lg"
+              className="h-12 bg-primary hover:bg-primary/90 text-white font-semibold px-6 rounded-xl shadow-lg"
             >
               <Download className="w-4 h-4 mr-2" />
               Exportar
