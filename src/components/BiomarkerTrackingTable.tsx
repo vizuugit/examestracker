@@ -427,7 +427,7 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                   return (
                     <TableHead 
                       key={examId} 
-                      className="text-center text-gray-900 font-bold text-sm uppercase tracking-wide min-w-[120px] cursor-pointer hover:bg-gray-200 transition-colors relative group"
+                      className="text-center text-gray-900 font-bold text-sm uppercase tracking-wide min-w-[140px] cursor-pointer hover:bg-gray-200 transition-colors relative group"
                     >
                       <TooltipProvider>
                         <div className="flex items-center justify-center gap-1">
@@ -541,7 +541,7 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                               <TableCell 
                                 key={examId}
                                 className={cn(
-                                  "text-center font-semibold cursor-pointer hover:bg-rest-blue/10 transition-colors group relative",
+                                  "min-w-[140px] text-center font-semibold cursor-pointer hover:bg-rest-blue/10 transition-colors group relative",
                                   value && value.status === 'normal' && "text-green-700 font-bold",
                                   value && (value.status === 'alto' || value.status === 'baixo') && "text-amber-700 font-bold",
                                   !value && "text-gray-400"
@@ -550,7 +550,7 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                               >
                                 {value ? (
                                   <div className="flex items-center justify-center gap-1">
-                                    <span>
+                                    <span className="whitespace-nowrap">
                                       {value.percentValue && isLeukocyteType(row.biomarker_name)
                                         ? combineLeukocyteValues(
                                             value.value_numeric ?? value.value, 

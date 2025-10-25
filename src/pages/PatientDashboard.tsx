@@ -239,21 +239,22 @@ export default function PatientDashboard() {
         data?.forEach((result: any) => {
           const originalName = result.biomarker_name;
           
-          // Normalizar e simplificar nome PRIMEIRO
-          const { normalizedKey, displayName } = normalizeAndSimplifyBiomarkerName(originalName);
-          
-          // Tentar normalizar usando a tabela de referência
+          // Sempre usar tableMatch se existir (fonte única de verdade)
           const tableMatch = normalizeBiomarkerWithTable(originalName);
           
-          // Se tem tableMatch, simplificar o nome também
-          let finalKey = normalizedKey;
-          let finalDisplayName = displayName;
+          let finalKey: string;
+          let finalDisplayName: string;
           
           if (tableMatch) {
-            const simplified = normalizeAndSimplifyBiomarkerName(tableMatch.normalizedName);
-            finalKey = simplified.normalizedKey;
-            // IMPORTANTE: usar o displayName simplificado, não o do tableMatch
-            finalDisplayName = displayName; // Manter o nome simplificado original
+            // Se tem tableMatch, simplificar o nome normalizado
+            const { normalizedKey, displayName } = normalizeAndSimplifyBiomarkerName(tableMatch.normalizedName);
+            finalKey = normalizedKey;
+            finalDisplayName = displayName;
+          } else {
+            // Caso contrário, simplificar o nome original
+            const { normalizedKey, displayName } = normalizeAndSimplifyBiomarkerName(originalName);
+            finalKey = normalizedKey;
+            finalDisplayName = displayName;
           }
           
           // Pular biomarcadores que são apenas títulos
