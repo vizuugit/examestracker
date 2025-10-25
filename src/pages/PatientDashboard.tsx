@@ -1,8 +1,8 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Activity, ArrowLeft } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { BiomarkerTrackingTable } from '@/components/BiomarkerTrackingTable';
@@ -10,7 +10,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function PatientDashboard() {
   const { id } = useParams();
-  const navigate = useNavigate();
 
   const { data: patient, isLoading: patientLoading } = useQuery({
     queryKey: ['patient', id],
@@ -108,7 +107,7 @@ export default function PatientDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-white">
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-black via-zinc-900 to-black">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Skeleton className="h-10 w-48 mb-6" />
@@ -120,21 +119,10 @@ export default function PatientDashboard() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <Navbar />
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-black via-zinc-900 to-black">
+      <Navbar showBackButton={true} backButtonPath="/patients" />
       
       <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Back Button */}
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/patients')}
-            className="hover:bg-gray-100 text-gray-900 font-medium"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Voltar para Pacientes
-          </Button>
-        </div>
 
         {/* Tabela de Acompanhamento */}
         {trackingTableData && trackingTableData.biomarkers.length > 0 && (
@@ -159,7 +147,7 @@ export default function PatientDashboard() {
               Adicione exames ao paciente para visualizar o histórico de biomarcadores
             </p>
             <Button
-              onClick={() => navigate(`/patients/${id}`)}
+              onClick={() => window.location.href = `/patients/${id}`}
               className="bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-lg"
             >
               Adicionar Primeiro Exame
