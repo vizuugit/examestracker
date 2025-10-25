@@ -7,6 +7,36 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { BiomarkerTrackingTable } from '@/components/BiomarkerTrackingTable';
 import { Skeleton } from '@/components/ui/skeleton';
+import { categorizeBiomarker } from '@/utils/biomarkerCategories';
+
+/**
+ * Normaliza nome do biomarcador para deduplicação
+ */
+function normalizeBiomarkerName(name: string): string {
+  if (!name) return "";
+  
+  let normalized = name.toLowerCase();
+  normalized = normalized.replace(/\([^)]*\)/g, '');
+  
+  const noiseWords = ['de', 'da', 'do', 'jejum', 'soro', 'sangue', 'total', '-'];
+  const words = normalized.split(/\s+/);
+  const filtered = words.filter(w => w.trim() && !noiseWords.includes(w.trim()));
+  
+  return filtered.join(' ').trim();
+}
+
+/**
+ * Calcula score de completude do biomarcador
+ */
+function calculateCompletenessScore(data: any): number {
+  let score = 0;
+  if (data.value) score += 10;
+  if (data.unit) score += 5;
+  if (data.reference_min !== null) score += 3;
+  if (data.reference_max !== null) score += 3;
+  if (data.status) score += 2;
+  return score;
+}
 
 export default function PatientDashboard() {
   const { id } = useParams();
@@ -55,31 +85,51 @@ export default function PatientDashboard() {
       
       if (error) throw error;
 
-      // Estruturar dados por biomarcador
+      // Estruturar dados por biomarcador com deduplicação
       const biomarkerMap = new Map<string, any>();
       const examDatesSet = new Set<string>();
 
       data?.forEach((result: any) => {
-        const key = result.biomarker_name;
+        const originalName = result.biomarker_name;
+        const normalizedKey = normalizeBiomarkerName(originalName);
+        
         const examId = result.exams.id;
         const examDate = result.exams.exam_date || result.exams.created_at;
         const isEstimatedDate = !result.exams.exam_date;
         
         examDatesSet.add(`${examId}|${examDate}|${isEstimatedDate ? 'estimated' : 'manual'}`);
 
-        if (!biomarkerMap.has(key)) {
-          biomarkerMap.set(key, {
-            biomarker_name: result.biomarker_name,
+        // Se biomarcador não existe, criar entrada
+        if (!biomarkerMap.has(normalizedKey)) {
+          const category = result.category || categorizeBiomarker(originalName);
+          
+          biomarkerMap.set(normalizedKey, {
+            biomarker_name: originalName,
             unit: result.unit,
             reference_min: result.reference_min,
             reference_max: result.reference_max,
-            category: result.category || 'Outros',
-            values: new Map()
+            category,
+            values: new Map(),
+            completeness_score: calculateCompletenessScore(result)
           });
+        } else {
+          // Biomarcador já existe, verificar se devemos atualizar metadados
+          const existing = biomarkerMap.get(normalizedKey)!;
+          const newScore = calculateCompletenessScore(result);
+          
+          // Atualizar metadados se este registro for mais completo
+          if (newScore > existing.completeness_score) {
+            existing.biomarker_name = originalName;
+            existing.unit = result.unit || existing.unit;
+            existing.reference_min = result.reference_min ?? existing.reference_min;
+            existing.reference_max = result.reference_max ?? existing.reference_max;
+            existing.completeness_score = newScore;
+          }
         }
 
-        const biomarkerData = biomarkerMap.get(key)!;
+        const biomarkerData = biomarkerMap.get(normalizedKey)!;
         
+        // Adicionar valor do exame
         if (!biomarkerData.values.has(examId)) {
           biomarkerData.values.set(examId, {
             result_id: result.id,
@@ -93,11 +143,22 @@ export default function PatientDashboard() {
         }
       });
 
+      // Converter Map para array e agrupar por categoria
+      const biomarkers = Array.from(biomarkerMap.values()).map(b => ({
+        ...b,
+        values: Array.from(b.values.values())
+      }));
+
+      // Ordenar por categoria e depois por nome
+      biomarkers.sort((a, b) => {
+        if (a.category !== b.category) {
+          return a.category.localeCompare(b.category);
+        }
+        return a.biomarker_name.localeCompare(b.biomarker_name);
+      });
+
       return {
-        biomarkers: Array.from(biomarkerMap.values()).map(b => ({
-          ...b,
-          values: Array.from(b.values.values())
-        })),
+        biomarkers,
         examDates: Array.from(examDatesSet).sort()
       };
     }

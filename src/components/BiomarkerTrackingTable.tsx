@@ -317,92 +317,133 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
             </TableHeader>
             
             <TableBody>
-              {filteredData.map((row, rowIndex) => {
-                const trend = getTrend(row.values);
-                
-                return (
-                  <TableRow 
-                    key={row.biomarker_name}
-                    className="border-b border-gray-100 hover:bg-rest-blue/10 transition-colors"
-                  >
-                    <TableCell className="sticky left-0 z-10 bg-white group-hover:bg-rest-blue/10 font-semibold text-gray-900 border-r border-gray-200">
-                      {row.biomarker_name}
-                    </TableCell>
-                    
-                    {examDates.map((dateKey, index) => {
-                      const [examId] = dateKey.split('|');
-                      const value = row.values.find(v => v.exam_id === examId);
-                      const isLatestExam = index === examDates.length - 1;
+              {(() => {
+                // Agrupar dados por categoria
+                const groupedData = filteredData.reduce((acc, row) => {
+                  const category = row.category || 'Outros';
+                  if (!acc[category]) acc[category] = [];
+                  acc[category].push(row);
+                  return acc;
+                }, {} as Record<string, BiomarkerRow[]>);
+
+                const categories = Object.keys(groupedData).sort();
+
+                return categories.map((category) => (
+                  <>
+                    {/* Header de Categoria */}
+                    <TableRow 
+                      key={`category-${category}`}
+                      className="bg-gradient-to-r from-rest-blue/10 to-rest-cyan/5 hover:from-rest-blue/15 hover:to-rest-cyan/10"
+                    >
+                      <TableCell 
+                        colSpan={examDates.length + 4}
+                        className="sticky left-0 z-10 font-bold text-rest-blue uppercase tracking-wide text-sm py-3 px-6 border-y-2 border-rest-blue/20"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="w-1 h-4 bg-rest-blue rounded-full" />
+                          {category}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+
+                    {/* Biomarcadores da categoria */}
+                    {groupedData[category].map((row) => {
+                      const trend = getTrend(row.values);
                       
                       return (
-                        <TableCell 
-                          key={examId}
-                          className={cn(
-                            "text-center font-semibold cursor-pointer hover:bg-rest-blue/10 transition-colors group relative",
-                  value && value.status === 'normal' && "text-green-700 font-bold",
-                  value && (value.status === 'alto' || value.status === 'baixo') && "text-amber-700 font-bold",
-                            !value && "text-gray-400"
-                          )}
-                          onClick={() => value && handleEditBiomarker(row, value)}
+                        <TableRow 
+                          key={row.biomarker_name}
+                          className="border-b border-gray-100 hover:bg-rest-blue/10 transition-colors"
                         >
-                          {value ? (
-                            <div className="flex items-center justify-center gap-1">
-                              <span>{value.value_numeric !== null ? value.value_numeric : value.value}</span>
-                              {value.manually_corrected && (
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Badge className="ml-1 text-[8px] bg-green-500 hover:bg-green-600">✓</Badge>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p>Corrigido manualmente</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                              )}
-                              <Pencil className="h-3 w-3 opacity-0 group-hover:opacity-50 transition-opacity" />
-                            </div>
-                          ) : (
-                            '-'
-                          )}
-                        </TableCell>
+                          <TableCell className="sticky left-0 z-10 bg-white hover:bg-rest-blue/10 font-semibold text-gray-900 border-r border-gray-200">
+                            {row.biomarker_name}
+                          </TableCell>
+                          
+                          {examDates.map((dateKey) => {
+                            const [examId] = dateKey.split('|');
+                            const value = row.values.find(v => v.exam_id === examId);
+                            
+                            return (
+                              <TableCell 
+                                key={examId}
+                                className={cn(
+                                  "text-center font-semibold cursor-pointer hover:bg-rest-blue/10 transition-colors group relative",
+                                  value && value.status === 'normal' && "text-green-700 font-bold",
+                                  value && (value.status === 'alto' || value.status === 'baixo') && "text-amber-700 font-bold",
+                                  !value && "text-gray-400"
+                                )}
+                                onClick={() => value && handleEditBiomarker(row, value)}
+                              >
+                                {value ? (
+                                  <div className="flex items-center justify-center gap-1">
+                                    <span>{value.value_numeric !== null ? value.value_numeric : value.value}</span>
+                                    {value.manually_corrected && (
+                                      <TooltipProvider>
+                                        <Tooltip>
+                                          <TooltipTrigger asChild>
+                                            <Badge className="ml-1 text-[8px] bg-green-500 hover:bg-green-600">✓</Badge>
+                                          </TooltipTrigger>
+                                          <TooltipContent>
+                                            <p>Corrigido manualmente</p>
+                                          </TooltipContent>
+                                        </Tooltip>
+                                      </TooltipProvider>
+                                    )}
+                                    <Pencil className="h-3 w-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+                                  </div>
+                                ) : (
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <span className="text-gray-300 text-sm">-</span>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p>Biomarcador não medido neste exame</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                )}
+                              </TableCell>
+                            );
+                          })}
+                          
+                          <TableCell className="text-gray-600 font-medium text-center">
+                            {row.unit || '-'}
+                          </TableCell>
+                          
+                          <TableCell className="text-gray-600 text-sm font-medium text-center">
+                            {row.reference_min !== null && row.reference_max !== null
+                              ? `${row.reference_min}-${row.reference_max}`
+                              : <span className="text-gray-400 italic">N/A</span>}
+                          </TableCell>
+                          
+                          <TableCell className="text-center">
+                            {trend ? (
+                              <div className={cn(
+                                "flex items-center justify-center gap-1",
+                                trend.type === 'stable' && "text-muted-foreground",
+                                trend.type === 'up' && "text-medical-critical",
+                                trend.type === 'down' && "text-medical-success"
+                              )}>
+                                {trend.type === 'up' && <TrendingUp className="w-4 h-4" />}
+                                {trend.type === 'down' && <TrendingDown className="w-4 h-4" />}
+                                {trend.type === 'stable' && <Minus className="w-4 h-4" />}
+                                <span className="text-sm font-medium">
+                                  {trend.type === 'stable' 
+                                    ? 'Estável' 
+                                    : `${Math.abs(trend.change).toFixed(1)}%`}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">N/A</span>
+                            )}
+                          </TableCell>
+                        </TableRow>
                       );
                     })}
-                    
-                    <TableCell className="text-gray-600 font-medium">
-                      {row.unit || '-'}
-                    </TableCell>
-                    
-                    <TableCell className="text-gray-600 text-sm font-medium">
-                      {row.reference_min !== null && row.reference_max !== null
-                        ? `${row.reference_min}-${row.reference_max}`
-                        : <span className="text-gray-400 italic">N/A</span>}
-                    </TableCell>
-                    
-                    <TableCell className="text-center">
-                      {trend ? (
-                        <div className={cn(
-                          "flex items-center justify-center gap-1",
-                          trend.type === 'stable' && "text-muted-foreground",
-                          trend.type === 'up' && "text-medical-critical",
-                          trend.type === 'down' && "text-medical-success"
-                        )}>
-                          {trend.type === 'up' && <TrendingUp className="w-4 h-4" />}
-                          {trend.type === 'down' && <TrendingDown className="w-4 h-4" />}
-                          {trend.type === 'stable' && <Minus className="w-4 h-4" />}
-                          <span className="text-sm font-medium">
-                            {trend.type === 'stable' 
-                              ? 'Estável' 
-                              : `${Math.abs(trend.change).toFixed(1)}%`}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground text-sm">N/A</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                  </>
+                ));
+              })()}
             </TableBody>
           </Table>
         </div>
