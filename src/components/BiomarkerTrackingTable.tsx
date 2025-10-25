@@ -323,9 +323,9 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                 return (
                   <TableRow 
                     key={row.biomarker_name}
-                    className="border-b border-gray-100 hover:bg-purple-50 transition-colors"
+                    className="border-b border-gray-100 hover:bg-rest-blue/10 transition-colors"
                   >
-                    <TableCell className="sticky left-0 z-10 bg-white hover:bg-purple-50 font-semibold text-gray-900 border-r border-gray-200">
+                    <TableCell className="sticky left-0 z-10 bg-white group-hover:bg-rest-blue/10 font-semibold text-gray-900 border-r border-gray-200">
                       {row.biomarker_name}
                     </TableCell>
                     
