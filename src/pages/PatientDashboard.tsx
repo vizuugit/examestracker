@@ -38,6 +38,35 @@ function calculateCompletenessScore(data: any): number {
   return score;
 }
 
+/**
+ * Normaliza nome da categoria para unificar variações
+ */
+function normalizeCategoryName(category: string | null): string {
+  if (!category) return 'minerais';
+  
+  const normalized = category.toLowerCase().trim();
+  
+  const categoryMap: Record<string, string> = {
+    'hematologia': 'hematologico',
+    'eritrograma': 'hematologico',
+    'hematológico': 'hematologico',
+    'hematologico': 'hematologico',
+    'hemograma': 'hematologico',
+    'cardiovascular': 'cardiovascular',
+    'metabólico': 'metabolico',
+    'metabolico': 'metabolico',
+    'hormonal': 'hormonal',
+    'renal': 'renal',
+    'hepático': 'hepatico',
+    'hepatico': 'hepatico',
+    'minerais': 'minerais',
+    'vitaminas': 'minerais',
+    'minerais e vitaminas': 'minerais'
+  };
+  
+  return categoryMap[normalized] || 'minerais';
+}
+
 export default function PatientDashboard() {
   const { id } = useParams();
 
@@ -101,7 +130,8 @@ export default function PatientDashboard() {
 
         // Se biomarcador não existe, criar entrada
         if (!biomarkerMap.has(normalizedKey)) {
-          const category = result.category || categorizeBiomarker(originalName);
+          const rawCategory = result.category || categorizeBiomarker(originalName);
+          const category = normalizeCategoryName(rawCategory);
           
           biomarkerMap.set(normalizedKey, {
             biomarker_name: originalName,

@@ -22,7 +22,7 @@ export const BIOMARKER_CATEGORIES = {
     ]
   },
   hematologico: {
-    name: 'Hematológico',
+    name: 'Hemograma',
     biomarkers: [
       'Hemácias',
       'Hemoglobina',
@@ -37,7 +37,11 @@ export const BIOMARKER_CATEGORIES = {
       'Linfócitos',
       'Monócitos',
       'Eosinófilos',
-      'Basófilos'
+      'Basófilos',
+      'Eritrograma',
+      'Serie Vermelha',
+      'Serie Branca',
+      'Leucograma'
     ]
   },
   hormonal: {
