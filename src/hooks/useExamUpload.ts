@@ -2,6 +2,8 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { deduplicateExams } from "@/utils/examDeduplication";
+import { normalizeBiomarkerWithTable } from "@/utils/biomarkerNormalization";
+import { normalizeHematologicalValue, calculateAbsoluteReference } from "@/utils/valueNormalizer";
 
 const EDGE_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/aws-proxy`;
 
@@ -482,21 +484,97 @@ export function useExamUpload() {
         
         console.log(`[syncExamToSupabase] 📊 Biomarcadores: ${originalCount} → ${dedupedExams.length} (${removedCount} duplicata${removedCount !== 1 ? 's' : ''} removida${removedCount !== 1 ? 's' : ''})`);
         
-        const biomarkers = dedupedExams.map((b) => ({
-          exam_id: examId,
-          biomarker_name: b.nome,
-          category: b.categoria,
-          value: String(b.resultado),
-          value_numeric: parseFloat(b.resultado) || null,
-          unit: b.unidade,
-          reference_min: b.referencia_min,
-          reference_max: b.referencia_max,
-          status: b.status as "normal" | "alto" | "baixo" | "alterado",
-          observation: b.observacao || null,
-          deviation_percentage: b.desvio_percentual,
-          layman_explanation: b.explicacao_leiga,
-          possible_causes: b.possiveis_causas_alteracao,
-        }));
+        // Find total leukocytes for absolute value calculations
+        const leucocitosData = dedupedExams.find((b) => 
+          b.nome && (
+            b.nome.toLowerCase().includes('leucócito') ||
+            b.nome.toLowerCase().includes('leucocito') ||
+            b.nome.toLowerCase() === 'wbc'
+          ) && b.unidade !== '%'
+        );
+        const leucocitosTotal = leucocitosData ? parseFloat(leucocitosData.resultado) : null;
+        console.log('[syncExamToSupabase] Total leukocytes found:', leucocitosTotal);
+        
+        const biomarkers = dedupedExams.map((b) => {
+          const normalizedInfo = normalizeBiomarkerWithTable(b.nome);
+          const biomarkerName = normalizedInfo?.normalizedName || b.nome;
+          const category = normalizedInfo?.category || b.categoria;
+          
+          // Normalize large values (like hemácias)
+          const { normalizedValue, normalizedUnit } = normalizeHematologicalValue(
+            b.resultado,
+            biomarkerName,
+            b.unidade
+          );
+          
+          let valueNumeric: number | null = normalizedValue;
+          let finalUnit = normalizedUnit || b.unidade;
+          
+          // If still not normalized, try parsing
+          if (typeof b.resultado === 'string' || typeof b.resultado === 'number') {
+            const originalValue = typeof b.resultado === 'string' 
+              ? parseFloat(b.resultado.replace(',', '.'))
+              : b.resultado;
+            
+            // If normalization didn't change the value, use the parsed original
+            if (valueNumeric === originalValue || (typeof valueNumeric === 'number' && isNaN(valueNumeric))) {
+              valueNumeric = isNaN(originalValue) ? null : originalValue;
+            }
+          }
+
+          return {
+            exam_id: examId,
+            biomarker_name: biomarkerName,
+            category: category,
+            value: String(b.resultado),
+            value_numeric: valueNumeric,
+            unit: finalUnit,
+            reference_min: b.referencia_min,
+            reference_max: b.referencia_max,
+            status: b.status as "normal" | "alto" | "baixo" | "alterado",
+            observation: b.observacao || null,
+            deviation_percentage: b.desvio_percentual,
+            layman_explanation: b.explicacao_leiga,
+            possible_causes: b.possiveis_causas_alteracao,
+          };
+        });
+        
+        // Calculate absolute values for leukogram cells (neutrophils, lymphocytes, etc.)
+        if (leucocitosTotal) {
+          const cellTypes = ['segmentado', 'bastonete', 'linfócito', 'linfocito', 'monócito', 'monocito', 'eosinófilo', 'eosinofilo', 'basófilo', 'basofilo'];
+          
+          for (const biomarker of dedupedExams) {
+            const isLeukogramCell = cellTypes.some(type => 
+              biomarker.nome && biomarker.nome.toLowerCase().includes(type)
+            );
+            
+            if (isLeukogramCell && biomarker.unidade === '%' && biomarker.resultado) {
+              const percentValue = parseFloat(biomarker.resultado);
+              if (!isNaN(percentValue)) {
+                const absoluteValue = (percentValue / 100) * leucocitosTotal;
+                const normalizedInfo = normalizeBiomarkerWithTable(`${biomarker.nome} (Absoluto)`);
+                
+                biomarkers.push({
+                  exam_id: examId,
+                  biomarker_name: normalizedInfo?.normalizedName || `${biomarker.nome} (Absoluto)`,
+                  category: 'hematologico',
+                  value: Math.round(absoluteValue).toString(),
+                  value_numeric: Math.round(absoluteValue),
+                  unit: '/mm³',
+                  reference_min: calculateAbsoluteReference(biomarker.referencia_min, leucocitosTotal),
+                  reference_max: calculateAbsoluteReference(biomarker.referencia_max, leucocitosTotal),
+                  status: biomarker.status as "normal" | "alto" | "baixo" | "alterado",
+                  observation: biomarker.observacao || null,
+                  deviation_percentage: biomarker.desvio_percentual,
+                  layman_explanation: biomarker.explicacao_leiga,
+                  possible_causes: biomarker.possiveis_causas_alteracao,
+                });
+              }
+            }
+          }
+        }
+        
+        console.log(`[syncExamToSupabase] 📊 Total biomarkers to insert (including calculated absolutes): ${biomarkers.length}`);
 
         const { error: biomarkersError } = await supabase
           .from("exam_results")
@@ -507,7 +585,7 @@ export function useExamUpload() {
           throw biomarkersError;
         }
         
-        console.log(`[syncExamToSupabase] ✅ ${dedupedExams.length} biomarcadores salvos com sucesso`);
+        console.log(`[syncExamToSupabase] ✅ ${biomarkers.length} biomarcadores salvos com sucesso`);
       }
       
       // ✅ Liberar flag de sincronização

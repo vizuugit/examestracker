@@ -11,7 +11,17 @@ export const BIOMARKER_REFERENCE_TABLE: Record<string, {
   'hb': { normalizedName: 'Hemoglobina', category: 'hematologico', unit: 'g/dL' },
   'hgb': { normalizedName: 'Hemoglobina', category: 'hematologico', unit: 'g/dL' },
   
-  'hemacias': { normalizedName: 'Hemácias', category: 'hematologico', unit: 'M/µL' },
+  'hemacias': { normalizedName: 'Hemácias', category: 'hematologico', unit: 'milhões/mm³' },
+  'segmentados (absoluto)': { normalizedName: 'Neutrófilos Segmentados (Absoluto)', category: 'hematologico', unit: '/mm³' },
+  'bastonetes (absoluto)': { normalizedName: 'Neutrófilos Bastonetes (Absoluto)', category: 'hematologico', unit: '/mm³' },
+  'linfócitos (absoluto)': { normalizedName: 'Linfócitos (Absoluto)', category: 'hematologico', unit: '/mm³' },
+  'linfocitos (absoluto)': { normalizedName: 'Linfócitos (Absoluto)', category: 'hematologico', unit: '/mm³' },
+  'monócitos (absoluto)': { normalizedName: 'Monócitos (Absoluto)', category: 'hematologico', unit: '/mm³' },
+  'monocitos (absoluto)': { normalizedName: 'Monócitos (Absoluto)', category: 'hematologico', unit: '/mm³' },
+  'eosinófilos (absoluto)': { normalizedName: 'Eosinófilos (Absoluto)', category: 'hematologico', unit: '/mm³' },
+  'eosinofilos (absoluto)': { normalizedName: 'Eosinófilos (Absoluto)', category: 'hematologico', unit: '/mm³' },
+  'basófilos (absoluto)': { normalizedName: 'Basófilos (Absoluto)', category: 'hematologico', unit: '/mm³' },
+  'basofilos (absoluto)': { normalizedName: 'Basófilos (Absoluto)', category: 'hematologico', unit: '/mm³' },
   'eritrocitos': { normalizedName: 'Hemácias', category: 'hematologico', unit: 'M/µL' },
   'rbc': { normalizedName: 'Hemácias', category: 'hematologico', unit: 'M/µL' },
   

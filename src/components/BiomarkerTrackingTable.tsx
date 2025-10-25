@@ -8,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Badge } from '@/components/ui/badge';
 import { ExamDateEditDialog } from './ExamDateEditDialog';
 import { BiomarkerEditDialog } from './BiomarkerEditDialog';
+import { formatBiomarkerValue } from '@/utils/valueFormatter';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -525,7 +526,7 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                               >
                                 {value ? (
                                   <div className="flex items-center justify-center gap-1">
-                                    <span>{value.value_numeric !== null ? value.value_numeric : value.value}</span>
+                                    <span>{formatBiomarkerValue(value.value_numeric ?? value.value, row.biomarker_name, row.unit)}</span>
                                     {value.manually_corrected && (
                                       <TooltipProvider>
                                         <Tooltip>
