@@ -41,14 +41,18 @@ export const BIOMARKER_REFERENCE_TABLE: Record<string, {
   'linfocitos': { normalizedName: 'Linfócitos', category: 'hematologico', unit: '/µL' },
   
   'monocitos': { normalizedName: 'Monócitos', category: 'hematologico', unit: '/µL' },
+  'mono': { normalizedName: 'Monócitos', category: 'hematologico', unit: '/µL' },
   
   'eosinofilos': { normalizedName: 'Eosinófilos', category: 'hematologico', unit: '/µL' },
+  'eos': { normalizedName: 'Eosinófilos', category: 'hematologico', unit: '/µL' },
   
   'basofilos': { normalizedName: 'Basófilos', category: 'hematologico', unit: '/µL' },
+  'baso': { normalizedName: 'Basófilos', category: 'hematologico', unit: '/µL' },
   
   // Plaquetas
   'plaquetas': { normalizedName: 'Plaquetas', category: 'hematologico', unit: '/µL' },
   'plt': { normalizedName: 'Plaquetas', category: 'hematologico', unit: '/µL' },
+  'platelet': { normalizedName: 'Plaquetas', category: 'hematologico', unit: '/µL' },
   
   // Bioquímica
   'glicose': { normalizedName: 'Glicose', category: 'metabolico', unit: 'mg/dL' },

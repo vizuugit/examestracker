@@ -9,6 +9,7 @@ import { BiomarkerTrackingTable } from '@/components/BiomarkerTrackingTable';
 import { Skeleton } from '@/components/ui/skeleton';
 import { categorizeBiomarker } from '@/utils/biomarkerCategories';
 import { normalizeBiomarkerWithTable } from '@/utils/biomarkerNormalization';
+import { CATEGORY_DISPLAY_ORDER, BIOMARKER_DISPLAY_ORDER, getCategoryOrder, getBiomarkerOrder } from '@/utils/biomarkerDisplayOrder';
 
 /**
  * Normaliza nome do biomarcador para deduplicação
@@ -68,47 +69,6 @@ function normalizeCategoryName(category: string | null): string {
   };
   
   return categoryMap[normalized] || 'minerais';
-}
-
-/**
- * Ordem customizada para biomarcadores do Hemograma
- */
-const HEMOGRAMA_ORDER = [
-  'hemoglobina',
-  'hemácias',
-  'hematócrito',
-  'vcm',
-  'chcm',
-  'hcm',
-  'rdw'
-];
-
-/**
- * Retorna índice de ordenação para biomarcadores do hemograma
- */
-function getHemogramaOrder(biomarkerName: string): number {
-  const normalized = biomarkerName.toLowerCase().trim();
-  
-  // Buscar match exato primeiro
-  const exactIndex = HEMOGRAMA_ORDER.findIndex(item => normalized === item);
-  if (exactIndex !== -1) return exactIndex;
-  
-  // Buscar match que comece com o termo
-  const startsWithIndex = HEMOGRAMA_ORDER.findIndex(item => 
-    normalized.startsWith(item) || normalized.includes(` ${item}`)
-  );
-  if (startsWithIndex !== -1) return startsWithIndex;
-  
-  // Buscar palavras-chave específicas para evitar false positives
-  if (normalized.includes('hemoglobin')) return 0; // Hemoglobina
-  if (normalized.includes('hemácia') || normalized.includes('hemacia')) return 1; // Hemácias
-  if (normalized.includes('hematócrito') || normalized.includes('hematocrito')) return 2; // Hematócrito
-  if (normalized.includes('vcm')) return 3; // VCM
-  if (normalized.includes('chcm')) return 4; // CHCM (antes de HCM!)
-  if (normalized.includes('hcm') && !normalized.includes('chcm')) return 5; // HCM
-  if (normalized.includes('rdw')) return 6; // RDW
-  
-  return 999; // Não encontrado
 }
 
 export default function PatientDashboard() {
@@ -249,19 +209,26 @@ export default function PatientDashboard() {
 
       // Ordenar por categoria e depois por ordem específica ou nome
       biomarkers.sort((a, b) => {
+        // Primeiro, ordenar por categoria
         if (a.category !== b.category) {
+          const categoryOrderA = getCategoryOrder(a.category);
+          const categoryOrderB = getCategoryOrder(b.category);
+          if (categoryOrderA !== categoryOrderB) {
+            return categoryOrderA - categoryOrderB;
+          }
+          // Se não estão na ordem definida, usar alfabética
           return a.category.localeCompare(b.category);
         }
         
-        // Ordem customizada para Hemograma
-        if (a.category === 'hematologico') {
-          const orderA = getHemogramaOrder(a.biomarker_name);
-          const orderB = getHemogramaOrder(b.biomarker_name);
-          if (orderA !== orderB) {
-            return orderA - orderB;
-          }
+        // Dentro da mesma categoria, usar ordem de exibição customizada
+        const biomarkerOrderA = getBiomarkerOrder(a.category, a.biomarker_name);
+        const biomarkerOrderB = getBiomarkerOrder(b.category, b.biomarker_name);
+        
+        if (biomarkerOrderA !== biomarkerOrderB) {
+          return biomarkerOrderA - biomarkerOrderB;
         }
         
+        // Se ambos não estão na ordem ou têm a mesma ordem, usar alfabética
         return a.biomarker_name.localeCompare(b.biomarker_name);
       });
 

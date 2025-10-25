@@ -15,6 +15,7 @@ import { useState } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+import { CATEGORY_DISPLAY_ORDER, BIOMARKER_DISPLAY_ORDER, getCategoryOrder, getBiomarkerOrder } from '@/utils/biomarkerDisplayOrder';
 
 interface BiomarkerValue {
   result_id: string;
@@ -181,16 +182,29 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
     ];
     excelData.push(headers);
 
-    // Dados por categoria
-    const categories = Object.keys(groupedData).sort();
+    // Dados por categoria - ordenar usando CATEGORY_DISPLAY_ORDER
+    const categories = Object.keys(groupedData).sort((a, b) => {
+      const orderA = getCategoryOrder(a);
+      const orderB = getCategoryOrder(b);
+      if (orderA !== orderB) return orderA - orderB;
+      return a.localeCompare(b);
+    });
+    
     categories.forEach(category => {
       // Linha de categoria
       const categoryRow = new Array(headers.length).fill('');
       categoryRow[0] = category.toUpperCase();
       excelData.push(categoryRow);
 
-      // Biomarcadores da categoria
-      groupedData[category].forEach(row => {
+      // Biomarcadores da categoria - ordenar usando BIOMARKER_DISPLAY_ORDER
+      const sortedBiomarkers = groupedData[category].sort((a, b) => {
+        const orderA = getBiomarkerOrder(category, a.biomarker_name);
+        const orderB = getBiomarkerOrder(category, b.biomarker_name);
+        if (orderA !== orderB) return orderA - orderB;
+        return a.biomarker_name.localeCompare(b.biomarker_name);
+      });
+      
+      sortedBiomarkers.forEach(row => {
         const refText = row.reference_min !== null && row.reference_max !== null
           ? `${row.reference_min}-${row.reference_max}`
           : '-';
@@ -448,7 +462,13 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                   return acc;
                 }, {} as Record<string, BiomarkerRow[]>);
 
-                const categories = Object.keys(groupedData).sort();
+                // Ordenar categorias usando CATEGORY_DISPLAY_ORDER
+                const categories = Object.keys(groupedData).sort((a, b) => {
+                  const orderA = getCategoryOrder(a);
+                  const orderB = getCategoryOrder(b);
+                  if (orderA !== orderB) return orderA - orderB;
+                  return a.localeCompare(b);
+                });
 
                 return categories.map((category) => (
                   <>
@@ -468,8 +488,15 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                       </TableCell>
                     </TableRow>
 
-                    {/* Biomarcadores da categoria */}
-                    {groupedData[category].map((row) => {
+                    {/* Biomarcadores da categoria - ordenar usando BIOMARKER_DISPLAY_ORDER */}
+                    {groupedData[category]
+                      .sort((a, b) => {
+                        const orderA = getBiomarkerOrder(category, a.biomarker_name);
+                        const orderB = getBiomarkerOrder(category, b.biomarker_name);
+                        if (orderA !== orderB) return orderA - orderB;
+                        return a.biomarker_name.localeCompare(b.biomarker_name);
+                      })
+                      .map((row) => {
                       const trend = getTrend(row.values);
                       
                       return (
