@@ -54,7 +54,7 @@ serve(async (req) => {
     console.log(`[analyze-exam] 📊 ${biomarkers.length} biomarcadores encontrados`);
 
     // 2. Buscar histórico do paciente (últimos 5 exames para comparação)
-    let historicalExams = [];
+    let historicalExams: any[] = [];
     if (exam.patient_id) {
       const { data: history, error: historyError } = await supabaseClient
         .from('exams')

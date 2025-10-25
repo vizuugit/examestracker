@@ -97,7 +97,7 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
 
     const rows = filteredData.map(row => {
       const refText = row.reference_min !== null && row.reference_max !== null
-        ? `${row.reference_min}-${row.reference_max}`
+        ? `${formatBiomarkerValue(row.reference_min, row.biomarker_name, row.unit)}-${formatBiomarkerValue(row.reference_max, row.biomarker_name, row.unit)}`
         : '-';
       
       const values = examDates.map(dateKey => {
@@ -207,7 +207,7 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
       
       sortedBiomarkers.forEach(row => {
         const refText = row.reference_min !== null && row.reference_max !== null
-          ? `${row.reference_min}-${row.reference_max}`
+          ? `${formatBiomarkerValue(row.reference_min, row.biomarker_name, row.unit)}-${formatBiomarkerValue(row.reference_max, row.biomarker_name, row.unit)}`
           : '-';
         
         const values = examDates.map(dateKey => {
@@ -563,7 +563,7 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                           
                           <TableCell className="text-gray-600 text-sm font-medium text-center">
                             {row.reference_min !== null && row.reference_max !== null
-                              ? `${row.reference_min}-${row.reference_max}`
+                              ? `${formatBiomarkerValue(row.reference_min, row.biomarker_name, row.unit)}-${formatBiomarkerValue(row.reference_max, row.biomarker_name, row.unit)}`
                               : <span className="text-gray-400 italic">N/A</span>}
                           </TableCell>
                           
