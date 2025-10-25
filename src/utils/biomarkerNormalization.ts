@@ -174,16 +174,16 @@ export const BIOMARKER_REFERENCE_TABLE: Record<string, {
   'capacidade latente de ligacao de ferro': { normalizedName: 'Capacidade Latente de Ligação de Ferro', category: 'vitaminas_minerais', unit: 'µg/dL' },
   'uibc': { normalizedName: 'Capacidade Latente de Ligação de Ferro', category: 'vitaminas_minerais', unit: 'µg/dL' },
   
-  'calcio': { normalizedName: 'Cálcio', category: 'vitaminas_minerais', unit: 'mg/dL' },
-  'calcio ionico': { normalizedName: 'Cálcio Iônico', category: 'vitaminas_minerais', unit: 'mmol/L' },
+  'calcio': { normalizedName: 'Cálcio', category: 'ions', unit: 'mg/dL' },
+  'calcio ionico': { normalizedName: 'Cálcio Iônico', category: 'ions', unit: 'mmol/L' },
   
-  'magnesio': { normalizedName: 'Magnésio', category: 'vitaminas_minerais', unit: 'mg/dL' },
+  'magnesio': { normalizedName: 'Magnésio', category: 'ions', unit: 'mg/dL' },
   
-  'fosforo': { normalizedName: 'Fósforo', category: 'vitaminas_minerais', unit: 'mg/dL' },
+  'fosforo': { normalizedName: 'Fósforo', category: 'ions', unit: 'mg/dL' },
   
-  'potassio': { normalizedName: 'Potássio', category: 'vitaminas_minerais', unit: 'mEq/L' },
+  'potassio': { normalizedName: 'Potássio', category: 'ions', unit: 'mEq/L' },
   
-  'sodio': { normalizedName: 'Sódio', category: 'vitaminas_minerais', unit: 'mEq/L' },
+  'sodio': { normalizedName: 'Sódio', category: 'ions', unit: 'mEq/L' },
   
   'zinco': { normalizedName: 'Zinco', category: 'vitaminas_minerais', unit: 'µg/dL' },
   
