@@ -351,16 +351,54 @@ export default function PatientDashboard() {
         }
       });
       
-      // Segunda passagem: consolidar leucócitos por data
+      // Segunda passagem: consolidar leucócitos por data E calcular valores absolutos faltantes
       leukocytesByDate.forEach((dateMap, dateKey) => {
+        // 1️⃣ Buscar contagem de leucócitos para esta data
+        let totalLeukocytes: number | null = null;
+        
+        const leukocytesKey = 'leucocitos';
+        const leukocytesInfo = biomarkerMap.get(leukocytesKey);
+        
+        if (leukocytesInfo) {
+          for (const [examId, valueData] of leukocytesInfo.values) {
+            const examDate = valueData.exam_date;
+            const valueExamKey = examDate || examId;
+            
+            if (valueExamKey === dateKey && valueData.value_numeric) {
+              totalLeukocytes = Number(valueData.value_numeric);
+              break;
+            }
+          }
+        }
+        
+        // 2️⃣ Consolidar cada tipo de leucócito
         dateMap.forEach((leukocyteData, biomarkerKey) => {
           const biomarkerInfo = biomarkerMap.get(biomarkerKey);
           if (!biomarkerInfo) return;
           
           const { absolute, percent } = leukocyteData;
           
-          // Priorizar valor absoluto como base
-          const primaryResult = absolute || percent;
+          // 3️⃣ Calcular valor absoluto se ausente
+          let calculatedAbsolute = absolute;
+          
+          if (!absolute && percent && totalLeukocytes) {
+            const percentValue = Number(percent.value_numeric || percent.value);
+            
+            if (!isNaN(percentValue) && percentValue >= 0) {
+              const absoluteValue = Math.round((percentValue / 100) * totalLeukocytes);
+              
+              // Criar objeto "result" sintético com valor calculado
+              calculatedAbsolute = {
+                ...percent,
+                value: String(absoluteValue),
+                value_numeric: absoluteValue,
+                unit: '/mm³'
+              };
+            }
+          }
+          
+          // 4️⃣ Priorizar valor absoluto (calculado ou original)
+          const primaryResult = calculatedAbsolute || percent;
           if (!primaryResult) return;
           
           const examId = primaryResult.exams.id;
@@ -371,15 +409,15 @@ export default function PatientDashboard() {
             result_id: primaryResult.id,
             exam_id: examId,
             exam_date: examDate,
-            value: absolute?.value || percent?.value,
-            value_numeric: absolute?.value_numeric || percent?.value_numeric,
+            value: calculatedAbsolute?.value || percent?.value,
+            value_numeric: calculatedAbsolute?.value_numeric || percent?.value_numeric,
             percentValue: percent ? (percent.value_numeric || percent.value) : null,
             status: primaryResult.status,
             manually_corrected: primaryResult.manually_corrected || false,
           });
           
           // Forçar unidade para /mm³ se houver valor absoluto
-          if (absolute) {
+          if (calculatedAbsolute) {
             biomarkerInfo.unit = '/mm³';
           }
         });

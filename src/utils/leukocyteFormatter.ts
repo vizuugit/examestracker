@@ -35,3 +35,13 @@ export function combineLeukocyteValues(
   
   return `${absFormatted} (${pctFormatted}%)`;
 }
+
+/**
+ * Calcula valor absoluto a partir de percentual e contagem total de leucócitos
+ */
+export function calculateAbsoluteFromPercent(
+  percentValue: number,
+  totalLeukocytes: number
+): number {
+  return Math.round((percentValue / 100) * totalLeukocytes);
+}
