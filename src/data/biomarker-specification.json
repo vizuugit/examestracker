@@ -1,0 +1,1449 @@
+{
+  "versao": "1.0.0",
+  "data_atualizacao": "2025-10-25",
+  "descricao": "Especificação de biomarcadores laboratoriais aceitos pelo sistema",
+  "categorias": [
+    "AVALIAÇÃO DO PERFIL GLICÊMICO E INSULINÊMICO",
+    "FATORES DE RISCO CARDIOVASCULAR",
+    "PERFIL LIPÍDICO",
+    "CONCENTRAÇÃO DE PARTÍCULAS LDL",
+    "TAMANHO DO PICO DE LDL",
+    "FUNÇÃO RENAL",
+    "FUNÇÃO HEPÁTICA",
+    "TGP /ALT  - H<58 M<41",
+    "IONOGRAMA E BIOQUÍMICA DO CÁLCIO",
+    "EXAMES DE URINA",
+    "FUNÇÃO TIREOIDEANA",
+    "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+    "CORTISOL SALIVAR ACORDAR",
+    "CORTISOL POS DEXA VR<1,8",
+    "BETA 2 MICROGLOBULINA:",
+    "MARCADORES TUMORAIS E OUTROS",
+    "KD ABC SCORE ALBUMINA",
+    "KD ABC SCORE PROT C REAT",
+    "METAIS PESADOS",
+    "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+    "ANTICORPOS ANTI MITOCÔNDRIA",
+    "DENSITOMETRIA ÓSSEA",
+    "EXAMES DE IMAGEM",
+    "CINTILOGRAFIA MIOCARDICA",
+    "ULTRASSOM ENDOVAGINAL"
+  ],
+  "total_biomarcadores": 213,
+  "biomarcadores": [
+    {
+      "nome_padrao": "GLICEMIA JEJUM",
+      "categoria": "AVALIAÇÃO DO PERFIL GLICÊMICO E INSULINÊMICO",
+      "sinonimos": [
+        "Glicose",
+        "Glicose Jejum",
+        "Glicemia",
+        "Glucose",
+        "Glicemia de Jejum"
+      ]
+    },
+    {
+      "nome_padrao": "G0H75GD GESTANTE",
+      "categoria": "AVALIAÇÃO DO PERFIL GLICÊMICO E INSULINÊMICO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "G1H75GD GESTANTE",
+      "categoria": "AVALIAÇÃO DO PERFIL GLICÊMICO E INSULINÊMICO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "G2H75GD GESTANTE",
+      "categoria": "AVALIAÇÃO DO PERFIL GLICÊMICO E INSULINÊMICO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "G2HPP",
+      "categoria": "AVALIAÇÃO DO PERFIL GLICÊMICO E INSULINÊMICO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "FRUTOSAMINA",
+      "categoria": "AVALIAÇÃO DO PERFIL GLICÊMICO E INSULINÊMICO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PEPTÍDEO C",
+      "categoria": "AVALIAÇÃO DO PERFIL GLICÊMICO E INSULINÊMICO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "HbA1c (Hemoglobina Glicada)",
+      "categoria": "AVALIAÇÃO DO PERFIL GLICÊMICO E INSULINÊMICO",
+      "sinonimos": [
+        "HbA1c",
+        "Hemoglobina Glicada",
+        "A1C",
+        "Hemoglobina glicosilada"
+      ]
+    },
+    {
+      "nome_padrao": "INSULINA VR<5",
+      "categoria": "AVALIAÇÃO DO PERFIL GLICÊMICO E INSULINÊMICO",
+      "sinonimos": [
+        "Insulina",
+        "Insulina Basal",
+        "Insulinemia"
+      ]
+    },
+    {
+      "nome_padrao": "HOMA IR",
+      "categoria": "AVALIAÇÃO DO PERFIL GLICÊMICO E INSULINÊMICO",
+      "sinonimos": [
+        "HOMA-IR",
+        "HOMA Index",
+        "Índice HOMA"
+      ]
+    },
+    {
+      "nome_padrao": "MICROALB REL",
+      "categoria": "AVALIAÇÃO DO PERFIL GLICÊMICO E INSULINÊMICO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "LP(A)",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "APO A1",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "APO B",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "APOB/APOA1",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "FIBRINOGÊNIO",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "FERRITINA",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": [
+        "Ferritina",
+        "Ferritin",
+        "Ferritina Sérica"
+      ]
+    },
+    {
+      "nome_padrao": "PCR ULTRA SENSÍVEL",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": [
+        "PCR",
+        "Proteína C Reativa",
+        "PCR Ultrassensível",
+        "hs-CRP",
+        "CRP"
+      ]
+    },
+    {
+      "nome_padrao": "PCR QUANTIT",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "VHS: (Velocidade de Hemossedimentação)",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": [
+        "VHS",
+        "Velocidade de Hemossedimentação",
+        "ESR"
+      ]
+    },
+    {
+      "nome_padrao": "HOMOCISTEÍNA VR<8",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": [
+        "Homocisteína",
+        "Homocysteine"
+      ]
+    },
+    {
+      "nome_padrao": "VITAMINAS",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "MUTAÇÃO MTHFR",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ÁCIDO FÓLICO",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": [
+        "Ácido Fólico",
+        "Folato",
+        "Vitamina B9",
+        "Folic Acid"
+      ]
+    },
+    {
+      "nome_padrao": "VIT B12",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": [
+        "Vitamina B12",
+        "B12",
+        "Cobalamina"
+      ]
+    },
+    {
+      "nome_padrao": "ZINCO",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": [
+        "Zinco",
+        "Zn",
+        "Zinco Sérico"
+      ]
+    },
+    {
+      "nome_padrao": "1,25-OH VIT D",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "25-OH VIT D",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": [
+        "Vitamina D",
+        "25-OH Vitamina D",
+        "25-Hidroxivitamina D",
+        "Vit D",
+        "25(OH)D"
+      ]
+    },
+    {
+      "nome_padrao": "VIT B1",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "VIT B2",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "VIT B3",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "VIT B5",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "VIT B6",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "VIT A",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "SELÊNIO",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "VIT C",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "FERRO",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": [
+        "Ferro",
+        "Ferro Sérico",
+        "Fe"
+      ]
+    },
+    {
+      "nome_padrao": "TRANSFERRINA",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CTLF: (Capacidade Total de Ligação do Ferro)",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "IST: (Indice de Saturação Transferrina)",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "FERRITINA",
+      "categoria": "FATORES DE RISCO CARDIOVASCULAR",
+      "sinonimos": [
+        "Ferritina",
+        "Ferritin",
+        "Ferritina Sérica"
+      ]
+    },
+    {
+      "nome_padrao": "CPK (Creatinofosfoquinase)",
+      "categoria": "PERFIL LIPÍDICO",
+      "sinonimos": [
+        "CPK",
+        "Creatina Fosfoquinase",
+        "CK",
+        "Creatine Kinase"
+      ]
+    },
+    {
+      "nome_padrao": "CT (Coleterol Total)",
+      "categoria": "PERFIL LIPÍDICO",
+      "sinonimos": [
+        "Colesterol Total",
+        "CT",
+        "Total Cholesterol",
+        "Colesterol"
+      ]
+    },
+    {
+      "nome_padrao": "LDL (Low Density Lipoproteins)",
+      "categoria": "PERFIL LIPÍDICO",
+      "sinonimos": [
+        "LDL",
+        "Colesterol LDL",
+        "LDL Colesterol",
+        "LDL-C"
+      ]
+    },
+    {
+      "nome_padrao": "VLDL (Very Low Density Lipoprotein)",
+      "categoria": "PERFIL LIPÍDICO",
+      "sinonimos": [
+        "VLDL",
+        "VLDL Colesterol",
+        "VLDL-C"
+      ]
+    },
+    {
+      "nome_padrao": "HDL (High Density Lipoproteins)",
+      "categoria": "PERFIL LIPÍDICO",
+      "sinonimos": [
+        "HDL",
+        "Colesterol HDL",
+        "HDL Colesterol",
+        "HDL-C"
+      ]
+    },
+    {
+      "nome_padrao": "TG (Triglicérides)",
+      "categoria": "PERFIL LIPÍDICO",
+      "sinonimos": [
+        "Triglicérides",
+        "TG",
+        "Triglicerídeos",
+        "Triglycerides"
+      ]
+    },
+    {
+      "nome_padrao": "RELAÇÃO TG/HDL",
+      "categoria": "PERFIL LIPÍDICO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "RELAÇÃO CT/HDL",
+      "categoria": "PERFIL LIPÍDICO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "NÃO-HDL",
+      "categoria": "PERFIL LIPÍDICO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "LDL PEQUENO",
+      "categoria": "CONCENTRAÇÃO DE PARTÍCULAS LDL",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "LDL MÉDIO",
+      "categoria": "CONCENTRAÇÃO DE PARTÍCULAS LDL",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "HDL GRANDE",
+      "categoria": "CONCENTRAÇÃO DE PARTÍCULAS LDL",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PADRÃO DE LDL A/B",
+      "categoria": "CONCENTRAÇÃO DE PARTÍCULAS LDL",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "LDL OX/HDL",
+      "categoria": "TAMANHO DO PICO DE LDL",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "LDL OXIDADO: (mmol/l)",
+      "categoria": "TAMANHO DO PICO DE LDL",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI-LDL-OXIDADO: (VR DE 100 A 700 MU/ML)",
+      "categoria": "TAMANHO DO PICO DE LDL",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "URÉIA",
+      "categoria": "FUNÇÃO RENAL",
+      "sinonimos": [
+        "Ureia",
+        "Uréia",
+        "BUN",
+        "Blood Urea Nitrogen"
+      ]
+    },
+    {
+      "nome_padrao": "CREATININA",
+      "categoria": "FUNÇÃO RENAL",
+      "sinonimos": [
+        "Creatinina",
+        "Creat",
+        "Cr"
+      ]
+    },
+    {
+      "nome_padrao": "TFG CKD - EPI",
+      "categoria": "FUNÇÃO RENAL",
+      "sinonimos": [
+        "Taxa de Filtração Glomerular",
+        "TFG",
+        "TFG CKD-EPI",
+        "eGFR",
+        "RFG"
+      ]
+    },
+    {
+      "nome_padrao": "ÁCIDO ÚRICO",
+      "categoria": "FUNÇÃO HEPÁTICA",
+      "sinonimos": [
+        "Ácido Úrico",
+        "Uric Acid",
+        "Urato"
+      ]
+    },
+    {
+      "nome_padrao": "TGO /AST - H<40 M<33",
+      "categoria": "FUNÇÃO HEPÁTICA",
+      "sinonimos": [
+        "TGO",
+        "AST",
+        "Transaminase Oxalacética",
+        "SGOT",
+        "TGO/AST"
+      ]
+    },
+    {
+      "nome_padrao": "FA (Fosfatase Alcalina)",
+      "categoria": "TGP /ALT  - H<58 M<41",
+      "sinonimos": [
+        "Fosfatase Alcalina",
+        "FA",
+        "ALP",
+        "Fosfatase"
+      ]
+    },
+    {
+      "nome_padrao": "GGT - H<73 M<38",
+      "categoria": "TGP /ALT  - H<58 M<41",
+      "sinonimos": [
+        "GGT",
+        "Gama GT",
+        "Gama Glutamil Transferase",
+        "Gamma GT"
+      ]
+    },
+    {
+      "nome_padrao": "BBD (Bilirrubina Direta)",
+      "categoria": "TGP /ALT  - H<58 M<41",
+      "sinonimos": [
+        "Bilirrubina Direta",
+        "BBD",
+        "BD"
+      ]
+    },
+    {
+      "nome_padrao": "BBI (Bilirrubina Indireta)",
+      "categoria": "TGP /ALT  - H<58 M<41",
+      "sinonimos": [
+        "Bilirrubina Indireta",
+        "BBI",
+        "BI"
+      ]
+    },
+    {
+      "nome_padrao": "RNI",
+      "categoria": "TGP /ALT  - H<58 M<41",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PTT",
+      "categoria": "TGP /ALT  - H<58 M<41",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "GLOBULINAS",
+      "categoria": "TGP /ALT  - H<58 M<41",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ALBUMINA",
+      "categoria": "TGP /ALT  - H<58 M<41",
+      "sinonimos": [
+        "Albumina",
+        "Alb",
+        "Albumin"
+      ]
+    },
+    {
+      "nome_padrao": "Na",
+      "categoria": "IONOGRAMA E BIOQUÍMICA DO CÁLCIO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "Mg",
+      "categoria": "IONOGRAMA E BIOQUÍMICA DO CÁLCIO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PTH",
+      "categoria": "IONOGRAMA E BIOQUÍMICA DO CÁLCIO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "OSTEOCALCINA",
+      "categoria": "IONOGRAMA E BIOQUÍMICA DO CÁLCIO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CTX (Telopeptídeo C-terminal do colágeno tipo 1)",
+      "categoria": "IONOGRAMA E BIOQUÍMICA DO CÁLCIO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "Cai (Cálcio Iônico)",
+      "categoria": "IONOGRAMA E BIOQUÍMICA DO CÁLCIO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CaT (Cálcio Total)",
+      "categoria": "IONOGRAMA E BIOQUÍMICA DO CÁLCIO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CÁLCIO CORRIGIDO",
+      "categoria": "IONOGRAMA E BIOQUÍMICA DO CÁLCIO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "FÓSFORO",
+      "categoria": "IONOGRAMA E BIOQUÍMICA DO CÁLCIO",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "URINA ROTINA:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "URINA 24H:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CITRATO:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "OXALATO:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "URATO:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CÁLCIO:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "SÓDIO:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "NORMETANEFRINA:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "METANEFRINA:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ADRENALINA:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "EPINEFRINA:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "NOREPINEFRINA:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "NORADRENALINA:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "DOPAMINA:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ÁCIDO 5-OH IA:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "5-HIAA:",
+      "categoria": "EXAMES DE URINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "LEVOTIROXINA",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "T3 SLOW RELEASE",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "TSH",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "sinonimos": [
+        "TSH",
+        "Hormônio Tireoestimulante",
+        "TSH Ultra Sensível",
+        "Tireotropina"
+      ]
+    },
+    {
+      "nome_padrao": "T4 LIVRE",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "sinonimos": [
+        "T4 Livre",
+        "T4L",
+        "Free T4",
+        "Tiroxina Livre"
+      ]
+    },
+    {
+      "nome_padrao": "T4 TOTAL",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "sinonimos": [
+        "T4 Total",
+        "T4",
+        "Tiroxina"
+      ]
+    },
+    {
+      "nome_padrao": "T3 TOTAL (0,6-1,76)",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "sinonimos": [
+        "T3 Total",
+        "T3",
+        "Triiodotironina"
+      ]
+    },
+    {
+      "nome_padrao": "T3 LIVRE (2,3-4,54)",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "sinonimos": [
+        "T3 Livre",
+        "T3L",
+        "Free T3",
+        "Triiodotironina Livre"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-TPO",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI-TG",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "TIREOGLOBULINA",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "TRAb",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "DOSE DE ESTRADIOL",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "DOSE DE ESTRIOL",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "DOSE DE PROGESTERONA",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "DOSE DE TESTOSTERONA",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "LH",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "FSH",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ESTRADIOL",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": [
+        "Estradiol",
+        "E2",
+        "17-Beta Estradiol",
+        "Estradiol, 17 Beta"
+      ]
+    },
+    {
+      "nome_padrao": "ESTRONA",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PROGESTERONA",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": [
+        "Progesterona",
+        "Prog",
+        "P4"
+      ]
+    },
+    {
+      "nome_padrao": "DHEA (Dehidroepiandrosterona)",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": [
+        "DHEA",
+        "Dehidroepiandrosterona",
+        "DHEA-S"
+      ]
+    },
+    {
+      "nome_padrao": "SDHEA (Sulfato de Dehidroepiandrosterona)",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": [
+        "SDHEA",
+        "DHEA-S",
+        "S-DHEA",
+        "Sulfato de DHEA"
+      ]
+    },
+    {
+      "nome_padrao": "DHT (Dihidrotestosterona)",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "TESTOSTERONA TOTAL",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": [
+        "Testosterona Total",
+        "Testosterona",
+        "Testosterone Total"
+      ]
+    },
+    {
+      "nome_padrao": "TESTOSTERONA LIVRE",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": [
+        "Testosterona Livre",
+        "Free Testosterone",
+        "Testosterona Livre Calculada"
+      ]
+    },
+    {
+      "nome_padrao": "SHBG",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "IGF-1",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PRL TOTAL",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PRL DILUIDA",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "MACRO PRL",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PSA TOTAL",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": [
+        "PSA Total",
+        "PSA",
+        "Antígeno Prostático"
+      ]
+    },
+    {
+      "nome_padrao": "PSA LIVRE",
+      "categoria": "HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS",
+      "sinonimos": [
+        "PSA Livre",
+        "Free PSA",
+        "PSA Free"
+      ]
+    },
+    {
+      "nome_padrao": "CORTISOL SALIVAR 12H",
+      "categoria": "CORTISOL SALIVAR ACORDAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CORTISOL SALIVAR 17H",
+      "categoria": "CORTISOL SALIVAR ACORDAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CORTISOL SALIVAR 23H",
+      "categoria": "CORTISOL SALIVAR ACORDAR",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "HEMOGRAMA",
+      "categoria": "CORTISOL POS DEXA VR<1,8",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "Hgb: (Hemoglobina)",
+      "categoria": "CORTISOL POS DEXA VR<1,8",
+      "sinonimos": [
+        "Hemoglobina",
+        "Hgb",
+        "Hb",
+        "Hemoglobin"
+      ]
+    },
+    {
+      "nome_padrao": "HTC: (Hematócrito)",
+      "categoria": "CORTISOL POS DEXA VR<1,8",
+      "sinonimos": [
+        "Hematócrito",
+        "HTC",
+        "Ht",
+        "Hematocrit"
+      ]
+    },
+    {
+      "nome_padrao": "VCM: (Volume Corpuscular Médio)",
+      "categoria": "CORTISOL POS DEXA VR<1,8",
+      "sinonimos": [
+        "VCM",
+        "MCV",
+        "Volume Corpuscular Médio"
+      ]
+    },
+    {
+      "nome_padrao": "CHCM: (Concentração da Hemoglobina Corpuscular Média)",
+      "categoria": "CORTISOL POS DEXA VR<1,8",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "RDW: (Red Cell Distribution Width)",
+      "categoria": "CORTISOL POS DEXA VR<1,8",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "GL: (Global Leucócitos)",
+      "categoria": "CORTISOL POS DEXA VR<1,8",
+      "sinonimos": [
+        "Leucócitos",
+        "GL",
+        "WBC",
+        "Glóbulos Brancos"
+      ]
+    },
+    {
+      "nome_padrao": "NEUTRÓFILOS: (no absoluto)",
+      "categoria": "CORTISOL POS DEXA VR<1,8",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "LINFOCITOS: (no absoluto)",
+      "categoria": "CORTISOL POS DEXA VR<1,8",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PTL: (Plaquetas)",
+      "categoria": "CORTISOL POS DEXA VR<1,8",
+      "sinonimos": [
+        "Plaquetas",
+        "PTL",
+        "Platelets",
+        "Contagem de Plaquetas"
+      ]
+    },
+    {
+      "nome_padrao": "Reticulócitos",
+      "categoria": "BETA 2 MICROGLOBULINA:",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PSOF: (Sangue Oculto nas Fezes)",
+      "categoria": "BETA 2 MICROGLOBULINA:",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "G6PD",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CEA (antígeno carcinoembrionário)",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CA 15-3",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CA 19-9",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CA 125",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CA 72-4",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CA 27-29 (MAMA)",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ALFAFETOPROTEINA",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "INTERLEUCINA IL - 12",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PKM2 (Marcador do Efeito Walburg)",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PROTEÍNA MMP2 (MAMA) (Indica risco de metástase)",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "SCC - AG EM CÂNCER DE CÉLULAS ESCAMOSAS CERVICAIS (COLO DE ÚTERO)",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "FERRITINA",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": [
+        "Ferritina",
+        "Ferritin",
+        "Ferritina Sérica"
+      ]
+    },
+    {
+      "nome_padrao": "LDH (Desidrogenase Lática)",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "Glicemia de Jejum",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ALBUMINA",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": [
+        "Albumina",
+        "Alb",
+        "Albumin"
+      ]
+    },
+    {
+      "nome_padrao": "PCR ULTRA SENSÍVEL",
+      "categoria": "MARCADORES TUMORAIS E OUTROS",
+      "sinonimos": [
+        "PCR",
+        "Proteína C Reativa",
+        "PCR Ultrassensível",
+        "hs-CRP",
+        "CRP"
+      ]
+    },
+    {
+      "nome_padrao": "KD ABC SCORE GLICOSE",
+      "categoria": "KD ABC SCORE ALBUMINA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "KD ABC SCORE",
+      "categoria": "KD ABC SCORE PROT C REAT",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PIRUVATO KINASE ERITROCITARIA (PKE)",
+      "categoria": "KD ABC SCORE PROT C REAT",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "PIRUVATO mmol/l",
+      "categoria": "KD ABC SCORE PROT C REAT",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "LACTATO mmol/l",
+      "categoria": "KD ABC SCORE PROT C REAT",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CHUMBO",
+      "categoria": "METAIS PESADOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "MERCURIO",
+      "categoria": "METAIS PESADOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CÁDMIO",
+      "categoria": "METAIS PESADOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ALUMÍNIO",
+      "categoria": "METAIS PESADOS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI GLIADINA IGA",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI GLIADINA IGG",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI-TTG IGA",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI-TTG IGG",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI-ENDOMISIO IGA",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI-ENDOMISIO IGG",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI-GAD",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI-INSULINA",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI-IA2",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI-ILHOTA",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "FAN (Fator Antinúcleo)",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "FATOR REUMATOIDE",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "C-ANCA",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "P-ANCA",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "C3",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "C4",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "CH50",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI HIV",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI HAV",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "HBSAG",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI-HBS",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI-HBC",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI-HCV",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ALFA 1 ANTI-TRIPSINA",
+      "categoria": "ELETROFORESE DE PROTEINAS PLASMÁTICAS",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI LKM 1",
+      "categoria": "ANTICORPOS ANTI MITOCÔNDRIA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANTI MÚSCULO LISO",
+      "categoria": "ANTICORPOS ANTI MITOCÔNDRIA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "L-CARNITINA TOTAL",
+      "categoria": "ANTICORPOS ANTI MITOCÔNDRIA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "L-CARNITINA LIVRE",
+      "categoria": "ANTICORPOS ANTI MITOCÔNDRIA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "L1",
+      "categoria": "DENSITOMETRIA ÓSSEA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "L2",
+      "categoria": "DENSITOMETRIA ÓSSEA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "L3",
+      "categoria": "DENSITOMETRIA ÓSSEA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "L4",
+      "categoria": "DENSITOMETRIA ÓSSEA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "L1-L4",
+      "categoria": "DENSITOMETRIA ÓSSEA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "COLO",
+      "categoria": "DENSITOMETRIA ÓSSEA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "WARDS",
+      "categoria": "DENSITOMETRIA ÓSSEA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "DOPPLER CARÓTIDAS",
+      "categoria": "EXAMES DE IMAGEM",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ECOCARDIOGRAMA",
+      "categoria": "EXAMES DE IMAGEM",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "TESTE ERGOMÉTRICO",
+      "categoria": "EXAMES DE IMAGEM",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ANGIO TC CORONARIAS",
+      "categoria": "EXAMES DE IMAGEM",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ESCORE DE CÁLCIO",
+      "categoria": "EXAMES DE IMAGEM",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ULTRASSOM ABDOME",
+      "categoria": "CINTILOGRAFIA MIOCARDICA",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ULTRASSOM MAMAS",
+      "categoria": "ULTRASSOM ENDOVAGINAL",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "ULTRASSOM AXILAS",
+      "categoria": "ULTRASSOM ENDOVAGINAL",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "MAMOGRAFIA",
+      "categoria": "ULTRASSOM ENDOVAGINAL",
+      "sinonimos": []
+    },
+    {
+      "nome_padrao": "COLONOSCOPIA",
+      "categoria": "ULTRASSOM ENDOVAGINAL",
+      "sinonimos": []
+    }
+  ],
+  "regras_normalizacao": {
+    "remover_caracteres": [
+      ".",
+      ",",
+      ":",
+      ";",
+      "!",
+      "?"
+    ],
+    "converter_minusculas": true,
+    "remover_espacos_extras": true,
+    "remover_acentos": false,
+    "remover_parenteses_descricao": true
+  },
+  "regras_validacao": {
+    "nome_minimo_caracteres": 2,
+    "nome_maximo_caracteres": 150,
+    "permitir_valores_nulos": false,
+    "formatos_data_aceitos": [
+      "DD/MM/YYYY",
+      "YYYY-MM-DD",
+      "DD-MM-YYYY"
+    ],
+    "formato_numero_aceito": "decimal",
+    "separador_decimal": [
+      ",",
+      "."
+    ],
+    "permitir_notacao_cientifica": true
+  },
+  "valores_referencia": {
+    "formato": "string ou range",
+    "exemplos": [
+      "12-15.8",
+      "<5",
+      ">100",
+      "4-5.4",
+      "Negativo",
+      "Não Reagente"
+    ]
+  },
+  "exemplo_payload_lambda": {
+    "paciente_id": "12345",
+    "data_exame": "25/10/2025",
+    "laboratorio": "LACI",
+    "biomarcadores": [
+      {
+        "nome": "Glicemia Jejum",
+        "valor": "95",
+        "unidade": "mg/dL",
+        "referencia": "70-100",
+        "data": "25/10/2025"
+      },
+      {
+        "nome": "Hemoglobina",
+        "valor": "14.5",
+        "unidade": "g/dL",
+        "referencia": "12-15.8",
+        "data": "25/10/2025"
+      }
+    ]
+  },
+  "algoritmo_matching": {
+    "descricao": "Algoritmo para encontrar correspondências entre nomes variados",
+    "passos": [
+      "1. Normalizar nome recebido (remover caracteres especiais, espaços extras)",
+      "2. Buscar correspondência exata no nome padrão",
+      "3. Se não encontrar, buscar nos sinônimos",
+      "4. Se não encontrar, calcular similaridade fuzzy (>= 85%)",
+      "5. Se múltiplas correspondências, retornar erro de ambiguidade",
+      "6. Se nenhuma correspondência, retornar erro de biomarcador não reconhecido"
+    ],
+    "threshold_similaridade": 0.85,
+    "bibliotecas_sugeridas": [
+      "fuzzywuzzy",
+      "rapidfuzz",
+      "jellyfish"
+    ]
+  },
+  "tratamento_duplicatas": {
+    "estrategia": "priority_based",
+    "regras": [
+      "Se mesmo biomarcador aparece múltiplas vezes, usar valor mais recente",
+      "Se biomarcadores são sinônimos, mesclar usando nome padrão",
+      "Se valores conflitantes, sinalizar para revisão manual"
+    ]
+  },
+  "respostas_api": {
+    "sucesso": {
+      "status": 200,
+      "formato": {
+        "success": true,
+        "biomarcadores_processados": 10,
+        "biomarcadores_rejeitados": 0,
+        "warnings": []
+      }
+    },
+    "erro_validacao": {
+      "status": 422,
+      "formato": {
+        "success": false,
+        "erro": "Erro de validação",
+        "detalhes": [
+          {
+            "biomarcador": "Nome do biomarcador",
+            "motivo": "Biomarcador não reconhecido",
+            "sugestoes": [
+              "Nome1",
+              "Nome2"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
