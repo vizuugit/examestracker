@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      biomarker_duplicates: {
+        Row: {
+          biomarker_name: string
+          conflict_type: string
+          conflicting_values: Json
+          created_at: string | null
+          exam_id: string | null
+          id: string
+          resolution_notes: string | null
+          resolved: boolean | null
+        }
+        Insert: {
+          biomarker_name: string
+          conflict_type: string
+          conflicting_values: Json
+          created_at?: string | null
+          exam_id?: string | null
+          id?: string
+          resolution_notes?: string | null
+          resolved?: boolean | null
+        }
+        Update: {
+          biomarker_name?: string
+          conflict_type?: string
+          conflicting_values?: Json
+          created_at?: string | null
+          exam_id?: string | null
+          id?: string
+          resolution_notes?: string | null
+          resolved?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "biomarker_duplicates_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       corrections: {
         Row: {
           ai_value: string | null
@@ -75,12 +116,16 @@ export type Database = {
           id: string
           layman_explanation: string | null
           manually_corrected: boolean | null
+          normalization_confidence: number | null
+          normalization_type: string | null
           observation: string | null
+          original_name: string | null
           possible_causes: Json | null
           reference_max: number | null
           reference_min: number | null
           status: Database["public"]["Enums"]["biomarker_status"]
           unit: string | null
+          validation_warnings: Json | null
           value: string
           value_numeric: number | null
         }
@@ -94,12 +139,16 @@ export type Database = {
           id?: string
           layman_explanation?: string | null
           manually_corrected?: boolean | null
+          normalization_confidence?: number | null
+          normalization_type?: string | null
           observation?: string | null
+          original_name?: string | null
           possible_causes?: Json | null
           reference_max?: number | null
           reference_min?: number | null
           status: Database["public"]["Enums"]["biomarker_status"]
           unit?: string | null
+          validation_warnings?: Json | null
           value: string
           value_numeric?: number | null
         }
@@ -113,12 +162,16 @@ export type Database = {
           id?: string
           layman_explanation?: string | null
           manually_corrected?: boolean | null
+          normalization_confidence?: number | null
+          normalization_type?: string | null
           observation?: string | null
+          original_name?: string | null
           possible_causes?: Json | null
           reference_max?: number | null
           reference_min?: number | null
           status?: Database["public"]["Enums"]["biomarker_status"]
           unit?: string | null
+          validation_warnings?: Json | null
           value?: string
           value_numeric?: number | null
         }
@@ -304,6 +357,47 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      rejected_biomarkers: {
+        Row: {
+          created_at: string | null
+          exam_id: string | null
+          id: string
+          original_name: string
+          original_value: string | null
+          rejection_reason: string
+          similarity_score: number | null
+          suggestions: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          exam_id?: string | null
+          id?: string
+          original_name: string
+          original_value?: string | null
+          rejection_reason: string
+          similarity_score?: number | null
+          suggestions?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          exam_id?: string | null
+          id?: string
+          original_name?: string
+          original_value?: string | null
+          rejection_reason?: string
+          similarity_score?: number | null
+          suggestions?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rejected_biomarkers_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { deduplicateExams } from "@/utils/examDeduplication";
 import { normalizeBiomarkerWithTable } from "@/utils/biomarkerNormalization";
 import { normalizeHematologicalValue, calculateAbsoluteReference } from "@/utils/valueNormalizer";
+import { biomarkerNormalizationService } from "@/services/BiomarkerNormalizationService";
 
 const EDGE_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/aws-proxy`;
 
@@ -474,7 +475,7 @@ export function useExamUpload() {
         throw updateError;
       }
 
-      // 🔍 PASSO 2: Deduplicar e inserir biomarcadores
+      // 🔍 PASSO 2: Normalizar e inserir biomarcadores
       if (awsData.exames && awsData.exames.length > 0) {
         const originalCount = awsData.exames.length;
         
@@ -484,36 +485,67 @@ export function useExamUpload() {
         
         console.log(`[syncExamToSupabase] 📊 Biomarcadores: ${originalCount} → ${dedupedExams.length} (${removedCount} duplicata${removedCount !== 1 ? 's' : ''} removida${removedCount !== 1 ? 's' : ''})`);
         
+        // 🆕 NORMALIZAR BIOMARCADORES COM O NOVO SERVIÇO
+        console.log('[syncExamToSupabase] 🔄 Normalizando biomarcadores...');
+        const validationResult = biomarkerNormalizationService.validatePayload({
+          biomarcadores: dedupedExams.map(b => ({
+            nome: b.nome,
+            valor: b.resultado,
+            unidade: b.unidade,
+            referencia: `${b.referencia_min || ''}-${b.referencia_max || ''}`,
+          })),
+          data_exame: dadosBasicos.data_exame,
+        });
+
+        console.log(`[syncExamToSupabase] ✅ Normalização concluída:`);
+        console.log(`  - Processados: ${validationResult.stats.processed}`);
+        console.log(`  - Rejeitados: ${validationResult.stats.rejected}`);
+        console.log(`  - Exact: ${validationResult.stats.exactMatches}`);
+        console.log(`  - Synonym: ${validationResult.stats.synonymMatches}`);
+        console.log(`  - Fuzzy: ${validationResult.stats.fuzzyMatches}`);
+
         // Find total leukocytes for absolute value calculations
-        const leucocitosData = dedupedExams.find((b) => 
+        const leucocitosData = validationResult.processedBiomarkers.find((b) => 
+          b.normalizedName && (
+            b.normalizedName.toLowerCase().includes('leucócito') ||
+            b.normalizedName.toLowerCase().includes('leucocito') ||
+            b.normalizedName.toLowerCase() === 'wbc'
+          ) && b.unit !== '%'
+        );
+        
+        // Get original exam data for leukocyte value
+        const leucocitosOriginal = dedupedExams.find((b) => 
           b.nome && (
             b.nome.toLowerCase().includes('leucócito') ||
             b.nome.toLowerCase().includes('leucocito') ||
             b.nome.toLowerCase() === 'wbc'
           ) && b.unidade !== '%'
         );
-        const leucocitosTotal = leucocitosData ? parseFloat(leucocitosData.resultado) : null;
+        const leucocitosTotal = leucocitosOriginal ? parseFloat(leucocitosOriginal.resultado) : null;
         console.log('[syncExamToSupabase] Total leukocytes found:', leucocitosTotal);
         
-        const biomarkers = dedupedExams.map((b) => {
-          const normalizedInfo = normalizeBiomarkerWithTable(b.nome);
-          const biomarkerName = normalizedInfo?.normalizedName || b.nome;
-          const category = normalizedInfo?.category || b.categoria;
+        const biomarkers = validationResult.processedBiomarkers.map((match) => {
+          // Find original exam data
+          const originalExam = dedupedExams.find(e => e.nome === match.originalName);
+          if (!originalExam) {
+            console.warn(`[syncExamToSupabase] Original exam not found for: ${match.originalName}`);
+            return null;
+          }
           
           // Parse original value once
-          const originalValue = typeof b.resultado === 'string' 
-            ? parseFloat(b.resultado.replace(',', '.'))
-            : b.resultado;
+          const originalValue = typeof originalExam.resultado === 'string' 
+            ? parseFloat(originalExam.resultado.replace(',', '.'))
+            : originalExam.resultado;
           
           // Normalize large values (like hemácias)
           const { normalizedValue, normalizedUnit } = normalizeHematologicalValue(
-            b.resultado,
-            biomarkerName,
-            b.unidade
+            originalExam.resultado,
+            match.normalizedName,
+            match.unit
           );
           
           let valueNumeric: number | null = normalizedValue;
-          let finalUnit = normalizedUnit || b.unidade;
+          let finalUnit = normalizedUnit || match.unit;
           
           // If normalization didn't work, use the parsed original
           if (valueNumeric === originalValue || (typeof valueNumeric === 'number' && isNaN(valueNumeric))) {
@@ -521,32 +553,36 @@ export function useExamUpload() {
           }
 
           // Normalize reference values if the main value was normalized
-          let normalizedRefMin = b.referencia_min;
-          let normalizedRefMax = b.referencia_max;
+          let normalizedRefMin = originalExam.referencia_min;
+          let normalizedRefMax = originalExam.referencia_max;
           
           // If the value was normalized (changed), normalize references too
           if (valueNumeric !== null && !isNaN(originalValue) && valueNumeric !== originalValue && originalValue > 0) {
             const normalizationFactor = valueNumeric / originalValue;
-            normalizedRefMin = b.referencia_min ? b.referencia_min * normalizationFactor : null;
-            normalizedRefMax = b.referencia_max ? b.referencia_max * normalizationFactor : null;
+            normalizedRefMin = originalExam.referencia_min ? originalExam.referencia_min * normalizationFactor : null;
+            normalizedRefMax = originalExam.referencia_max ? originalExam.referencia_max * normalizationFactor : null;
           }
 
           return {
             exam_id: examId,
-            biomarker_name: biomarkerName,
-            category: category,
-            value: String(b.resultado),
+            biomarker_name: match.normalizedName,
+            category: match.category,
+            value: String(originalExam.resultado),
             value_numeric: valueNumeric,
             unit: finalUnit,
             reference_min: normalizedRefMin,
             reference_max: normalizedRefMax,
-            status: b.status as "normal" | "alto" | "baixo" | "alterado",
-            observation: b.observacao || null,
-            deviation_percentage: b.desvio_percentual,
-            layman_explanation: b.explicacao_leiga,
-            possible_causes: b.possiveis_causas_alteracao,
+            status: originalExam.status as "normal" | "alto" | "baixo" | "alterado",
+            observation: originalExam.observacao || null,
+            deviation_percentage: originalExam.desvio_percentual,
+            layman_explanation: originalExam.explicacao_leiga,
+            possible_causes: originalExam.possiveis_causas_alteracao,
+            // 🆕 Campos de auditoria
+            original_name: match.originalName,
+            normalization_confidence: match.confidence,
+            normalization_type: match.matchType,
           };
-        });
+        }).filter(Boolean);
         
         // Calculate absolute values for leukogram cells (neutrophils, lymphocytes, etc.)
         if (leucocitosTotal) {
@@ -561,12 +597,18 @@ export function useExamUpload() {
               const percentValue = parseFloat(biomarker.resultado);
               if (!isNaN(percentValue)) {
                 const absoluteValue = (percentValue / 100) * leucocitosTotal;
-                const normalizedInfo = normalizeBiomarkerWithTable(`${biomarker.nome} (Absoluto)`);
+                
+                // Normalize the absolute biomarker name
+                const absoluteNameResult = biomarkerNormalizationService.validatePayload({
+                  biomarcadores: [{ nome: `${biomarker.nome} (Absoluto)`, valor: absoluteValue, unidade: '/mm³' }],
+                });
+                
+                const absoluteMatch = absoluteNameResult.processedBiomarkers[0];
                 
                 biomarkers.push({
                   exam_id: examId,
-                  biomarker_name: normalizedInfo?.normalizedName || `${biomarker.nome} (Absoluto)`,
-                  category: 'hematologico',
+                  biomarker_name: absoluteMatch?.normalizedName || `${biomarker.nome} (Absoluto)`,
+                  category: absoluteMatch?.category || 'hematologico',
                   value: Math.round(absoluteValue).toString(),
                   value_numeric: Math.round(absoluteValue),
                   unit: '/mm³',
@@ -577,6 +619,10 @@ export function useExamUpload() {
                   deviation_percentage: biomarker.desvio_percentual,
                   layman_explanation: biomarker.explicacao_leiga,
                   possible_causes: biomarker.possiveis_causas_alteracao,
+                  // 🆕 Campos de auditoria
+                  original_name: `${biomarker.nome} (Absoluto)`,
+                  normalization_confidence: absoluteMatch?.confidence || null,
+                  normalization_type: absoluteMatch?.matchType || 'manual',
                 });
               }
             }
@@ -595,6 +641,53 @@ export function useExamUpload() {
         }
         
         console.log(`[syncExamToSupabase] ✅ ${biomarkers.length} biomarcadores salvos com sucesso`);
+        
+        // 🆕 SALVAR BIOMARCADORES REJEITADOS
+        if (validationResult.rejectedBiomarkers.length > 0) {
+          console.log(`[syncExamToSupabase] ⚠️ Salvando ${validationResult.rejectedBiomarkers.length} biomarcadores rejeitados...`);
+          
+          const rejectedRecords = validationResult.rejectedBiomarkers.map(rejected => ({
+            exam_id: examId,
+            original_name: rejected.originalName,
+            original_value: dedupedExams.find(e => e.nome === rejected.originalName)?.resultado || null,
+            rejection_reason: rejected.reason,
+            suggestions: rejected.suggestions,
+            similarity_score: rejected.similarity || null,
+          }));
+          
+          const { error: rejectedError } = await supabase
+            .from('rejected_biomarkers')
+            .insert(rejectedRecords);
+          
+          if (rejectedError) {
+            console.error('[syncExamToSupabase] ❌ Erro ao salvar biomarcadores rejeitados:', rejectedError);
+          } else {
+            console.log(`[syncExamToSupabase] ✅ ${rejectedRecords.length} biomarcadores rejeitados registrados`);
+          }
+        }
+        
+        // 🆕 REGISTRAR DUPLICATAS DETECTADAS
+        if (validationResult.duplicates.length > 0) {
+          console.log(`[syncExamToSupabase] ⚠️ Salvando ${validationResult.duplicates.length} duplicatas detectadas...`);
+          
+          const duplicateRecords = validationResult.duplicates.map(dup => ({
+            exam_id: examId,
+            biomarker_name: dup.biomarkerName,
+            conflict_type: dup.conflictType,
+            conflicting_values: dup.values,
+            resolved: !dup.requiresManualReview,
+          }));
+          
+          const { error: duplicateError } = await supabase
+            .from('biomarker_duplicates')
+            .insert(duplicateRecords);
+          
+          if (duplicateError) {
+            console.error('[syncExamToSupabase] ❌ Erro ao salvar duplicatas:', duplicateError);
+          } else {
+            console.log(`[syncExamToSupabase] ✅ ${duplicateRecords.length} duplicatas registradas`);
+          }
+        }
       }
       
       // ✅ Liberar flag de sincronização
