@@ -32,6 +32,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, TrendingUp, TrendingDown, CheckCircle, Brain, Loader2 } from "lucide-react";
 import { categorizeBiomarker, getCategoryColor } from "@/utils/biomarkerCategories";
+import { getCategoryOrder, getBiomarkerOrder } from "@/utils/biomarkerDisplayOrder";
 import { useExamAnalysis } from "@/hooks/useExamAnalysis";
 
 interface ExamResultsDialogProps {
@@ -99,6 +100,23 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
     });
   }, [examData, categoryFilter, statusFilter, searchQuery]);
 
+  // Agrupar resultados por categoria
+  const groupedResults = useMemo(() => {
+    const grouped = filteredResults.reduce((acc, result) => {
+      const category = categorizeBiomarker(result.biomarker_name);
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(result);
+      return acc;
+    }, {} as Record<string, typeof filteredResults>);
+    
+    // Ordenar categorias
+    return Object.entries(grouped).sort((a, b) => {
+      const orderA = getCategoryOrder(a[0]);
+      const orderB = getCategoryOrder(b[0]);
+      return orderA - orderB;
+    });
+  }, [filteredResults]);
+
   const stats = useMemo(() => {
     if (!examData?.results) return { total: 0, normal: 0, altered: 0 };
     
@@ -113,21 +131,21 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
     switch (status) {
       case "normal":
         return (
-          <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+          <Badge className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
             <CheckCircle className="w-3 h-3 mr-1" />
             Normal
           </Badge>
         );
       case "alto":
         return (
-          <Badge className="bg-red-500/20 text-red-400 border-red-500/30">
+          <Badge className="bg-red-50 text-red-700 border-red-200 hover:bg-red-100">
             <TrendingUp className="w-3 h-3 mr-1" />
             Alto
           </Badge>
         );
       case "baixo":
         return (
-          <Badge className="bg-red-500/20 text-red-400 border-red-500/30">
+          <Badge className="bg-red-50 text-red-700 border-red-200 hover:bg-red-100">
             <TrendingDown className="w-3 h-3 mr-1" />
             Baixo
           </Badge>
@@ -139,29 +157,29 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] max-w-6xl max-h-[90vh] overflow-hidden flex flex-col bg-gradient-to-br from-rest-black via-rest-charcoal to-rest-black border-white/10">
-        <DialogHeader>
-          <DialogTitle className="text-2xl text-white">
+      <DialogContent className="w-[95vw] max-w-6xl max-h-[90vh] overflow-hidden flex flex-col bg-white border border-gray-200">
+        <DialogHeader className="bg-gradient-to-br from-gray-50 via-white to-gray-50 border-b-2 border-gray-100 -mx-6 -mt-6 px-6 pt-6 pb-4">
+          <DialogTitle className="text-2xl text-gray-900 font-bold">
             📊 Resultados do Exame
           </DialogTitle>
           {examData?.exam && (
-            <div className="text-sm text-white/70 space-y-1">
-              <p>
+            <div className="text-sm text-gray-600 space-y-1 mt-2">
+              <p className="font-medium">
                 {examData.exam.laboratory} | {new Date(examData.exam.exam_date).toLocaleDateString("pt-BR")}
               </p>
-              <p>
+              <p className="text-gray-500">
                 {stats.total} biomarcadores | {stats.normal} normais | {stats.altered} alterados
               </p>
             </div>
           )}
         </DialogHeader>
 
-        <Tabs defaultValue="results" className="flex-1 overflow-hidden flex flex-col">
-          <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10">
-            <TabsTrigger value="results" className="data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/70">
+        <Tabs defaultValue="results" className="flex-1 overflow-hidden flex flex-col mt-4">
+          <TabsList className="grid w-full grid-cols-2 bg-gray-100 border border-gray-200">
+            <TabsTrigger value="results" className="data-[state=active]:bg-white data-[state=active]:text-gray-900 text-gray-600 font-medium">
               📊 Resultados
             </TabsTrigger>
-            <TabsTrigger value="insights" className="data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/70">
+            <TabsTrigger value="insights" className="data-[state=active]:bg-white data-[state=active]:text-gray-900 text-gray-600 font-medium">
               🧠 Insights
             </TabsTrigger>
           </TabsList>
@@ -170,45 +188,45 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
             {/* Filtros */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-white/50" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="Buscar biomarcador..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 bg-white/5 border-white/20 text-white placeholder:text-white/50"
+                  className="pl-9 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                 />
               </div>
 
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="bg-white/5 border-white/20 text-white">
+                <SelectTrigger className="bg-white border-gray-300 text-gray-900">
                   <SelectValue placeholder="Todas as categorias" />
                 </SelectTrigger>
-                <SelectContent className="bg-rest-charcoal border-white/10">
-                  <SelectItem value="all" className="text-white hover:bg-white/10 focus:bg-white/10">Todas as categorias</SelectItem>
-                  <SelectItem value="cardiovascular" className="text-white hover:bg-white/10 focus:bg-white/10">Cardiovascular</SelectItem>
-                  <SelectItem value="metabolico" className="text-white hover:bg-white/10 focus:bg-white/10">Metabólico</SelectItem>
-                  <SelectItem value="hematologico" className="text-white hover:bg-white/10 focus:bg-white/10">Hematológico</SelectItem>
-                  <SelectItem value="hormonal" className="text-white hover:bg-white/10 focus:bg-white/10">Hormonal</SelectItem>
-                  <SelectItem value="renal" className="text-white hover:bg-white/10 focus:bg-white/10">Renal</SelectItem>
-                  <SelectItem value="hepatico" className="text-white hover:bg-white/10 focus:bg-white/10">Hepático</SelectItem>
-                  <SelectItem value="minerais" className="text-white hover:bg-white/10 focus:bg-white/10">Minerais/Vitaminas</SelectItem>
+                <SelectContent className="bg-white border-gray-200">
+                  <SelectItem value="all">Todas as categorias</SelectItem>
+                  <SelectItem value="cardiovascular">Cardiovascular</SelectItem>
+                  <SelectItem value="metabolico">Metabólico</SelectItem>
+                  <SelectItem value="hematologico">Hematológico</SelectItem>
+                  <SelectItem value="hormonal">Hormonal</SelectItem>
+                  <SelectItem value="renal">Renal</SelectItem>
+                  <SelectItem value="hepatico">Hepático</SelectItem>
+                  <SelectItem value="minerais">Minerais/Vitaminas</SelectItem>
                 </SelectContent>
               </Select>
 
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="bg-white/5 border-white/20 text-white">
+                <SelectTrigger className="bg-white border-gray-300 text-gray-900">
                   <SelectValue placeholder="Todos os status" />
                 </SelectTrigger>
-                <SelectContent className="bg-rest-charcoal border-white/10">
-                  <SelectItem value="all" className="text-white hover:bg-white/10 focus:bg-white/10">Todos os status</SelectItem>
-                  <SelectItem value="normal" className="text-white hover:bg-white/10 focus:bg-white/10">Apenas normais</SelectItem>
-                  <SelectItem value="altered" className="text-white hover:bg-white/10 focus:bg-white/10">Apenas alterados</SelectItem>
+                <SelectContent className="bg-white border-gray-200">
+                  <SelectItem value="all">Todos os status</SelectItem>
+                  <SelectItem value="normal">Apenas normais</SelectItem>
+                  <SelectItem value="altered">Apenas alterados</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Tabela */}
-            <div className="flex-1 overflow-y-auto border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm">
+            <div className="flex-1 overflow-y-auto border border-gray-200 rounded-lg bg-white">
               {isLoading ? (
                 <div className="space-y-2 p-4">
                   {[...Array(10)].map((_, i) => (
@@ -217,75 +235,97 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
                 </div>
               ) : (
                 <Table>
-                  <TableHeader className="sticky top-0 bg-white/10 backdrop-blur-sm z-10">
+                  <TableHeader className="sticky top-0 bg-gradient-to-r from-gray-50 to-white border-b-2 border-gray-200 z-10">
                     <TableRow>
-                      <TableHead className="text-white font-bold">Biomarcador</TableHead>
-                      <TableHead className="text-right text-white font-bold">Valor</TableHead>
-                      <TableHead className="text-right text-white font-bold">Referência</TableHead>
-                      <TableHead className="text-center text-white font-bold">Status</TableHead>
+                      <TableHead className="text-gray-900 font-bold">Biomarcador</TableHead>
+                      <TableHead className="text-right text-gray-900 font-bold">Valor</TableHead>
+                      <TableHead className="text-right text-gray-900 font-bold">Referência</TableHead>
+                      <TableHead className="text-center text-gray-900 font-bold">Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredResults.length === 0 ? (
+                    {groupedResults.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={4} className="text-center text-white/70 py-8">
+                        <TableCell colSpan={4} className="text-center text-gray-500 py-8">
                           Nenhum resultado encontrado
                         </TableCell>
                       </TableRow>
                     ) : (
-                      filteredResults.map((result) => {
-                        return (
-                          <TableRow key={result.id} className="border-b border-white/5 hover:bg-white/5">
-                            <TableCell className="font-medium text-white">
-                              {result.biomarker_name}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <span className="text-white font-mono">
-                                {result.value}
-                              </span>
-                              {result.unit && (
-                                <span className="text-white/50 ml-1 text-xs">
-                                  {result.unit}
+                      groupedResults.map(([category, results]) => (
+                        <>
+                          {/* Linha separadora de categoria */}
+                          <TableRow key={`category-${category}`} className="bg-blue-50 border-y-2 border-blue-200">
+                            <TableCell colSpan={4} className="py-3 px-6">
+                              <div className="flex items-center gap-2">
+                                <div className="w-1 h-6 bg-blue-500 rounded-full" />
+                                <span className="font-bold text-blue-700 uppercase tracking-wider text-sm">
+                                  {category}
                                 </span>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <span className={`font-mono text-sm ${
-                                result.reference_min !== null && result.reference_max !== null
-                                  ? 'text-white/70'
-                                  : 'text-white/40 italic'
-                              }`}>
-                                {result.reference_min !== null && result.reference_max !== null
-                                  ? `${result.reference_min} - ${result.reference_max}`
-                                  : "N/A"}
-                              </span>
-                            </TableCell>
-                            <TableCell className="text-center">
-                              {getStatusBadge(result.status)}
+                              </div>
                             </TableCell>
                           </TableRow>
-                        );
-                      })
+                          
+                          {/* Biomarcadores da categoria (ordenados) */}
+                          {results
+                            .sort((a, b) => {
+                              const orderA = getBiomarkerOrder(category, a.biomarker_name);
+                              const orderB = getBiomarkerOrder(category, b.biomarker_name);
+                              return orderA - orderB;
+                            })
+                            .map((result) => (
+                              <TableRow key={result.id} className="border-b border-gray-100 hover:bg-gray-50">
+                                <TableCell className="font-medium text-gray-900">
+                                  {result.biomarker_name}
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <span className="text-gray-900 font-mono">
+                                    {result.value}
+                                  </span>
+                                  {result.unit && (
+                                    <span className="text-gray-500 ml-1 text-xs">
+                                      {result.unit}
+                                    </span>
+                                  )}
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <span className={`font-mono text-sm ${
+                                    result.reference_min !== null && result.reference_max !== null
+                                      ? 'text-gray-600'
+                                      : 'text-gray-400 italic'
+                                  }`}>
+                                    {result.reference_min !== null && result.reference_max !== null
+                                      ? `${result.reference_min} - ${result.reference_max}`
+                                      : "N/A"}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  {getStatusBadge(result.status)}
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          }
+                        </>
+                      ))
                     )}
                   </TableBody>
                 </Table>
               )}
             </div>
 
-            <div className="text-xs text-white/70 text-center">
+            <div className="text-xs text-gray-600 text-center">
               Mostrando {filteredResults.length} de {stats.total} biomarcadores
             </div>
           </TabsContent>
 
           <TabsContent value="insights" className="flex-1 overflow-auto mt-4">
             {examData?.exam && !examData.exam.health_score && (
-              <Card className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-purple-500/20">
+              <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
                 <CardContent className="py-8 text-center">
-                  <Brain className="w-16 h-16 mx-auto mb-4 text-purple-400" />
-                  <h3 className="text-xl font-semibold mb-2 text-white">
+                  <Brain className="w-16 h-16 mx-auto mb-4 text-purple-600" />
+                  <h3 className="text-xl font-semibold mb-2 text-gray-900">
                     Insights Clínicos Não Gerados
                   </h3>
-                  <p className="text-sm text-white/70 mb-6 max-w-md mx-auto">
+                  <p className="text-sm text-gray-600 mb-6 max-w-md mx-auto">
                     Os biomarcadores foram extraídos com sucesso. Clique abaixo para gerar uma análise clínica detalhada com IA.
                   </p>
                   <Button 
