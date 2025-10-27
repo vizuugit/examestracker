@@ -117,7 +117,9 @@ export function ExamInsightsPanel({ exam }: ExamInsightsPanelProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-blue-500" />
+              <div className="w-5 h-5 rounded-full bg-gradient-to-r from-rest-blue to-rest-cyan flex items-center justify-center">
+                <Activity className="w-3 h-3 text-white" />
+              </div>
               Áreas que Requerem Atenção
             </CardTitle>
           </CardHeader>
