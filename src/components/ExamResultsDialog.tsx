@@ -304,11 +304,11 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
                     groupedResults.map(([category, results]) => (
                       <>
                         {/* Linha separadora de categoria */}
-                        <TableRow key={`category-${category}`} className="bg-gradient-to-r from-blue-50 to-cyan-50 border-y-2 border-blue-200">
+                        <TableRow key={`category-${category}`} className="bg-gradient-to-r from-rest-blue to-rest-cyan border-y-2 border-blue-200">
                           <TableCell colSpan={4} className="py-3 px-6">
                             <div className="flex items-center gap-2">
-                              <div className="w-1 h-6 bg-gradient-to-b from-rest-blue to-rest-cyan rounded-full" />
-                              <span className="font-bold bg-gradient-to-r from-rest-blue to-rest-cyan bg-clip-text text-transparent uppercase tracking-wider text-sm">
+                              <div className="w-1 h-6 bg-white rounded-full" />
+                              <span className="font-bold text-white uppercase tracking-wider text-sm">
                                 {category}
                               </span>
                             </div>
