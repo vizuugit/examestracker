@@ -196,7 +196,7 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
                   placeholder="Buscar biomarcador..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 w-[220px] h-12 bg-white border-2 border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400"
+                  className="pl-9 w-[220px] h-12 bg-white border-2 border-gray-200 hover:border-rest-blue focus:border-rest-blue focus:ring-0 rounded-xl text-gray-900 placeholder:text-gray-400"
                 />
               </div>
 
