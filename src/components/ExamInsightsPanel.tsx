@@ -187,7 +187,7 @@ export function ExamInsightsPanel({ exam }: ExamInsightsPanelProps) {
           </CardHeader>
           <CardContent className="space-y-3">
             {recommendations.map((rec, idx) => (
-              <div key={idx} className="border-l-2 border-primary/30 pl-4 py-2">
+              <div key={idx} className="border-l-2 border-rest-blue/30 pl-4 py-2">
                 <div className="flex items-center gap-2 mb-1">
                   <Badge variant={rec.prioridade === 'urgente' || rec.prioridade === 'alta' ? 'destructive' : 'outline'}>
                     {rec.prioridade}
@@ -211,7 +211,10 @@ export function ExamInsightsPanel({ exam }: ExamInsightsPanelProps) {
             {clinical_analysis.correlacoes_importantes.map((corr, idx) => (
               <div key={idx} className="p-3 bg-muted/50 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
-                  <Badge variant={corr.relevancia_clinica === 'alta' ? 'default' : 'outline'}>
+                  <Badge 
+                    variant={corr.relevancia_clinica === 'alta' ? 'outline' : 'outline'}
+                    className={corr.relevancia_clinica === 'alta' ? 'bg-gradient-to-r from-rest-blue to-rest-cyan text-white border-0' : ''}
+                  >
                     Relevância {corr.relevancia_clinica}
                   </Badge>
                 </div>
