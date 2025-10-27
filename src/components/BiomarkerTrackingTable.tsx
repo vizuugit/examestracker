@@ -498,14 +498,14 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                     {/* Header de Categoria */}
                     <TableRow 
                       key={`category-${category}`}
-                      className="bg-gradient-to-r from-rest-blue/10 to-rest-cyan/5 hover:from-rest-blue/15 hover:to-rest-cyan/10"
+                      className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-blue/90 hover:to-rest-cyan/90 relative"
                     >
                       <TableCell 
                         colSpan={examDates.length + 3}
-                        className="sticky left-0 z-10 font-bold text-rest-blue uppercase tracking-wide text-sm py-3 px-6 border-y-2 border-rest-blue/20"
+                        className="sticky left-0 z-10 font-bold text-white uppercase tracking-wide text-sm py-3 px-6 border-y-2 border-transparent"
                       >
                         <div className="flex items-center gap-2">
-                          <div className="w-1 h-4 bg-rest-blue rounded-full" />
+                          <div className="w-1 h-4 bg-white rounded-full" />
                           {category}
                         </div>
                       </TableCell>
