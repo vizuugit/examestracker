@@ -175,7 +175,11 @@ export const BIOMARKER_REFERENCE_TABLE: Record<string, {
   
   'transferrina': { normalizedName: 'Transferrina', category: 'vitaminas_minerais', unit: 'mg/dL' },
   
-  'indice de saturacao de transferrina': { normalizedName: 'Índice de Saturação de Transferrina', category: 'vitaminas_minerais', unit: '%' },
+  'indice de saturacao de transferrina': { normalizedName: 'Índice de Saturação da Transferrina', category: 'vitaminas_minerais', unit: '%' },
+  'indice de saturacao da transferrina': { normalizedName: 'Índice de Saturação da Transferrina', category: 'vitaminas_minerais', unit: '%' },
+  'saturacao de transferrina': { normalizedName: 'Índice de Saturação da Transferrina', category: 'vitaminas_minerais', unit: '%' },
+  'saturacao da transferrina': { normalizedName: 'Índice de Saturação da Transferrina', category: 'vitaminas_minerais', unit: '%' },
+  'istf': { normalizedName: 'Índice de Saturação da Transferrina', category: 'vitaminas_minerais', unit: '%' },
   
   'capacidade total de ligacao de ferro': { normalizedName: 'Capacidade Total de Ligação de Ferro', category: 'vitaminas_minerais', unit: 'µg/dL' },
   'tibc': { normalizedName: 'Capacidade Total de Ligação de Ferro', category: 'vitaminas_minerais', unit: 'µg/dL' },

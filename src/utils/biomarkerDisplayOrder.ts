@@ -111,7 +111,7 @@ export const BIOMARKER_DISPLAY_ORDER: Record<string, string[]> = {
     'Vitamina D (25-OH)',
     'Zinco',
     'Ácido Fólico',
-    'Índice de Saturação de Transferrina'
+    'Índice de Saturação da Transferrina'
   ],
   marcadores_inflamatorios: [
     'Homocisteína',
