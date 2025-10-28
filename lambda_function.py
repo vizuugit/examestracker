@@ -8,8 +8,10 @@ import os
 import json
 import boto3
 import logging
+import requests
 from decimal import Decimal
 from pathlib import Path
+from datetime import datetime
 from anthropic import Anthropic
 from urllib.parse import unquote_plus
 import google.generativeai as genai
@@ -98,18 +100,90 @@ def convert_decimals_in_dict(obj):
     return obj
 
 def send_webhook_to_supabase(exam_id: str, s3_key: str, status: str, data: dict = None):
-    import requests
+    """
+    Envia webhook para Supabase com estrutura corrigida
+    """
     webhook_url = os.environ.get('WEBHOOK_URL')
     if not webhook_url:
+        logger.warning("⚠️ WEBHOOK_URL não configurada")
         return False
     
-    payload = {'exam_id': exam_id, 's3_key': s3_key, 'status': status}
+    # ✅ CORRIGIDO: Usar nomes corretos (camelCase)
+    payload = {
+        'examId': exam_id,           # ← Mudou de 'exam_id'
+        's3Key': s3_key,             # ← Mudou de 's3_key'
+        'status': 'completed',       # ← Sempre 'completed' para sucesso
+        'processedAt': datetime.utcnow().isoformat() + 'Z'
+    }
+    
     if data:
-        payload['data'] = convert_decimals_in_dict(data)
+        # ✅ Transformar estrutura AWS → estrutura brasileira esperada pelo webhook
+        header = data.get('header', {})
+        biomarkers = data.get('biomarkers', [])
+        
+        payload['data'] = {
+            'dados_basicos': {
+                'paciente': data.get('patient_name', 'N/A'),
+                'data_exame': data.get('timestamp', ''),
+                'data_nascimento': header.get('data_nascimento'),
+                'laboratorio': header.get('laboratorio')
+            },
+            'exames': [
+                {
+                    'nome': b.get('biomarker_name') or b.get('nome') or b.get('exam_name', ''),
+                    'resultado': str(b.get('value') or b.get('valor', '')),
+                    'valor_numerico': b.get('value_numeric') or b.get('valor_numerico'),
+                    'unidade': b.get('unit') or b.get('unidade'),
+                    'valor_referencia_min': b.get('reference_min') or b.get('referencia_min'),
+                    'valor_referencia_max': b.get('reference_max') or b.get('referencia_max'),
+                    'status': b.get('status', 'normal'),
+                    'categoria': b.get('category') or b.get('categoria'),
+                    'percentual_desvio': b.get('deviation_percentage') or b.get('percentual_desvio'),
+                    'observacao': b.get('observation') or b.get('observacao'),
+                    'explicacao_leiga': b.get('layman_explanation') or b.get('explicacao_leiga'),
+                    'causas_possiveis': b.get('possible_causes') or b.get('causas_possiveis'),
+                    'nome_original': b.get('original_name') or b.get('nome_original'),
+                    'tipo_normalizacao': b.get('normalization_type') or b.get('tipo_normalizacao'),
+                    'confianca_normalizacao': b.get('normalization_confidence') or b.get('confianca_normalizacao')
+                }
+                for b in biomarkers
+            ],
+            'biomarcadores_rejeitados': [
+                {
+                    'nome_original': r.get('original_name') or r.get('nome_original', ''),
+                    'motivo_rejeicao': r.get('rejection_reason') or r.get('motivo_rejeicao', ''),
+                    'sugestoes': r.get('suggestions') or r.get('sugestoes', []),
+                    'similaridade': r.get('similarity_score') or r.get('similaridade'),
+                    'valor_original': r.get('original_value') or r.get('valor_original')
+                }
+                for r in data.get('rejected_biomarkers', [])
+            ],
+            'analise_clinica': {},
+            'alertas': [],
+            'tendencias': {},
+            'recomendacoes': []
+        }
+        
+        # Converter Decimals para floats no payload final
+        payload['data'] = convert_decimals_in_dict(payload['data'])
+    
     try:
-        response = requests.post(webhook_url, json=payload, timeout=10)
+        logger.info(f"📤 Sending webhook to: {webhook_url}")
+        logger.info(f"📦 Payload: examId={exam_id}, status={payload['status']}, biomarkers={len(payload.get('data', {}).get('exames', []))}")
+        
+        response = requests.post(webhook_url, json=payload, timeout=30)
+        
+        logger.info(f"✅ Webhook response: {response.status_code}")
+        
+        if response.status_code != 200:
+            logger.error(f"❌ Webhook failed: {response.text}")
+        
         return response.status_code == 200
-    except:
+        
+    except Exception as e:
+        logger.error(f"❌ Webhook error: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
         return False
 
 # ========================================
@@ -253,9 +327,13 @@ def process_exam_main(event: dict) -> dict:
         table.put_item(Item=convert_floats_to_decimal(exam_result))
         logger.info(f"✅ Saved to DynamoDB")
         
-        # 10. Webhook to Supabase
-        send_webhook_to_supabase(exam_id, s3_key, 'success', exam_result)
-        logger.info(f"✅ Webhook sent to Supabase")
+        # 10. Webhook to Supabase (CORRIGIDO)
+        webhook_success = send_webhook_to_supabase(exam_id, s3_key, 'completed', exam_result)
+        
+        if webhook_success:
+            logger.info(f"✅ Webhook sent successfully to Supabase")
+        else:
+            logger.error(f"❌ Webhook failed - exam saved to DynamoDB but not synced to Supabase")
         
         # 11. Cleanup
         if pdf_path:
@@ -264,7 +342,13 @@ def process_exam_main(event: dict) -> dict:
         return {
             'statusCode': 200,
             'headers': {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
-            'body': json.dumps({'success': True, 'exam_id': exam_id, 'biomarkers': len(normalized)})
+            'body': json.dumps({
+                'success': True, 
+                'exam_id': exam_id, 
+                'biomarkers': len(normalized),
+                'rejected': len(rejected),
+                'webhook_sent': webhook_success
+            })
         }
         
     except Exception as e:
