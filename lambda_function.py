@@ -197,6 +197,8 @@ def process_exam_main(event: dict) -> dict:
     Agora com suporte a imagens HEIC e otimização
     """
     pdf_path = None
+    temp_files = []
+    
     try:
         # 1. Parse event (S3 trigger ou API Gateway)
         if 'Records' in event:
@@ -211,6 +213,7 @@ def process_exam_main(event: dict) -> dict:
         
         # 2. Download from S3
         pdf_path = download_from_s3(s3_client, os.environ.get('S3_BUCKET_NAME'), s3_key)
+        temp_files.append(pdf_path)
         filename = s3_key.split('/')[-1]
         
         # Log informações do arquivo
@@ -232,8 +235,8 @@ def process_exam_main(event: dict) -> dict:
                     f.write(jpeg_data)
                 
                 # Update path to use JPEG
-                cleanup_temp_files([pdf_path])
                 pdf_path = jpeg_path
+                temp_files.append(jpeg_path)
                 logger.info(f"✅ HEIC converted successfully")
             except Exception as e:
                 logger.error(f"❌ HEIC conversion failed: {e}")
@@ -265,11 +268,13 @@ def process_exam_main(event: dict) -> dict:
         )
         logger.info(f"✅ Text extracted using: {method}")
         
-        # ✅ VALIDAÇÃO: Se extração falhou, tentar Vision API em imagens
+        # 6. FALLBACK PARA VISION API
         if not extracted_text or method == 'none':
             logger.warning(f"⚠️ Extração primária falhou - tentando fallbacks...")
             
-            # Se for imagem, tentar Vision API
+            file_ext = filename.lower().split('.')[-1]
+            
+            # Fallback 1: Se for imagem, tentar Vision API direto
             if is_image_supported(filename):
                 logger.info(f"🖼️ Tentando extrair texto de imagem via Vision API...")
                 extracted_text = extract_text_from_image_with_vision(pdf_path, gemini_client)
@@ -277,7 +282,44 @@ def process_exam_main(event: dict) -> dict:
                     method = 'gemini-vision'
                     logger.info(f"✅ Vision API: {len(extracted_text)} caracteres extraídos")
             
-            # Se ainda não tem texto, falhar
+            # Fallback 2: Se for PDF, converter para imagem e tentar Vision API
+            elif file_ext == 'pdf' and gemini_client:
+                logger.info(f"📄 Convertendo PDF para imagem e tentando Vision API...")
+                try:
+                    import fitz  # PyMuPDF
+                    
+                    # Abrir PDF
+                    doc = fitz.open(pdf_path)
+                    
+                    if len(doc) > 0:
+                        # Converter primeira página para imagem (2x resolution para melhor OCR)
+                        page = doc[0]
+                        pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+                        
+                        # Salvar como PNG temporariamente
+                        image_path = pdf_path.replace('.pdf', '_page1.png')
+                        pix.save(image_path)
+                        temp_files.append(image_path)
+                        
+                        doc.close()
+                        
+                        logger.info(f'✅ PDF convertido para imagem: {image_path}')
+                        
+                        # Tentar extrair texto com Vision API
+                        extracted_text = extract_text_from_image_with_vision(image_path, gemini_client)
+                        
+                        if extracted_text:
+                            method = 'gemini-vision-from-pdf'
+                            logger.info(f'✅ Vision API extraiu {len(extracted_text)} caracteres do PDF convertido')
+                    else:
+                        logger.error('❌ PDF não tem páginas')
+                    
+                except Exception as e:
+                    logger.error(f'❌ Falha ao converter PDF para imagem: {e}')
+                    import traceback
+                    logger.error(traceback.format_exc())
+            
+            # Validação final
             if not extracted_text:
                 supported_formats = ['PDF', 'DOCX', 'DOC', 'JPG', 'PNG', 'HEIC']
                 raise ValueError(
@@ -286,7 +328,7 @@ def process_exam_main(event: dict) -> dict:
                     f"Método tentado: {method}"
                 )
         
-        # 6. Extract header with cache (usando Gemini Flash)
+        # 7. Extract header with cache (usando Gemini Flash)
         header_data = extract_header_with_cache(
             pdf_path, 
             extracted_text, 
@@ -296,14 +338,14 @@ def process_exam_main(event: dict) -> dict:
         patient_name = header_data.get('paciente') or header_data.get('nome', 'N/A')
         logger.info(f"✅ Header extracted: {patient_name}")
         
-        # 7. Parse biomarkers (Claude Haiku)
+        # 8. Parse biomarkers (Claude Haiku)
         raw_biomarkers = parse_exams_from_text(extracted_text, anthropic_client)
         cleaned = clean_reference_values(raw_biomarkers)
         deduped = deduplicate_exams(cleaned)
         final = assign_biomarker_ids(deduped)
         logger.info(f"✅ Parsed {len(final)} biomarkers")
         
-        # 8. Normalize biomarkers (CORRIGIDO)
+        # 9. Normalize biomarkers
         try:
             # Construir payload no formato correto
             payload = {
@@ -335,7 +377,7 @@ def process_exam_main(event: dict) -> dict:
             normalized = final
             rejected = []
         
-        # 9. Save to DynamoDB (CORRIGIDO)
+        # 10. Save to DynamoDB
         exam_result = {
             'PK': exam_id,                      # ← Chave primária
             'SK': 'EXAM',                       # ← Sort key (ajustar se necessário)
@@ -353,7 +395,7 @@ def process_exam_main(event: dict) -> dict:
         table.put_item(Item=convert_floats_to_decimal(exam_result))
         logger.info(f"✅ Saved to DynamoDB")
         
-        # 10. Webhook to Supabase (CORRIGIDO)
+        # 11. Webhook to Supabase
         webhook_success = send_webhook_to_supabase(exam_id, s3_key, 'completed', exam_result)
         
         if webhook_success:
@@ -361,9 +403,8 @@ def process_exam_main(event: dict) -> dict:
         else:
             logger.error(f"❌ Webhook failed - exam saved to DynamoDB but not synced to Supabase")
         
-        # 11. Cleanup
-        if pdf_path:
-            cleanup_temp_files([pdf_path])
+        # 12. Cleanup
+        cleanup_temp_files(temp_files)
         
         return {
             'statusCode': 200,
@@ -373,7 +414,8 @@ def process_exam_main(event: dict) -> dict:
                 'exam_id': exam_id, 
                 'biomarkers': len(normalized),
                 'rejected': len(rejected),
-                'webhook_sent': webhook_success
+                'webhook_sent': webhook_success,
+                'extraction_method': method
             })
         }
         
@@ -398,8 +440,7 @@ def process_exam_main(event: dict) -> dict:
                 {'error': error_details}
             )
         
-        if pdf_path:
-            cleanup_temp_files([pdf_path])
+        cleanup_temp_files(temp_files)
         
         return {
             'statusCode': 500,
