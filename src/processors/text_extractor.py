@@ -5,7 +5,7 @@ Economia estimada: ~80% em custos de extração
 """
 
 import PyPDF2
-import magic
+import mimetypes
 from docx import Document
 from typing import Optional, Tuple
 from src.config import (
@@ -178,8 +178,19 @@ def extract_text_universal(file_path: str, textract_client, s3_bucket: str, s3_k
         Tuple[texto_extraido, metodo_usado]
     """
     try:
-        # Detectar tipo MIME do arquivo
-        mime_type = magic.from_file(file_path, mime=True)
+        # Detectar tipo MIME pela extensão
+        mime_type, _ = mimetypes.guess_type(file_path)
+        
+        # Fallback: detectar pela extensão manualmente
+        if not mime_type:
+            ext = file_path.lower().split('.')[-1]
+            mime_map = {
+                'pdf': 'application/pdf',
+                'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'doc': 'application/msword'
+            }
+            mime_type = mime_map.get(ext, 'application/octet-stream')
+        
         print(f'🔍 Tipo MIME detectado: {mime_type}')
         
         # PDF: usar estratégia híbrida PyPDF2 → Textract

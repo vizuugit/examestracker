@@ -22,8 +22,7 @@ RUN pip install --no-cache-dir \
     PyPDF2==3.0.1 \
     python-dateutil==2.8.2 \
     google-generativeai==0.8.3 \
-    python-docx==1.1.2 \
-    python-magic-bin==0.4.14
+    python-docx==1.1.2
 
 # Handler
 CMD ["lambda_function.lambda_handler"]
