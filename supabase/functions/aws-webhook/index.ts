@@ -79,12 +79,12 @@ serve(async (req) => {
       );
     }
 
-    const { examId, s3Key, status, data, processedAt } = payload;
+    const { examId, s3Key, status, data, processedAt, filename } = payload;
 
     // Define background task
     const backgroundTask = async () => {
       try {
-        console.log(`Processing webhook for exam ${examId} with status ${status}`);
+        console.log(`Processing webhook for exam ${examId} (filename: ${filename || 'not provided'}) with status ${status}`);
 
         if (status === 'failed') {
           // Update exam status to failed

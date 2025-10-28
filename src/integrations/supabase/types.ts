@@ -194,6 +194,7 @@ export type Database = {
           clinical_analysis: Json | null
           created_at: string | null
           exam_date: string | null
+          filename: string | null
           health_score: number | null
           id: string
           laboratory: string | null
@@ -221,6 +222,7 @@ export type Database = {
           clinical_analysis?: Json | null
           created_at?: string | null
           exam_date?: string | null
+          filename?: string | null
           health_score?: number | null
           id?: string
           laboratory?: string | null
@@ -248,6 +250,7 @@ export type Database = {
           clinical_analysis?: Json | null
           created_at?: string | null
           exam_date?: string | null
+          filename?: string | null
           health_score?: number | null
           id?: string
           laboratory?: string | null

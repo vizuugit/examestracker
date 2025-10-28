@@ -150,6 +150,7 @@ export function useExamUpload() {
       setProgress(20);
 
       // 5. Create exam record in Supabase (status: uploading)
+      // ✅ Deixar o Supabase gerar o UUID automaticamente
       const { data: exam, error: examError } = await supabase
         .from("exams")
         .insert({
@@ -157,13 +158,17 @@ export function useExamUpload() {
           uploaded_by: user.id,
           aws_file_key: s3Key,
           aws_file_name: finalFileName,
+          filename: finalFileName,
           exam_date: examDate?.toISOString().split("T")[0],
           processing_status: "uploading",
         })
         .select()
         .single();
-
+      
       if (examError) throw examError;
+      
+      console.log(`[Upload] ✅ Exame criado com UUID: ${exam.id}`);
+
       setProgress(30);
 
       // 6. Upload para S3 com Content-Type retornado pela AWS

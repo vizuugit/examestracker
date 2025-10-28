@@ -100,7 +100,50 @@ def convert_decimals_in_dict(obj):
         return [convert_decimals_in_dict(item) for item in obj]
     return obj
 
-def send_webhook_to_supabase(exam_id: str, s3_key: str, status: str, data: dict = None):
+def get_exam_uuid_from_supabase(filename: str) -> str:
+    """
+    Busca o UUID do exame no Supabase usando o filename
+    Retorna o UUID se encontrado, caso contrário retorna o filename (fallback)
+    """
+    supabase_url = os.environ.get('SUPABASE_URL', 'https://vmusmbuofkhzmtoqdhqc.supabase.co')
+    supabase_key = os.environ.get('SUPABASE_ANON_KEY')
+    
+    if not supabase_key:
+        logger.warning('⚠️ SUPABASE_ANON_KEY não configurada, usando filename como fallback')
+        return filename
+    
+    try:
+        logger.info(f'🔍 Buscando UUID do exame com filename: {filename}')
+        
+        response = requests.get(
+            f"{supabase_url}/rest/v1/exams",
+            params={"aws_file_name": f"eq.{filename}", "select": "id"},
+            headers={
+                "apikey": supabase_key,
+                "Authorization": f"Bearer {supabase_key}",
+                "Content-Type": "application/json"
+            },
+            timeout=10
+        )
+        
+        if response.status_code != 200:
+            logger.error(f'❌ Erro ao buscar UUID: {response.status_code}')
+            return filename
+        
+        exam_data = response.json()
+        if not exam_data or len(exam_data) == 0:
+            logger.error(f'❌ Nenhum exame encontrado com filename: {filename}')
+            return filename
+        
+        exam_uuid = exam_data[0]['id']
+        logger.info(f'✅ UUID encontrado: {exam_uuid}')
+        return exam_uuid
+        
+    except Exception as e:
+        logger.error(f'❌ Erro ao buscar UUID: {e}')
+        return filename
+
+def send_webhook_to_supabase(exam_id: str, s3_key: str, status: str, data: dict = None, filename: str = None):
     """
     Envia webhook para Supabase com estrutura corrigida
     """
@@ -111,9 +154,10 @@ def send_webhook_to_supabase(exam_id: str, s3_key: str, status: str, data: dict 
     
     # ✅ CORRIGIDO: Usar nomes corretos (camelCase)
     payload = {
-        'examId': exam_id,           # ← Mudou de 'exam_id'
-        's3Key': s3_key,             # ← Mudou de 's3_key'
-        'status': 'completed',       # ← Sempre 'completed' para sucesso
+        'examId': exam_id,           # ← UUID do exame
+        's3Key': s3_key,             # ← Chave S3
+        'filename': filename,         # ← Nome do arquivo original
+        'status': status,             # ← Status (completed/failed)
         'processedAt': datetime.utcnow().isoformat() + 'Z'
     }
     
@@ -203,18 +247,21 @@ def process_exam_main(event: dict) -> dict:
         # 1. Parse event (S3 trigger ou API Gateway)
         if 'Records' in event:
             s3_key = unquote_plus(event['Records'][0]['s3']['object']['key'])
-            exam_id = s3_key.split('/')[-1].split('.')[0]
+            filename = s3_key.split('/')[-1]
+            # ✅ Buscar UUID real do exame no Supabase
+            exam_id = get_exam_uuid_from_supabase(filename)
         else:
             body = json.loads(event.get('body', '{}'))
             s3_key = body.get('s3_key')
             exam_id = body.get('exam_id')
+            filename = s3_key.split('/')[-1] if s3_key else 'unknown'
         
-        logger.info(f"🔄 Processing exam: {exam_id}")
+        logger.info(f"🔄 Processing file: {filename}")
+        logger.info(f"🆔 Exam UUID: {exam_id}")
         
         # 2. Download from S3
         pdf_path = download_from_s3(s3_client, os.environ.get('S3_BUCKET_NAME'), s3_key)
         temp_files.append(pdf_path)
-        filename = s3_key.split('/')[-1]
         
         # Log informações do arquivo
         file_size = os.path.getsize(pdf_path)
@@ -432,7 +479,7 @@ def process_exam_main(event: dict) -> dict:
         logger.info(f"✅ Saved to DynamoDB")
         
         # 11. Webhook to Supabase
-        webhook_success = send_webhook_to_supabase(exam_id, s3_key, 'completed', exam_result)
+        webhook_success = send_webhook_to_supabase(exam_id, s3_key, 'completed', exam_result, filename)
         
         if webhook_success:
             logger.info(f"✅ Webhook sent successfully to Supabase")
@@ -473,7 +520,8 @@ def process_exam_main(event: dict) -> dict:
                 exam_id, 
                 s3_key, 
                 'failed',
-                {'error': error_details}
+                {'error': error_details},
+                filename if 'filename' in locals() else None
             )
         
         cleanup_temp_files(temp_files)
