@@ -311,11 +311,18 @@ def process_exam_main(event: dict) -> dict:
                                 page = doc[page_num]
                                 pix = page.get_pixmap(matrix=fitz.Matrix(1.5, 1.5))
                                 
-                                # Salvar como JPEG com compressão
+                                # Salvar como JPEG com compressão via PIL (controle de qualidade)
                                 image_path = pdf_path.replace('.pdf', f'_page{page_num + 1}.jpg')
-                                pix.save(image_path, 'JPEG', quality=90)
-                                temp_files.append(image_path)
                                 
+                                # Obter bytes e comprimir via PIL
+                                from PIL import Image
+                                import io
+                                
+                                img_bytes = pix.tobytes("jpeg")
+                                img = Image.open(io.BytesIO(img_bytes))
+                                img.save(image_path, format='JPEG', quality=85, optimize=True)
+                                
+                                temp_files.append(image_path)
                                 logger.info(f'✅ Página {page_num + 1} convertida: {image_path}')
                                 
                                 # Extrair texto com Vision API (já comprime internamente)
