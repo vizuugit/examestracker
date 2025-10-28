@@ -9,7 +9,7 @@ import json
 import uuid
 from typing import List, Dict, Any
 from src.config import (
-    CLAUDE_MODEL,
+    CLAUDE_HAIKU_MODEL,
     CLAUDE_MAX_TOKENS,
     CLAUDE_TEMPERATURE,
     EXAM_NAME_SIMILARITY_THRESHOLD
@@ -60,7 +60,7 @@ Retorne APENAS o array JSON, sem texto adicional."""
     
     try:
         message = anthropic_client.messages.create(
-            model=CLAUDE_MODEL,
+            model=CLAUDE_HAIKU_MODEL,
             max_tokens=CLAUDE_MAX_TOKENS,
             temperature=CLAUDE_TEMPERATURE,
             messages=[

@@ -28,10 +28,8 @@ CACHE_TTL_DAYS = 90
 
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 CLAUDE_HAIKU_MODEL = 'claude-3-5-haiku-20241022'
-CLAUDE_VISION_MODEL = 'claude-sonnet-4-20250514'
 
-# Configuração de chamadas Claude
-CLAUDE_MODEL = 'claude-sonnet-4-5'
+# Configuração de chamadas Claude Haiku
 CLAUDE_MAX_TOKENS = 4096
 CLAUDE_TEMPERATURE = 0.3
 
