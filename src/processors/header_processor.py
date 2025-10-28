@@ -7,7 +7,7 @@ Economia estimada: ~15% em chamadas Vision
 import re
 import io
 import base64
-from pdf2image import convert_from_path
+import fitz  # PyMuPDF
 from typing import Dict, Any, Optional
 from src.config import CLAUDE_MODEL
 
@@ -83,17 +83,20 @@ def extract_header_with_vision(pdf_path: str, anthropic_client) -> Dict[str, Any
         Dict com dados do header extraídos
     """
     try:
-        # Converter primeira página para imagem
-        images = convert_from_path(pdf_path, first_page=1, last_page=1, dpi=150)
+        # Converter primeira página para imagem usando PyMuPDF
+        doc = fitz.open(pdf_path)
         
-        if not images:
-            raise Exception('Não foi possível converter PDF para imagem')
+        if len(doc) == 0:
+            raise Exception('PDF não possui páginas')
+        
+        # Renderizar primeira página em alta resolução
+        page = doc[0]
+        pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))  # 2x zoom para melhor qualidade
+        img_bytes = pix.tobytes("png")
+        doc.close()
         
         # Converter para base64
-        img_byte_arr = io.BytesIO()
-        images[0].save(img_byte_arr, format='PNG')
-        img_byte_arr = img_byte_arr.getvalue()
-        img_base64 = base64.b64encode(img_byte_arr).decode('utf-8')
+        img_base64 = base64.b64encode(img_bytes).decode('utf-8')
         
         # Prompt para Claude Vision
         prompt = """Extraia as seguintes informações da primeira página deste laudo de exames:
