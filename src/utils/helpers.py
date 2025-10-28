@@ -4,31 +4,38 @@ Utilitários gerais para download, limpeza e formatação
 """
 
 import os
+import re
 from pathlib import Path
 from typing import List, Dict, Any
 from datetime import datetime
 
 
-def download_from_s3(s3_client, bucket: str, key: str, local_path: str) -> bool:
+def download_from_s3(s3_client, bucket: str, key: str) -> str:
     """
     Download de arquivo do S3
     
     Args:
         s3_client: Cliente boto3 S3
         bucket: Nome do bucket
-        key: Chave do objeto
-        local_path: Caminho local de destino
+        key: Chave do objeto (ex: 'uploads/exam123.pdf')
         
     Returns:
-        bool: True se download bem-sucedido
+        str: Caminho local do arquivo baixado (ex: '/tmp/exam123.pdf')
+        
+    Raises:
+        Exception: Se o download falhar
     """
+    # Extrair nome do arquivo da chave S3
+    filename = key.split('/')[-1]
+    local_path = f'/tmp/{filename}'
+    
     try:
         s3_client.download_file(bucket, key, local_path)
         print(f'📥 Download completo: {key} -> {local_path}')
-        return True
+        return local_path
     except Exception as e:
         print(f'❌ Erro ao baixar {key}: {e}')
-        return False
+        raise Exception(f'Falha ao baixar arquivo do S3: {e}')
 
 
 def cleanup_temp_files(file_paths: List[str]) -> None:
@@ -107,4 +114,3 @@ def calculate_exam_stats(exames: List[Dict[str, Any]]) -> Dict[str, int]:
     return stats
 
 
-import re
