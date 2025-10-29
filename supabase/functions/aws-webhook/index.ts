@@ -137,7 +137,7 @@ serve(async (req) => {
             processed_at: processedAt || new Date().toISOString(),
             updated_at: new Date().toISOString(),
             laboratory: dadosBasicos.laboratorio || null,
-            exam_date: dadosBasicos.data_exame || null,
+            exam_date: parseBrazilianDate(dadosBasicos.data_exame) || null,
             birth_date: parseBrazilianDate(dadosBasicos.data_nascimento) || null,
             patient_name_extracted: dadosBasicos.paciente || null,
             health_score: analiseClin.score_saude || null,
