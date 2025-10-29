@@ -106,10 +106,10 @@ def get_exam_uuid_from_supabase(filename: str) -> str:
     Retorna o UUID se encontrado, caso contrário retorna o filename (fallback)
     """
     supabase_url = os.environ.get('SUPABASE_URL', 'https://vmusmbuofkhzmtoqdhqc.supabase.co')
-    supabase_key = os.environ.get('SUPABASE_ANON_KEY')
+    supabase_key = os.environ.get('SUPABASE_KEY')
     
     if not supabase_key:
-        logger.warning('⚠️ SUPABASE_ANON_KEY não configurada, usando filename como fallback')
+        logger.warning('⚠️ SUPABASE_KEY não configurada, usando filename como fallback')
         return filename
     
     try:
