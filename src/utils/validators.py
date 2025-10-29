@@ -6,7 +6,7 @@ Valida nomes de pacientes, datas, estruturas de exames e extração de texto
 import re
 from datetime import datetime
 from typing import Dict, Any, Optional, List, Tuple
-from src.config import (
+from src.config.constants import (
     PATIENT_NAME_BLACKLIST,
     MIN_NAME_LENGTH,
     MAX_NAME_LENGTH,
@@ -232,7 +232,264 @@ def validate_birth_date(data: str) -> bool:
 
 
 # ========================================
-# VALIDAÇÃO DE ESTRUTURA DE EXAMES
+# VALIDAÇÃO E NORMALIZAÇÃO DE VALORES (NOVO)
+# ========================================
+
+def normalize_value(value: Any) -> str:
+    """
+    Normaliza valor de biomarcador
+    - Converte vírgula para ponto (padrão brasileiro)
+    - Limpa espaços desnecessários
+    - Preserva operadores (<, >, <=, >=)
+    - Identifica valores qualitativos
+    """
+    if not value:
+        return ""
+    
+    texto = str(value).strip()
+    
+    # Valores qualitativos comuns
+    qualitativos = [
+        'negativo', 'positivo', 'não reagente', 'nao reagente', 
+        'reagente', 'indetectável', 'indetectavel', 'detectável', 'detectavel',
+        'presente', 'ausente', 'normal', 'alterado'
+    ]
+    texto_lower = texto.lower()
+    if texto_lower in qualitativos:
+        return texto_lower
+    
+    # Substituir vírgula por ponto (padrão brasileiro → internacional)
+    texto = texto.replace(',', '.')
+    
+    # Remover espaços em valores numéricos com operadores
+    # Exemplo: "> 100" ou "< 0.5"
+    if re.match(r'^[<>]=?\s*\d', texto):
+        texto = re.sub(r'([<>]=?)\s+', r'\1', texto)
+    
+    # Remover espaços extras em valores científicos
+    # Exemplo: "1.5 e+03" → "1.5e+03"
+    if re.match(r'^-?\d+\.?\d*\s*e[+-]?\d+$', texto, re.IGNORECASE):
+        texto = texto.replace(' ', '')
+    
+    return texto
+
+
+def extract_numeric_value(value_str: str) -> Optional[float]:
+    """
+    Extrai valor numérico de string
+    - Remove operadores (<, >, <=, >=)
+    - Converte notação científica
+    - Retorna None se não for numérico
+    """
+    if not value_str:
+        return None
+    
+    # Normalizar primeiro
+    texto = normalize_value(value_str)
+    
+    # Valores qualitativos não têm valor numérico
+    qualitativos = [
+        'negativo', 'positivo', 'não reagente', 'nao reagente', 
+        'reagente', 'indetectável', 'indetectavel', 'detectável', 'detectavel',
+        'presente', 'ausente', 'normal', 'alterado'
+    ]
+    if texto.lower() in qualitativos:
+        return None
+    
+    # Remover operadores
+    texto = re.sub(r'^[<>]=?\s*', '', texto)
+    
+    # Remover unidades comuns
+    texto = re.sub(r'[a-zA-Z/%]+$', '', texto).strip()
+    
+    # Tentar converter
+    try:
+        return float(texto)
+    except (ValueError, Exception):
+        return None
+
+
+def validate_value_format(value: str) -> Tuple[bool, Optional[str]]:
+    """
+    Valida formato do valor
+    
+    Returns:
+        (is_valid, error_message)
+    """
+    if not value:
+        return (False, "Valor vazio")
+    
+    texto = normalize_value(value)
+    
+    # Valores qualitativos aceitos
+    qualitativos = [
+        'negativo', 'positivo', 'não reagente', 'nao reagente', 
+        'reagente', 'indetectável', 'indetectavel', 'detectável', 'detectavel',
+        'presente', 'ausente', 'normal', 'alterado'
+    ]
+    if texto.lower() in qualitativos:
+        return (True, None)
+    
+    # Valores numéricos (com ou sem operadores)
+    if re.match(r'^[<>>=]?\s*-?\d+\.?\d*(e[+-]?\d+)?$', texto, re.IGNORECASE):
+        return (True, None)
+    
+    return (False, f"Formato inválido: {value}")
+
+
+def parse_reference_range(reference_text: str) -> Dict[str, Optional[float]]:
+    """
+    Extrai valores mínimo e máximo de referência
+    
+    Exemplos:
+        "10 - 50" → {min: 10, max: 50}
+        "até 20" → {min: None, max: 20}
+        ">= 30" → {min: 30, max: None}
+        "< 1.0" → {min: None, max: 1.0}
+    
+    Returns:
+        dict com 'reference_min' e 'reference_max'
+    """
+    result = {
+        'reference_min': None,
+        'reference_max': None
+    }
+    
+    if not reference_text:
+        return result
+    
+    ref = normalize_value(reference_text)
+    
+    # Padrão: "min - max" ou "min a max"
+    match = re.search(r'(\d+\.?\d*)\s*[-a]\s*(\d+\.?\d*)', ref)
+    if match:
+        result['reference_min'] = float(match.group(1))
+        result['reference_max'] = float(match.group(2))
+        return result
+    
+    # Padrão: "até X" ou "abaixo de X" ou "< X"
+    match = re.search(r'(?:até|abaixo de|inferior a|<|<=)\s*(\d+\.?\d*)', ref, re.IGNORECASE)
+    if match:
+        result['reference_max'] = float(match.group(1))
+        return result
+    
+    # Padrão: "acima de X" ou "> X"
+    match = re.search(r'(?:acima de|superior a|>|>=)\s*(\d+\.?\d*)', ref, re.IGNORECASE)
+    if match:
+        result['reference_min'] = float(match.group(1))
+        return result
+    
+    return result
+
+
+def validate_exam_structure(exam: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
+    """
+    Valida estrutura completa de um exame
+    
+    Returns:
+        (is_valid, error_message)
+    """
+    # Campos obrigatórios
+    if 'exam_name' not in exam or not exam['exam_name']:
+        return (False, "Campo 'exam_name' obrigatório")
+    
+    if 'value' not in exam:
+        return (False, "Campo 'value' obrigatório")
+    
+    # Validar nome do exame
+    exam_name = exam['exam_name'].strip()
+    if len(exam_name) < 3:
+        return (False, f"Nome do exame muito curto: {exam_name}")
+    
+    # Validar formato do valor
+    value = exam.get('value')
+    if value is not None and value != '':
+        is_valid, error = validate_value_format(str(value))
+        if not is_valid:
+            return (False, f"Valor inválido: {error}")
+    
+    return (True, None)
+
+
+def normalize_unit(unit: str) -> str:
+    """
+    Padroniza unidades de medida
+    
+    Exemplos:
+        "mg/dl" → "mg/dL"
+        "ui/ml" → "UI/mL"
+        "g/dl" → "g/dL"
+    """
+    if not unit:
+        return ""
+    
+    unit = unit.strip()
+    
+    # Mapeamento de unidades comuns
+    unit_map = {
+        'mg/dl': 'mg/dL',
+        'g/dl': 'g/dL',
+        'ui/ml': 'UI/mL',
+        'uui/ml': 'µUI/mL',
+        'mui/ml': 'mUI/mL',
+        'ng/ml': 'ng/mL',
+        'pg/ml': 'pg/mL',
+        'ug/dl': 'µg/dL',
+        'ng/dl': 'ng/dL',
+        'u/l': 'U/L',
+        '/mm3': '/mm³',
+        'meq/l': 'mEq/L',
+        'mmol/l': 'mmol/L'
+    }
+    
+    unit_lower = unit.lower()
+    if unit_lower in unit_map:
+        return unit_map[unit_lower]
+    
+    return unit
+
+
+def calculate_exam_status(
+    value_numeric: Optional[float],
+    reference_min: Optional[float],
+    reference_max: Optional[float]
+) -> str:
+    """
+    Calcula status do exame baseado nos valores de referência
+    
+    Returns:
+        'normal', 'baixo', 'alto', ou 'indeterminado'
+    """
+    if value_numeric is None:
+        return 'indeterminado'
+    
+    # Sem referência
+    if reference_min is None and reference_max is None:
+        return 'indeterminado'
+    
+    # Apenas máximo
+    if reference_min is None:
+        if value_numeric > reference_max:
+            return 'alto'
+        return 'normal'
+    
+    # Apenas mínimo
+    if reference_max is None:
+        if value_numeric < reference_min:
+            return 'baixo'
+        return 'normal'
+    
+    # Ambos min e max
+    if value_numeric < reference_min:
+        return 'baixo'
+    elif value_numeric > reference_max:
+        return 'alto'
+    else:
+        return 'normal'
+
+
+# ========================================
+# VALIDAÇÃO DE ESTRUTURA DE EXAMES (LEGADO)
 # ========================================
 
 
@@ -324,7 +581,15 @@ def calculate_exam_completeness(exam: dict) -> int:
     return score
 
 
-def validate_and_deduplicate_exams(exames_list: List[dict]) -> List[dict]:
+def normalize_exam_name_for_dedup(name: str) -> str:
+    """
+    Normaliza nome do exame para facilitar deduplicação
+    (Alias para normalize_exam_name)
+    """
+    return normalize_exam_name(name)
+
+
+def deduplicate_exams(exames_list: List[dict]) -> List[dict]:
     """
     Remove exames duplicados, mantendo o mais completo
     
@@ -364,6 +629,10 @@ def validate_and_deduplicate_exams(exames_list: List[dict]) -> List[dict]:
             print(f'🔄 Deduplicado: {normalized_name} ({len(exams)} → 1)')
     
     return deduplicated
+
+
+# Alias para compatibilidade retroativa
+validate_and_deduplicate_exams = deduplicate_exams
 
 
 def normalize_exam_value(value: Any) -> Optional[float]:
@@ -471,8 +740,8 @@ def validate_extracted_data(
     
     # Deduplic exames
     if 'exams' in validated and isinstance(validated['exams'], list):
-        validated['exams'] = validate_and_deduplicate_exams(validated['exams'])
+        validated['exams'] = deduplicate_exams(validated['exams'])
     elif 'exames' in validated and isinstance(validated['exames'], list):
-        validated['exames'] = validate_and_deduplicate_exams(validated['exames'])
+        validated['exames'] = deduplicate_exams(validated['exames'])
     
     return validated
