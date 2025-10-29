@@ -743,9 +743,16 @@ export function useExamUpload() {
         contentType = typeMap[fileExtension] || 'application/octet-stream';
       }
 
-      console.log(`[AutoMatch] Arquivo: ${file.name} | Ext: ${fileExtension} | Content-Type: ${contentType}`);
+      // 2. Sanitizar nome do arquivo
+      const sanitizedFileName = sanitizeFileName(file.name);
+      const timestamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0].replace('T', '-');
+      const finalFileName = `${timestamp}-${sanitizedFileName}`;
 
-      // 2. Get upload URL
+      console.log(`[AutoMatch] Arquivo original: ${file.name}`);
+      console.log(`[AutoMatch] Arquivo sanitizado: ${finalFileName}`);
+      console.log(`[AutoMatch] Content-Type: ${contentType}`);
+
+      // 3. Get upload URL
       const response = await fetch(EDGE_FUNCTION_URL, {
         method: "POST",
         headers: { 
@@ -755,7 +762,7 @@ export function useExamUpload() {
         body: JSON.stringify({
           action: "getUploadUrl",
           userId: "temp", // Temporário
-          fileName: file.name,
+          fileName: finalFileName,
           contentType: contentType,
         }),
       });
@@ -764,14 +771,14 @@ export function useExamUpload() {
       const { uploadUrl, s3Key, contentType: awsContentType } = await response.json();
       setProgress(20);
 
-      // 3. Create exam without patient_id (será preenchido depois)
+      // 4. Create exam without patient_id (será preenchido depois)
       const { data: exam, error: examError } = await supabase
         .from("exams")
         .insert({
           patient_id: null, // NULL temporariamente
           uploaded_by: user.id,
           aws_file_key: s3Key,
-          aws_file_name: file.name,
+          aws_file_name: finalFileName,
           exam_date: examDate?.toISOString().split("T")[0],
           processing_status: "uploading",
         })
