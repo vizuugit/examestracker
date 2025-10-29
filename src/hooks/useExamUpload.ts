@@ -247,16 +247,48 @@ export function useExamUpload() {
     examId: string,
     onStatusUpdate?: (message: string, progress: number) => void
   ) => {
-    const maxAttempts = 60;
-    let attempts = 0;
     const startTime = Date.now();
+    let attempts = 0;
+    let currentIntervalId: NodeJS.Timeout | null = null;
+
+    // 🧠 Função para calcular intervalo dinâmico
+    const getPollingInterval = (elapsedSeconds: number): number => {
+      if (elapsedSeconds < 10) return 5000;  // 5s - Lambda ainda iniciando
+      if (elapsedSeconds < 30) return 3000;  // 3s - processamento ativo
+      if (elapsedSeconds < 60) return 2000;  // 2s - próximo de concluir
+      if (elapsedSeconds < 120) return 3000; // 3s - documento grande
+      return 4000;                           // 4s - documento muito grande
+    };
+
+    // 🎯 Função para determinar qual fonte verificar
+    const getCheckSource = (elapsedSeconds: number): 'aws-only' | 'supabase-first' | 'supabase-only' => {
+      if (elapsedSeconds < 20) return 'aws-only';        // Webhook pode não ter chegado
+      if (elapsedSeconds < 90) return 'supabase-first';  // Webhook já deve ter chegado
+      return 'supabase-only';                            // Webhook já chegou ou Lambda timeout
+    };
 
     return new Promise<void>((resolve, reject) => {
-      const interval = setInterval(async () => {
+      const scheduleNextCheck = () => {
+        const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+        const nextInterval = getPollingInterval(elapsedSeconds);
+        
+        currentIntervalId = setTimeout(checkStatus, nextInterval);
+      };
+
+      const checkStatus = async () => {
         attempts++;
         const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
         
-        // Progresso mais detalhado baseado em fases
+        // Timeout de 5 minutos (300 segundos)
+        if (elapsedSeconds >= 300) {
+          console.log(`[Polling Inteligente] ⏱️ Timeout de 5 minutos atingido`);
+          if (currentIntervalId) clearTimeout(currentIntervalId);
+          onStatusUpdate?.("Processamento em background...", 95);
+          resolve();
+          return;
+        }
+        
+        // 📊 Progresso visual detalhado
         let currentProgress = 50;
         let statusMsg = '';
         
@@ -266,15 +298,15 @@ export function useExamUpload() {
         } else if (elapsedSeconds < 30) {
           currentProgress = 60 + ((elapsedSeconds - 10) / 20) * 20; // 60% -> 80%
           statusMsg = `Analisando com IA... (${elapsedSeconds}s)`;
-        } else if (elapsedSeconds < 60) {
-          currentProgress = 80 + ((elapsedSeconds - 30) / 30) * 10; // 80% -> 90%
+        } else if (elapsedSeconds < 90) {
+          currentProgress = 80 + ((elapsedSeconds - 30) / 60) * 12; // 80% -> 92%
           const mins = Math.floor(elapsedSeconds / 60);
           const secs = elapsedSeconds % 60;
           statusMsg = mins > 0 
             ? `Organizando biomarcadores... (${mins}min ${secs}s)`
             : `Organizando biomarcadores... (${elapsedSeconds}s)`;
         } else {
-          currentProgress = 90 + ((elapsedSeconds - 60) / 120) * 8; // 90% -> 98%
+          currentProgress = 92 + ((elapsedSeconds - 90) / 210) * 6; // 92% -> 98%
           const mins = Math.floor(elapsedSeconds / 60);
           const secs = elapsedSeconds % 60;
           statusMsg = `Finalizando processamento... (${mins}min ${secs}s)`;
@@ -285,105 +317,104 @@ export function useExamUpload() {
         onStatusUpdate?.(statusMsg, Math.min(currentProgress, 98));
 
         try {
-          // ========================================
-          // 🆕 POLLING HÍBRIDO: Verificar 2 fontes
-          // ========================================
+          const checkSource = getCheckSource(elapsedSeconds);
+          console.log(`[Polling Inteligente] Tentativa ${attempts} (${elapsedSeconds}s) - Fonte: ${checkSource}`);
           
-          // 1️⃣ Verificar Supabase PRIMEIRO (mais confiável após webhook)
-          console.log(`[Polling Híbrido] Tentativa ${attempts}/${maxAttempts} (${elapsedSeconds}s)`);
-          
-          const { data: examData, error: examError } = await supabase
-            .from('exams')
-            .select('processing_status, total_biomarkers, patient_name_extracted')
-            .eq('id', examId)
-            .single();
-          
-          if (!examError && examData) {
-            console.log(`[Polling Híbrido] Status no Supabase:`, examData.processing_status);
+          // 🗄️ Verificar Supabase
+          if (checkSource === 'supabase-first' || checkSource === 'supabase-only') {
+            const { data: examData, error: examError } = await supabase
+              .from('exams')
+              .select('processing_status, total_biomarkers, patient_name_extracted')
+              .eq('id', examId)
+              .single();
             
-            // ✅ Se o webhook já atualizou o Supabase, parar imediatamente
-            if (examData.processing_status === 'completed') {
-              console.log(`[Polling Híbrido] ✅ Exame concluído (detectado via Supabase após ${elapsedSeconds}s)!`);
-              console.log(`[Polling Híbrido] Total de biomarcadores: ${examData.total_biomarkers}`);
+            if (!examError && examData) {
+              console.log(`[Polling Inteligente] Status Supabase: ${examData.processing_status}`);
               
-              const successMsg = examData.total_biomarkers 
-                ? `✅ Concluído! ${examData.total_biomarkers} biomarcadores extraídos`
-                : '✅ Concluído!';
+              if (examData.processing_status === 'completed') {
+                console.log(`[Polling Inteligente] ✅ Concluído via Supabase (${elapsedSeconds}s)`);
+                
+                const successMsg = examData.total_biomarkers 
+                  ? `✅ Concluído! ${examData.total_biomarkers} biomarcadores extraídos`
+                  : '✅ Concluído!';
+                
+                onStatusUpdate?.(successMsg, 100);
+                
+                if (currentIntervalId) clearTimeout(currentIntervalId);
+                resolve();
+                return;
+              }
               
-              onStatusUpdate?.(successMsg, 100);
-              
-              clearInterval(interval);
-              resolve();
-              return;
+              if (examData.processing_status === 'error') {
+                console.error(`[Polling Inteligente] ❌ Erro no Supabase`);
+                if (currentIntervalId) clearTimeout(currentIntervalId);
+                reject(new Error('Erro no processamento do exame'));
+                return;
+              }
             }
             
-            // ❌ Se falhou no Supabase, parar com erro
-            if (examData.processing_status === 'error') {
-              console.error(`[Polling Híbrido] ❌ Erro detectado no Supabase`);
-              clearInterval(interval);
-              reject(new Error('Erro no processamento do exame'));
+            // Se for 'supabase-only', não verificar AWS
+            if (checkSource === 'supabase-only') {
+              scheduleNextCheck();
               return;
             }
           }
           
-          // 2️⃣ Se Supabase ainda está 'processing', verificar AWS também
-          console.log(`[Polling Híbrido] Verificando AWS...`);
-          
-          const response = await fetch(`${EDGE_FUNCTION_URL}?userId=${userId}&s3Key=${encodeURIComponent(s3Key)}`, {
-            headers: {
-              "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            }
-          });
-          
-          if (!response.ok) {
-            console.warn('[Polling Híbrido] Erro na AWS, mas Supabase será checado novamente');
-            // Não rejeitar - continuar tentando via Supabase
-          } else {
-            const data = await response.json();
-            console.log(`[Polling Híbrido] Resposta AWS:`, data);
+          // ☁️ Verificar AWS
+          if (checkSource === 'aws-only' || checkSource === 'supabase-first') {
+            console.log(`[Polling Inteligente] Verificando AWS...`);
+            
+            const response = await fetch(`${EDGE_FUNCTION_URL}?userId=${userId}&s3Key=${encodeURIComponent(s3Key)}`, {
+              headers: {
+                "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+              }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              console.log(`[Polling Inteligente] Status AWS:`, data.status);
 
-            // Se AWS retornou status 'completed'
-            if (data.status === 'completed' && data.data) {
-              console.log(`[Polling Híbrido] ✅ Processamento concluído (detectado via AWS após ${elapsedSeconds}s)!`);
-              
-              const totalBiomarkers = data.data.metadata?.total_exames || data.data.total_exames || 0;
-              const successMsg = totalBiomarkers 
-                ? `✅ Concluído! ${totalBiomarkers} biomarcadores extraídos`
-                : '✅ Concluído!';
-              
-              onStatusUpdate?.(successMsg, 100);
-              
-              clearInterval(interval);
-              await syncExamToSupabase(examId, data);
-              resolve();
-              return;
-            } else if (data.status === 'processing') {
-              console.log(`[Polling Híbrido] ⏳ AWS ainda processando...`);
-            } else if (data.status === 'failed') {
-              console.error(`[Polling Híbrido] ❌ AWS retornou status 'failed'`);
-              clearInterval(interval);
-              reject(new Error('Erro no processamento AWS'));
-              return;
+              if (data.status === 'completed' && data.data) {
+                console.log(`[Polling Inteligente] ✅ Concluído via AWS (${elapsedSeconds}s)`);
+                
+                const totalBiomarkers = data.data.metadata?.total_exames || data.data.total_exames || 0;
+                const successMsg = totalBiomarkers 
+                  ? `✅ Concluído! ${totalBiomarkers} biomarcadores extraídos`
+                  : '✅ Concluído!';
+                
+                onStatusUpdate?.(successMsg, 100);
+                
+                if (currentIntervalId) clearTimeout(currentIntervalId);
+                await syncExamToSupabase(examId, data);
+                resolve();
+                return;
+              } else if (data.status === 'failed') {
+                console.error(`[Polling Inteligente] ❌ AWS retornou 'failed'`);
+                if (currentIntervalId) clearTimeout(currentIntervalId);
+                reject(new Error('Erro no processamento AWS'));
+                return;
+              }
+            } else {
+              console.warn(`[Polling Inteligente] Erro na AWS (continuando...)`);
             }
           }
 
-          // 3️⃣ Timeout check
-          if (attempts >= maxAttempts) {
-            console.log(`[Polling Híbrido] ⏱️ Timeout após ${elapsedSeconds}s - processamento continuará em background via webhook`);
-            clearInterval(interval);
-            onStatusUpdate?.("Processamento em background...", 95);
-            resolve();
-          }
+          // Agendar próxima verificação
+          scheduleNextCheck();
         } catch (error) {
-          console.error(`[Polling Híbrido] Erro na tentativa ${attempts}:`, error);
+          console.error(`[Polling Inteligente] Erro:`, error);
           
-          // Não rejeitar imediatamente - continuar tentando
-          if (attempts >= maxAttempts) {
-            clearInterval(interval);
+          if (elapsedSeconds >= 300) {
+            if (currentIntervalId) clearTimeout(currentIntervalId);
             reject(error);
+          } else {
+            scheduleNextCheck();
           }
         }
-      }, 3000); // Poll every 3 seconds
+      };
+
+      // Iniciar primeira verificação
+      checkStatus();
     });
   };
 
