@@ -116,8 +116,7 @@ def get_exam_uuid_from_supabase(filename: str) -> str:
         logger.info(f'🔍 Buscando UUID do exame com filename: {filename}')
         
         response = requests.get(
-            f"{supabase_url}/rest/v1/exams",
-            params={"aws_file_name": f"eq.{filename}", "select": "id"},
+            f"{supabase_url}/rest/v1/exams?aws_file_name=eq.{filename}&select=id&limit=1",
             headers={
                 "apikey": supabase_key,
                 "Authorization": f"Bearer {supabase_key}",
