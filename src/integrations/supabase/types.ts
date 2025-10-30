@@ -438,7 +438,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "professional" | "assistant"
-      biomarker_status: "normal" | "alto" | "baixo" | "alterado"
+      biomarker_status:
+        | "normal"
+        | "alto"
+        | "baixo"
+        | "alterado"
+        | "indeterminado"
       processing_status: "uploading" | "processing" | "completed" | "error"
     }
     CompositeTypes: {
@@ -568,7 +573,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "professional", "assistant"],
-      biomarker_status: ["normal", "alto", "baixo", "alterado"],
+      biomarker_status: [
+        "normal",
+        "alto",
+        "baixo",
+        "alterado",
+        "indeterminado",
+      ],
       processing_status: ["uploading", "processing", "completed", "error"],
     },
   },
