@@ -162,14 +162,16 @@ const PatientCharts = () => {
   } : null;
 
   // Agrupar biomarcadores por categoria
-  const biomarkersByCategory = biomarkers?.reduce((acc, biomarker) => {
-    const category = biomarker.category || "Outros";
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(biomarker);
-    return acc;
-  }, {} as Record<string, BiomarkerOption[]>);
+  const biomarkersByCategory = biomarkers
+    ?.filter(biomarker => biomarker.biomarker_name && biomarker.biomarker_name.trim() !== "")
+    .reduce((acc, biomarker) => {
+      const category = biomarker.category || "Outros";
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(biomarker);
+      return acc;
+    }, {} as Record<string, BiomarkerOption[]>);
 
   if (patientLoading) {
     return (
