@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_notifications: {
+        Row: {
+          admin_id: string | null
+          created_at: string | null
+          id: string
+          message: string
+          read: boolean | null
+          related_invitation_id: string | null
+          title: string
+          type: string
+        }
+        Insert: {
+          admin_id?: string | null
+          created_at?: string | null
+          id?: string
+          message: string
+          read?: boolean | null
+          related_invitation_id?: string | null
+          title: string
+          type: string
+        }
+        Update: {
+          admin_id?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          related_invitation_id?: string | null
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_notifications_related_invitation_id_fkey"
+            columns: ["related_invitation_id"]
+            isOneToOne: false
+            referencedRelation: "invitations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       biomarker_duplicates: {
         Row: {
           biomarker_name: string
@@ -286,6 +327,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          full_name: string | null
+          id: string
+          invited_by: string | null
+          invited_role: Database["public"]["Enums"]["app_role"]
+          last_resent_at: string | null
+          metadata: Json | null
+          resent_count: number | null
+          specialty: string | null
+          status: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          full_name?: string | null
+          id?: string
+          invited_by?: string | null
+          invited_role?: Database["public"]["Enums"]["app_role"]
+          last_resent_at?: string | null
+          metadata?: Json | null
+          resent_count?: number | null
+          specialty?: string | null
+          status?: string
+          token?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          full_name?: string | null
+          id?: string
+          invited_by?: string | null
+          invited_role?: Database["public"]["Enums"]["app_role"]
+          last_resent_at?: string | null
+          metadata?: Json | null
+          resent_count?: number | null
+          specialty?: string | null
+          status?: string
+          token?: string
+        }
+        Relationships: []
       }
       patients: {
         Row: {

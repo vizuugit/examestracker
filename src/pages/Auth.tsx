@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import exLogo from "@/assets/ex-logo.png";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { BackButton } from "@/components/BackButton";
@@ -18,19 +16,7 @@ const loginSchema = z.object({
   password: z.string().min(8, { message: "Senha deve ter no mínimo 8 caracteres" }),
 });
 
-const signupSchema = z.object({
-  fullName: z.string().min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
-  email: z.string().email({ message: "Email inválido" }),
-  password: z.string().min(8, { message: "Senha deve ter no mínimo 8 caracteres" }),
-  confirmPassword: z.string(),
-  specialty: z.string().optional(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "As senhas não coincidem",
-  path: ["confirmPassword"],
-});
-
 type LoginFormData = z.infer<typeof loginSchema>;
-type SignupFormData = z.infer<typeof signupSchema>;
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -38,10 +24,6 @@ const Auth = () => {
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-  });
-
-  const signupForm = useForm<SignupFormData>({
-    resolver: zodResolver(signupSchema),
   });
 
   const handleLogin = async (data: LoginFormData) => {
@@ -66,34 +48,6 @@ const Auth = () => {
     }
   };
 
-  const handleSignup = async (data: SignupFormData) => {
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            full_name: data.fullName,
-            specialty: data.specialty,
-          },
-        },
-      });
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-
-      toast.success("Cadastro realizado com sucesso!");
-      navigate("/dashboard");
-    } catch (error) {
-      toast.error("Erro ao criar conta");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black flex items-center justify-center p-4">
