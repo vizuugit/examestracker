@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Search, RefreshCw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, RefreshCw, AlertCircle, X, Save } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { CategoryStats } from './CategoryStats';
@@ -36,7 +36,22 @@ export function CategoryManagementPanel() {
     removeBiomarker,
     getStats,
     refresh,
+    hasUnsavedChanges,
+    saveAllChanges,
+    discardChanges
   } = useCategoryManagement();
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [hasUnsavedChanges]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -167,6 +182,41 @@ export function CategoryManagementPanel() {
       {filteredCategories.length === 0 && searchQuery && (
         <div className="text-center py-12 text-muted-foreground">
           Nenhum biomarcador encontrado com o termo "{searchQuery}"
+        </div>
+      )}
+
+      {hasUnsavedChanges && (
+        <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-md border-t border-border shadow-lg z-50">
+          <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 text-yellow-500" />
+              <div>
+                <p className="text-sm font-medium">Alterações não salvas</p>
+                <p className="text-xs text-muted-foreground">
+                  Você tem alterações pendentes que ainda não foram salvas
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={discardChanges}
+                className="gap-2"
+              >
+                <X className="h-4 w-4" />
+                Descartar
+              </Button>
+              
+              <Button 
+                onClick={saveAllChanges}
+                className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+              >
+                <Save className="h-4 w-4" />
+                Salvar Alterações
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>
