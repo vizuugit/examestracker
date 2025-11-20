@@ -176,7 +176,7 @@ export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="bg-gradient-to-br from-rest-blue to-rest-cyan text-white hover:from-rest-cyan hover:to-rest-blue rounded-lg w-10 h-10"
+                className="bg-gradient-to-br from-rest-blue to-rest-cyan text-white hover:from-rest-cyan hover:to-rest-blue rounded-lg w-10 h-10 focus-visible:ring-0 focus-visible:ring-offset-0"
               >
                 <Menu className="w-5 h-5" />
               </Button>
