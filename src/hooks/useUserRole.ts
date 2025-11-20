@@ -31,6 +31,9 @@ export function useUserRole() {
     staleTime: 5 * 60 * 1000, // Cache por 5 minutos
   });
 
+  // Considerar como loading se roles ainda é undefined E a query está habilitada
+  const actuallyLoading = isLoading || (!!user?.id && roles === undefined);
+
   const isAdmin = roles?.includes("admin") || false;
   const isProfessional = roles?.includes("professional") || false;
 
@@ -39,6 +42,7 @@ export function useUserRole() {
     isAdmin, 
     isProfessional, 
     isLoading,
+    actuallyLoading,
     userId: user?.id 
   });
 
@@ -46,6 +50,6 @@ export function useUserRole() {
     roles: roles || [],
     isAdmin,
     isProfessional,
-    isLoading,
+    isLoading: actuallyLoading,
   };
 }
