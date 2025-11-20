@@ -8,7 +8,7 @@ import Footer from '@/components/Footer';
 import { BiomarkerTrackingTable } from '@/components/BiomarkerTrackingTable';
 import { Skeleton } from '@/components/ui/skeleton';
 import { normalizeBiomarkerWithTable } from '@/utils/biomarkerNormalization';
-import { CATEGORY_DISPLAY_ORDER, BIOMARKER_DISPLAY_ORDER, getCategoryOrder, getBiomarkerOrder } from '@/utils/biomarkerDisplayOrder';
+import { SIMPLIFIED_CATEGORIES, getCategoryOrder } from '@/utils/categoryMapping';
 import { isLeukocyteType } from '@/utils/leukocyteFormatter';
 import { getBiomarkerCategory } from '@/services/biomarkerCategoryService';
 
@@ -362,13 +362,8 @@ export default function PatientDashboard() {
           return a.category.localeCompare(b.category);
         }
         
-        // Dentro da mesma categoria, usar ordem de exibição customizada
-        const biomarkerOrderA = getBiomarkerOrder(a.category, a.biomarker_name);
-        const biomarkerOrderB = getBiomarkerOrder(b.category, b.biomarker_name);
-        
-        if (biomarkerOrderA !== biomarkerOrderB) {
-          return biomarkerOrderA - biomarkerOrderB;
-        }
+        // Dentro da mesma categoria, usar ordem alfabética
+        return a.biomarker_name.localeCompare(b.biomarker_name);
         
         // Se ambos não estão na ordem ou têm a mesma ordem, usar alfabética
         return a.biomarker_name.localeCompare(b.biomarker_name);
