@@ -169,6 +169,42 @@ export function useCategoryManagement() {
       newMoves.set(biomarkerName, newCategory);
       return { ...prev, biomarkerMoves: newMoves };
     });
+    
+    // ✅ Atualizar UI instantaneamente: remover da categoria antiga e adicionar na nova
+    setCategories(prev => {
+      let biomarkerToMove: BiomarkerData | null = null;
+      let oldCategory: string | null = null;
+      
+      // 1️⃣ Encontrar e remover o biomarcador da categoria atual
+      const withoutBiomarker = prev.map(cat => {
+        const foundBiomarker = cat.biomarkers.find(b => b.name === biomarkerName);
+        if (foundBiomarker) {
+          biomarkerToMove = foundBiomarker;
+          oldCategory = cat.name;
+          return {
+            ...cat,
+            biomarkers: cat.biomarkers.filter(b => b.name !== biomarkerName)
+          };
+        }
+        return cat;
+      });
+      
+      // 2️⃣ Adicionar na nova categoria
+      if (biomarkerToMove && oldCategory !== newCategory) {
+        return withoutBiomarker.map(cat => {
+          if (cat.name === newCategory) {
+            return {
+              ...cat,
+              biomarkers: [...cat.biomarkers, { ...biomarkerToMove!, hasOverride: true }]
+            };
+          }
+          return cat;
+        });
+      }
+      
+      return withoutBiomarker;
+    });
+    
     setHasUnsavedChanges(true);
   };
 
