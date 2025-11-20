@@ -1,6 +1,7 @@
-import { categorizeBiomarker } from '@/utils/biomarkerCategories';
 import { normalizeBiomarkerWithTable } from '@/utils/biomarkerNormalization';
 import { supabase } from '@/integrations/supabase/client';
+import { mapJsonCategoryToSimplified } from '@/utils/categoryMapping';
+import biomarkerSpec from '@/data/biomarker-specification.json';
 
 /**
  * Cache LRU (Least Recently Used) para categorização de biomarcadores
@@ -226,11 +227,34 @@ export async function getBiomarkerCategoryAsync(biomarkerName: string, dbCategor
     return result;
   }
   
-  // 4️⃣ Última alternativa: função heurística
-  const heuristicCategory = categorizeBiomarker(biomarkerName);
-  const result = normalizeCategoryName(heuristicCategory);
+  // 4️⃣ Última alternativa: procurar no JSON
+  const result = categorizeBiomarkerFromJson(biomarkerName);
   categoryCache.set(cacheKey, result);
   return result;
+}
+
+/**
+ * Categoriza um biomarcador usando o biomarker-specification.json
+ * Procura pelo nome padrão ou sinônimos e mapeia para categoria simplificada
+ */
+function categorizeBiomarkerFromJson(biomarkerName: string): string {
+  const normalizedName = biomarkerName.toLowerCase().trim();
+  
+  // Procurar no JSON por nome padrão ou sinônimos
+  const biomarker = biomarkerSpec.biomarcadores.find((b: any) => {
+    const normalizedStandard = b.nome_padrao.toLowerCase().trim();
+    if (normalizedStandard === normalizedName) return true;
+    
+    return b.sinonimos.some((syn: string) => 
+      syn.toLowerCase().trim() === normalizedName
+    );
+  });
+  
+  if (biomarker) {
+    return mapJsonCategoryToSimplified(biomarker.categoria);
+  }
+  
+  return 'outros';
 }
 
 /**
@@ -268,9 +292,8 @@ export function getBiomarkerCategory(biomarkerName: string, dbCategory?: string 
     return result;
   }
   
-  // 3️⃣ Última alternativa: função heurística
-  const heuristicCategory = categorizeBiomarker(biomarkerName);
-  const result = normalizeCategoryName(heuristicCategory);
+  // 3️⃣ Última alternativa: procurar no JSON
+  const result = categorizeBiomarkerFromJson(biomarkerName);
   categoryCache.set(cacheKey, result);
   return result;
 }
@@ -315,9 +338,9 @@ export function getBiomarkerCategoryWithSource(biomarkerName: string, dbCategory
     return result;
   }
   
-  const heuristicCategory = categorizeBiomarker(biomarkerName);
+  const jsonCategory = categorizeBiomarkerFromJson(biomarkerName);
   const result = {
-    category: normalizeCategoryName(heuristicCategory),
+    category: jsonCategory,
     source: 'heuristic' as const
   };
   categoryWithSourceCache.set(cacheKey, result);

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { BIOMARKER_DISPLAY_ORDER, CATEGORY_DISPLAY_ORDER } from '@/utils/biomarkerDisplayOrder';
 import { clearCategorizationCache } from '@/services/biomarkerCategoryService';
+import { SIMPLIFIED_CATEGORIES, CATEGORY_DISPLAY_NAMES, mapJsonCategoryToSimplified, SimplifiedCategory } from '@/utils/categoryMapping';
+import biomarkerSpec from '@/data/biomarker-specification.json';
 import { toast } from 'sonner';
 
 export interface BiomarkerData {
@@ -26,20 +27,6 @@ interface PendingChanges {
   biomarkerDeletions: Set<string>;
   biomarkerMoves: Map<string, string>;
 }
-
-const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
-  'hematologico': '🩸 Hematológico',
-  'metabolico': '💊 Metabólico',
-  'hepatico': '🏥 Hepático',
-  'renal': '🫘 Renal',
-  'ions': '⚡ Íons e Eletrólitos',
-  'hormonal': '🧬 Hormonal',
-  'vitaminas': '💎 Vitaminas e Minerais',
-  'inflamatorios': '🔥 Marcadores Inflamatórios',
-  'musculares': '💪 Marcadores Musculares',
-  'prostaticos': '🎯 Marcadores Prostáticos',
-  'outros': '📋 Outros'
-};
 
 export function useCategoryManagement() {
   const [categories, setCategories] = useState<CategoryData[]>([]);
@@ -87,9 +74,23 @@ export function useCategoryManagement() {
         categoryOrderMap.set(order.category_key, order.display_order);
       });
 
-      // Mesclar com BIOMARKER_DISPLAY_ORDER
-      let categoriesData: CategoryData[] = CATEGORY_DISPLAY_ORDER.map((categoryKey, index) => {
-        const biomarkersInCategory = BIOMARKER_DISPLAY_ORDER[categoryKey] || [];
+      // 🔥 MUDANÇA PRINCIPAL: Agrupar biomarcadores do JSON por categoria simplificada
+      const biomarkersByCategory: Record<string, string[]> = {};
+      
+      // Inicializar todas as categorias vazias
+      SIMPLIFIED_CATEGORIES.forEach(cat => {
+        biomarkersByCategory[cat] = [];
+      });
+
+      // Agrupar biomarcadores do JSON
+      biomarkerSpec.biomarcadores.forEach((bio: any) => {
+        const simplifiedCategory = mapJsonCategoryToSimplified(bio.categoria);
+        biomarkersByCategory[simplifiedCategory].push(bio.nome_padrao);
+      });
+
+      // Criar estrutura de categorias
+      let categoriesData: CategoryData[] = SIMPLIFIED_CATEGORIES.map((categoryKey, index) => {
+        const biomarkersInCategory = biomarkersByCategory[categoryKey] || [];
         
         const biomarkers: BiomarkerData[] = biomarkersInCategory.map((biomarkerName, bioIndex) => {
           const override = overridesMap.get(biomarkerName);
@@ -101,7 +102,7 @@ export function useCategoryManagement() {
           };
         });
 
-        // Adicionar biomarcadores que têm override para esta categoria mas não estão no BIOMARKER_DISPLAY_ORDER
+        // Adicionar biomarcadores que têm override para esta categoria mas não estão no JSON
         overridesData?.forEach(override => {
           if (override.category === categoryKey && !biomarkers.find(b => b.name === override.biomarker_name)) {
             biomarkers.push({
@@ -118,7 +119,7 @@ export function useCategoryManagement() {
 
         return {
           name: categoryKey,
-          displayName: CATEGORY_DISPLAY_NAMES[categoryKey] || categoryKey,
+          displayName: CATEGORY_DISPLAY_NAMES[categoryKey as SimplifiedCategory],
           biomarkers,
           order: categoryOrderMap.get(categoryKey) ?? index
         };

@@ -31,7 +31,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, TrendingUp, TrendingDown, CheckCircle, Brain } from "lucide-react";
-import { getCategoryOrder, getBiomarkerOrder } from "@/utils/biomarkerDisplayOrder";
+import { getCategoryOrder } from '@/utils/categoryMapping';
 import { useExamAnalysis } from "@/hooks/useExamAnalysis";
 import { ExamInsightsPanel } from "@/components/ExamInsightsPanel";
 import type { ExamWithInsights } from "@/types/exam-insights";
@@ -329,12 +329,10 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
                             </TableCell>
                           </TableRow>
                           
-                          {/* Biomarcadores da categoria (ordenados) */}
+                          {/* Biomarcadores da categoria (ordenados alfabeticamente) */}
                           {results
                             .sort((a, b) => {
-                              const orderA = getBiomarkerOrder(category, a.biomarker_name);
-                              const orderB = getBiomarkerOrder(category, b.biomarker_name);
-                              return orderA - orderB;
+                              return a.biomarker_name.localeCompare(b.biomarker_name);
                             })
                             .map((result) => (
                               <TableRow key={result.id} className="border-b border-gray-100 hover:bg-gray-50">
