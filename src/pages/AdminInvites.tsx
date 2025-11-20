@@ -16,10 +16,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Mail, UserPlus, Users, Clock, CheckCircle2, XCircle, Tags } from "lucide-react";
+import { Loader2, Mail, UserPlus, Users, Clock, CheckCircle2, XCircle, Tags, Dna } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CategoryManagementPanel } from "@/components/admin/CategoryManagementPanel";
+import AdminBiomarkerVariations from "./AdminBiomarkerVariations";
 
 const inviteSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -199,6 +200,10 @@ export default function AdminInvites() {
             <TabsTrigger value="categories" className="data-[state=active]:bg-rest-blue">
               <Tags className="w-4 h-4 mr-2" />
               Categorias
+            </TabsTrigger>
+            <TabsTrigger value="variations" className="data-[state=active]:bg-rest-blue">
+              <Dna className="w-4 h-4 mr-2" />
+              Variações
             </TabsTrigger>
           </TabsList>
 
@@ -425,6 +430,10 @@ export default function AdminInvites() {
 
           <TabsContent value="categories">
             <CategoryManagementPanel />
+          </TabsContent>
+
+          <TabsContent value="variations">
+            <AdminBiomarkerVariations />
           </TabsContent>
         </Tabs>
       </main>
