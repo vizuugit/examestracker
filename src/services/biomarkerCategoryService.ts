@@ -175,6 +175,41 @@ export function normalizeCategoryName(category: string | null): string {
 }
 
 /**
+ * Normaliza nome do biomarcador consultando variações customizadas
+ * Ordem de prioridade:
+ * 1. Variações Customizadas (biomarker_variations)
+ * 2. Tabela de Normalização (normalizeBiomarkerWithTable)
+ */
+export async function normalizeBiomarkerNameAsync(originalName: string): Promise<{
+  normalizedName: string;
+  category?: string;
+  unit?: string;
+} | null> {
+  // 1️⃣ Verificar variações customizadas do admin
+  try {
+    const { data: customVariation } = await supabase
+      .from('biomarker_variations')
+      .select('biomarker_normalized_name, category, unit')
+      .ilike('variation', originalName)
+      .eq('active', true)
+      .maybeSingle();
+    
+    if (customVariation) {
+      return {
+        normalizedName: customVariation.biomarker_normalized_name,
+        category: customVariation.category || undefined,
+        unit: customVariation.unit || undefined
+      };
+    }
+  } catch (error) {
+    console.warn('Error fetching custom variation:', error);
+  }
+  
+  // 2️⃣ Fallback para tabela hardcoded
+  return normalizeBiomarkerWithTable(originalName);
+}
+
+/**
  * Versão assíncrona com suporte a overrides do admin
  * Ordem de prioridade:
  * 1. Override do Admin (biomarker_category_overrides)

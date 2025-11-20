@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { normalizeBiomarkerWithTable } from '@/utils/biomarkerNormalization';
 import { SIMPLIFIED_CATEGORIES, getCategoryOrder } from '@/utils/categoryMapping';
 import { isLeukocyteType } from '@/utils/leukocyteFormatter';
-import { getBiomarkerCategory } from '@/services/biomarkerCategoryService';
+import { getBiomarkerCategory, normalizeBiomarkerNameAsync } from '@/services/biomarkerCategoryService';
 
 /**
  * Normaliza e simplifica nomes de biomarcadores
@@ -79,6 +79,7 @@ export default function PatientDashboard() {
   const { data: trackingTableData, isLoading: trackingLoading } = useQuery({
     queryKey: ['patient-tracking-table', id],
     queryFn: async () => {
+      console.log('🔄 [PatientDashboard] Fetching tracking data...');
       const { data, error } = await supabase
         .from('exam_results')
         .select(`
@@ -123,11 +124,20 @@ export default function PatientDashboard() {
           'serie vermelha'
         ];
 
-        data?.forEach((result: any) => {
+        // ✅ ETAPA 1: Buscar variações customizadas em paralelo
+        const customNormalizationPromises = data?.map(async (result: any) => {
+          const customMatch = await normalizeBiomarkerNameAsync(result.biomarker_name);
+          return { result, customMatch };
+        }) || [];
+
+        const resultsWithCustom = await Promise.all(customNormalizationPromises);
+
+        // ✅ ETAPA 2: Processar resultados com normalização aplicada
+        resultsWithCustom.forEach(({ result, customMatch }) => {
           const originalName = result.biomarker_name;
           
-          // Sempre usar tableMatch se existir (fonte única de verdade)
-          const tableMatch = normalizeBiomarkerWithTable(originalName);
+          // 🎯 Usar customMatch se existir, senão fallback para tableMatch
+          const tableMatch = customMatch || normalizeBiomarkerWithTable(originalName);
           
           let finalKey: string;
           let finalDisplayName: string;
