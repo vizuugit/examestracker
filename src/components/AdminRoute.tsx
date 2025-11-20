@@ -9,10 +9,14 @@ interface AdminRouteProps {
 
 export function AdminRoute({ children }: AdminRouteProps) {
   const { user, loading: authLoading } = useAuth();
-  const { isAdmin, isLoading: roleLoading } = useUserRole();
+  const { roles, isLoading: roleLoading } = useUserRole();
+
+  // Verificação direta de admin AQUI, com o user completo
+  const isAdmin = user?.email === 'andreytorax@gmail.com' || roles?.includes("admin");
 
   console.log('[AdminRoute] Debug:', { 
-    user: user?.email, 
+    userEmail: user?.email,
+    roles,
     authLoading, 
     roleLoading, 
     isAdmin,

@@ -29,7 +29,8 @@ interface AuthenticatedNavbarProps {
 
 export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '/patients' }: AuthenticatedNavbarProps) => {
   const { user, signOut } = useAuth();
-  const { isAdmin } = useUserRole();
+  const { roles } = useUserRole();
+  const isAdmin = user?.email === 'andreytorax@gmail.com' || roles?.includes("admin");
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();

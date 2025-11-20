@@ -12,7 +12,8 @@ import { AIAccuracyStats } from "@/components/AIAccuracyStats";
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { isAdmin } = useUserRole();
+  const { roles } = useUserRole();
+  const isAdmin = user?.email === 'andreytorax@gmail.com' || roles?.includes("admin");
 
   // Query: Estatísticas gerais
   const { data: stats } = useQuery({
