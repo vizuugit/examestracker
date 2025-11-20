@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -72,9 +72,9 @@ export function CategoryCard({
   };
 
   // Update local state when prop changes
-  useState(() => {
+  useEffect(() => {
     setLocalBiomarkers(biomarkers);
-  });
+  }, [biomarkers]);
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="border border-white/10 rounded-lg bg-white/5 backdrop-blur-md">
