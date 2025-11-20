@@ -174,7 +174,7 @@ export function BiomarkerChart({
               <Line 
                 type="monotone" 
                 dataKey="value" 
-                stroke="hsl(271, 81%, 56%)" 
+                stroke="hsl(199, 85%, 38%)" 
                 strokeWidth={3}
                 dot={(props) => {
                   const { cx, cy, payload } = props;
@@ -196,7 +196,7 @@ export function BiomarkerChart({
                   r: 8,
                   stroke: 'white',
                   strokeWidth: 3,
-                  fill: 'hsl(271, 81%, 56%)'
+                  fill: 'hsl(199, 85%, 38%)'
                 }}
               />
             </LineChart>
