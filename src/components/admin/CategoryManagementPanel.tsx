@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Search, RefreshCw, AlertCircle, X, Save } from 'lucide-react';
+import { Search, RefreshCw, AlertCircle, X, Save, Filter } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { CategoryStats } from './CategoryStats';
 import { CategoryCard } from './CategoryCard';
 import { SortableCategoryCard } from './SortableCategoryCard';
@@ -25,6 +27,7 @@ import {
 
 export function CategoryManagementPanel() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const {
     categories,
     isLoading,
@@ -75,6 +78,12 @@ export function CategoryManagementPanel() {
   };
 
   const filteredCategories = categories.map(category => {
+    // Filtrar por categoria selecionada
+    if (categoryFilter !== 'all' && category.name !== categoryFilter) {
+      return { ...category, biomarkers: [] };
+    }
+
+    // Filtrar por termo de busca
     if (!searchQuery) return category;
 
     const filteredBiomarkers = category.biomarkers.filter(biomarker =>
@@ -86,6 +95,18 @@ export function CategoryManagementPanel() {
       biomarkers: filteredBiomarkers,
     };
   }).filter(category => category.biomarkers.length > 0);
+
+  const totalFilteredBiomarkers = filteredCategories.reduce(
+    (sum, cat) => sum + cat.biomarkers.length, 
+    0
+  );
+
+  const hasActiveFilters = searchQuery || categoryFilter !== 'all';
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setCategoryFilter('all');
+  };
 
   if (isLoading) {
     return (
@@ -120,19 +141,71 @@ export function CategoryManagementPanel() {
         coverage={stats.coverage}
       />
 
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar biomarcador..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
+      <div className="space-y-3">
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar biomarcador pelo nome..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10"
+            />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7"
+                onClick={() => setSearchQuery('')}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="w-[200px]">
+              <Filter className="h-4 w-4 mr-2" />
+              <SelectValue placeholder="Filtrar por categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas as categorias</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category.name} value={category.name}>
+                  {category.displayName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {hasActiveFilters && (
+            <Button variant="outline" onClick={clearFilters}>
+              Limpar Filtros
+            </Button>
+          )}
+
+          <Button variant="outline" size="icon" onClick={refresh}>
+            <RefreshCw className="h-4 w-4" />
+          </Button>
         </div>
-        <Button variant="outline" size="icon" onClick={refresh}>
-          <RefreshCw className="h-4 w-4" />
-        </Button>
+
+        {hasActiveFilters && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Badge variant="secondary">
+              {totalFilteredBiomarkers} biomarcador{totalFilteredBiomarkers !== 1 ? 'es' : ''} encontrado{totalFilteredBiomarkers !== 1 ? 's' : ''}
+            </Badge>
+            {categoryFilter !== 'all' && (
+              <Badge variant="outline">
+                Categoria: {categories.find(c => c.name === categoryFilter)?.displayName}
+              </Badge>
+            )}
+            {searchQuery && (
+              <Badge variant="outline">
+                Busca: "{searchQuery}"
+              </Badge>
+            )}
+          </div>
+        )}
       </div>
 
       {searchQuery ? (
@@ -179,9 +252,15 @@ export function CategoryManagementPanel() {
         </DndContext>
       )}
 
-      {filteredCategories.length === 0 && searchQuery && (
-        <div className="text-center py-12 text-muted-foreground">
-          Nenhum biomarcador encontrado com o termo "{searchQuery}"
+      {filteredCategories.length === 0 && hasActiveFilters && (
+        <div className="text-center py-12 space-y-3">
+          <div className="text-muted-foreground">
+            Nenhum biomarcador encontrado com os filtros aplicados
+          </div>
+          <Button variant="outline" onClick={clearFilters}>
+            <X className="h-4 w-4 mr-2" />
+            Limpar Filtros
+          </Button>
         </div>
       )}
 
