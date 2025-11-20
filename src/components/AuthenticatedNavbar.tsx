@@ -173,9 +173,8 @@ export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '
           {/* Dropdown de Perfil */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="bg-rest-blue text-white hover:bg-rest-cyan rounded-full px-6 transition-colors">
-                <User className="w-4 h-4 mr-2" />
-                Perfil
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                <Menu className="w-6 h-6" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 bg-black/95 border-white/10 text-white z-50">
