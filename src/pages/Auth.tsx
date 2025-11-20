@@ -111,7 +111,7 @@ const Auth = () => {
         </div>
 
         {/* Login Form */}
-        <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-2xl p-8 shadow-2xl">
+        <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-2xl p-8 shadow-2xl transition-all duration-300 ease-in-out hover:shadow-[0_20px_50px_hsl(var(--primary)/0.15)] hover:border-zinc-700">
           <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
             {/* Email Field */}
             <div className="space-y-2">
@@ -146,7 +146,7 @@ const Auth = () => {
             {/* Submit Button */}
             <Button 
               type="submit" 
-              className="w-full bg-rest-blue hover:bg-rest-blue/90" 
+              className="w-full bg-rest-blue hover:bg-rest-blue/90 transition-all duration-200 ease-in-out hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100" 
               disabled={loading}
             >
               {loading ? "Entrando..." : "Entrar"}
@@ -157,7 +157,7 @@ const Auth = () => {
           <div className="text-center mt-4">
             <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
               <DialogTrigger asChild>
-                <button className="text-sm text-rest-cyan hover:text-rest-lightblue transition-colors">
+                <button className="text-sm text-rest-cyan hover:text-primary transition-colors duration-200 underline-offset-4 hover:underline">
                   Esqueci minha senha
                 </button>
               </DialogTrigger>
