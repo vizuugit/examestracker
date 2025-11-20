@@ -109,7 +109,7 @@ const Demo = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-black via-zinc-900 to-black">
-      <PublicNavbar />
+      <PublicNavbar showOnlyBackButton={true} />
       
       <main className="flex-1">
         {/* Hero Section */}

@@ -1,8 +1,13 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import exLogo from "@/assets/ex-logo.png";
 
-export const PublicNavbar = () => {
+interface PublicNavbarProps {
+  showOnlyBackButton?: boolean;
+}
+
+export const PublicNavbar = ({ showOnlyBackButton = false }: PublicNavbarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -33,39 +38,51 @@ export const PublicNavbar = () => {
           <span className="text-2xl font-bold text-white tracking-tight">Exames</span>
         </Link>
         
-        <nav className="hidden md:flex items-center space-x-8">
-          <button 
-            onClick={() => handleNavigateToSection('inicio')}
-            className="text-gray-300 hover:text-rest-cyan transition-colors"
-          >
-            Início
-          </button>
-          <button 
-            onClick={() => handleNavigateToSection('como-funciona')}
-            className="text-gray-300 hover:text-rest-cyan transition-colors"
-          >
-            Como Funciona
-          </button>
-          <Link 
-            to="/about"
-            className="text-gray-300 hover:text-rest-cyan transition-colors"
-          >
-            Sobre Nós
-          </Link>
+        {showOnlyBackButton ? (
           <Button 
-            className="bg-rest-blue text-white hover:bg-rest-cyan rounded-full px-6 transition-colors"
-            onClick={() => navigate('/auth')}
+            onClick={() => navigate('/')}
+            className="bg-rest-blue text-white hover:bg-rest-cyan rounded-full px-6 transition-all duration-200 ease-in-out hover:scale-[1.02] active:scale-[0.98]"
           >
-            Entrar
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Voltar
           </Button>
-        </nav>
+        ) : (
+          <>
+            <nav className="hidden md:flex items-center space-x-8">
+              <button 
+                onClick={() => handleNavigateToSection('inicio')}
+                className="text-gray-300 hover:text-rest-cyan transition-colors"
+              >
+                Início
+              </button>
+              <button 
+                onClick={() => handleNavigateToSection('como-funciona')}
+                className="text-gray-300 hover:text-rest-cyan transition-colors"
+              >
+                Como Funciona
+              </button>
+              <Link 
+                to="/about"
+                className="text-gray-300 hover:text-rest-cyan transition-colors"
+              >
+                Sobre Nós
+              </Link>
+              <Button 
+                className="bg-rest-blue text-white hover:bg-rest-cyan rounded-full px-6 transition-colors"
+                onClick={() => navigate('/auth')}
+              >
+                Entrar
+              </Button>
+            </nav>
 
-        <Button 
-          className="md:hidden bg-rest-blue text-white hover:bg-rest-cyan rounded-full px-6 transition-colors"
-          onClick={() => navigate('/auth')}
-        >
-          Entrar
-        </Button>
+            <Button 
+              className="md:hidden bg-rest-blue text-white hover:bg-rest-cyan rounded-full px-6 transition-colors"
+              onClick={() => navigate('/auth')}
+            >
+              Entrar
+            </Button>
+          </>
+        )}
       </div>
     </header>
   );
