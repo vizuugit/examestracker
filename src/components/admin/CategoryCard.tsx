@@ -1,0 +1,122 @@
+import { useState } from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { ChevronRight } from 'lucide-react';
+import { BiomarkerItem } from './BiomarkerItem';
+import { AddBiomarkerDialog } from './AddBiomarkerDialog';
+import { BiomarkerData } from '@/hooks/useCategoryManagement';
+import { Badge } from '@/components/ui/badge';
+
+interface CategoryCardProps {
+  name: string;
+  displayName: string;
+  biomarkers: BiomarkerData[];
+  onReorder: (biomarkers: BiomarkerData[]) => void;
+  onEditBiomarker: (oldName: string, newName: string) => void;
+  onDeleteBiomarker: (name: string) => void;
+  onAddBiomarker: (name: string) => void;
+  defaultOpen?: boolean;
+}
+
+export function CategoryCard({
+  name,
+  displayName,
+  biomarkers,
+  onReorder,
+  onEditBiomarker,
+  onDeleteBiomarker,
+  onAddBiomarker,
+  defaultOpen = false,
+}: CategoryCardProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [localBiomarkers, setLocalBiomarkers] = useState(biomarkers);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = localBiomarkers.findIndex((b) => b.name === active.id);
+      const newIndex = localBiomarkers.findIndex((b) => b.name === over.id);
+
+      const reordered = arrayMove(localBiomarkers, oldIndex, newIndex);
+      setLocalBiomarkers(reordered);
+      onReorder(reordered);
+    }
+  };
+
+  // Update local state when prop changes
+  useState(() => {
+    setLocalBiomarkers(biomarkers);
+  });
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="border border-border rounded-lg">
+      <CollapsibleTrigger className="flex items-center justify-between w-full p-4 hover:bg-accent/50 transition-colors">
+        <div className="flex items-center gap-3">
+          <ChevronRight
+            className={`h-5 w-5 transition-transform ${isOpen ? 'rotate-90' : ''}`}
+          />
+          <span className="font-medium text-lg">{displayName}</span>
+          <Badge variant="secondary">{biomarkers.length} biomarcadores</Badge>
+        </div>
+      </CollapsibleTrigger>
+
+      <CollapsibleContent className="px-4 pb-4">
+        <div className="space-y-2 mt-2">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={localBiomarkers.map((b) => b.name)}
+              strategy={verticalListSortingStrategy}
+            >
+              {localBiomarkers.map((biomarker) => (
+                <BiomarkerItem
+                  key={biomarker.name}
+                  id={biomarker.name}
+                  name={biomarker.name}
+                  hasOverride={biomarker.hasOverride}
+                  onEdit={(oldName, newName) => onEditBiomarker(oldName, newName)}
+                  onDelete={onDeleteBiomarker}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+
+          <AddBiomarkerDialog
+            category={name}
+            categoryDisplayName={displayName}
+            onAdd={onAddBiomarker}
+          />
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}

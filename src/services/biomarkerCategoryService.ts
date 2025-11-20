@@ -1,5 +1,6 @@
 import { categorizeBiomarker } from '@/utils/biomarkerCategories';
 import { normalizeBiomarkerWithTable } from '@/utils/biomarkerNormalization';
+import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Cache LRU (Least Recently Used) para categorização de biomarcadores
@@ -173,21 +174,15 @@ export function normalizeCategoryName(category: string | null): string {
 }
 
 /**
- * Serviço centralizado para obter a categoria de um biomarcador
- * Com cache LRU para otimização de performance
- * 
+ * Versão assíncrona com suporte a overrides do admin
  * Ordem de prioridade:
- * 1. Tabela de Normalização (normalizeBiomarkerWithTable)
- * 2. Banco de Dados (dbCategory)
- * 3. Função Heurística (categorizeBiomarker)
- * 4. Normalização Final (normalizeCategoryName)
- * 
- * @param biomarkerName - Nome do biomarcador
- * @param dbCategory - Categoria do banco de dados (opcional)
- * @returns Categoria normalizada
+ * 1. Override do Admin (biomarker_category_overrides)
+ * 2. Tabela de Normalização (normalizeBiomarkerWithTable)
+ * 3. Banco de Dados (dbCategory)
+ * 4. Função Heurística (categorizeBiomarker)
+ * 5. Normalização Final (normalizeCategoryName)
  */
-export function getBiomarkerCategory(biomarkerName: string, dbCategory?: string | null): string {
-  // Criar chave única para cache (incluindo dbCategory para evitar colisões)
+export async function getBiomarkerCategoryAsync(biomarkerName: string, dbCategory?: string | null): Promise<string> {
   const cacheKey = `${biomarkerName}|${dbCategory || 'null'}`;
   
   // Verificar cache primeiro
@@ -199,7 +194,24 @@ export function getBiomarkerCategory(biomarkerName: string, dbCategory?: string 
   
   cacheMisses++;
   
-  // 1️⃣ Tentar tabela de normalização primeiro (fonte mais confiável)
+  // 1️⃣ Verificar override do admin (maior prioridade)
+  try {
+    const { data: override } = await supabase
+      .from('biomarker_category_overrides')
+      .select('category')
+      .eq('biomarker_name', biomarkerName)
+      .maybeSingle();
+    
+    if (override?.category) {
+      const result = normalizeCategoryName(override.category);
+      categoryCache.set(cacheKey, result);
+      return result;
+    }
+  } catch (error) {
+    console.warn('Error fetching category override:', error);
+  }
+  
+  // 2️⃣ Tentar tabela de normalização
   const tableMatch = normalizeBiomarkerWithTable(biomarkerName);
   if (tableMatch?.category) {
     const result = normalizeCategoryName(tableMatch.category);
@@ -207,7 +219,49 @@ export function getBiomarkerCategory(biomarkerName: string, dbCategory?: string 
     return result;
   }
   
-  // 2️⃣ Se não encontrou, usar categoria do banco de dados
+  // 3️⃣ Usar categoria do banco de dados
+  if (dbCategory) {
+    const result = normalizeCategoryName(dbCategory);
+    categoryCache.set(cacheKey, result);
+    return result;
+  }
+  
+  // 4️⃣ Última alternativa: função heurística
+  const heuristicCategory = categorizeBiomarker(biomarkerName);
+  const result = normalizeCategoryName(heuristicCategory);
+  categoryCache.set(cacheKey, result);
+  return result;
+}
+
+/**
+ * Versão síncrona (sem overrides do admin)
+ * Ordem de prioridade:
+ * 1. Tabela de Normalização (normalizeBiomarkerWithTable)
+ * 2. Banco de Dados (dbCategory)
+ * 3. Função Heurística (categorizeBiomarker)
+ * 4. Normalização Final (normalizeCategoryName)
+ */
+export function getBiomarkerCategory(biomarkerName: string, dbCategory?: string | null): string {
+  const cacheKey = `${biomarkerName}|${dbCategory || 'null'}`;
+  
+  // Verificar cache primeiro
+  const cached = categoryCache.get(cacheKey);
+  if (cached !== undefined) {
+    cacheHits++;
+    return cached;
+  }
+  
+  cacheMisses++;
+  
+  // 1️⃣ Tentar tabela de normalização
+  const tableMatch = normalizeBiomarkerWithTable(biomarkerName);
+  if (tableMatch?.category) {
+    const result = normalizeCategoryName(tableMatch.category);
+    categoryCache.set(cacheKey, result);
+    return result;
+  }
+  
+  // 2️⃣ Usar categoria do banco de dados
   if (dbCategory) {
     const result = normalizeCategoryName(dbCategory);
     categoryCache.set(cacheKey, result);
