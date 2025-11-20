@@ -55,6 +55,36 @@ export type Database = {
           },
         ]
       }
+      biomarker_category_overrides: {
+        Row: {
+          biomarker_name: string
+          category: string
+          created_at: string | null
+          created_by: string | null
+          display_order: number | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          biomarker_name: string
+          category: string
+          created_at?: string | null
+          created_by?: string | null
+          display_order?: number | null
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          biomarker_name?: string
+          category?: string
+          created_at?: string | null
+          created_by?: string | null
+          display_order?: number | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       biomarker_duplicates: {
         Row: {
           biomarker_name: string

@@ -16,9 +16,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Mail, UserPlus, Users, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, Mail, UserPlus, Users, Clock, CheckCircle2, XCircle, Tags } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { CategoryManagementPanel } from "@/components/admin/CategoryManagementPanel";
 
 const inviteSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -186,9 +187,22 @@ export default function AdminInvites() {
       <main className="container mx-auto px-4 py-12">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Administração</h1>
-          <p className="text-white/60">Gerencie convites e usuários do sistema</p>
+          <p className="text-white/60">Gerencie convites, usuários e categorias do sistema</p>
         </div>
 
+        <Tabs defaultValue="invites" className="w-full">
+          <TabsList className="bg-zinc-900/50 border-white/10 mb-6">
+            <TabsTrigger value="invites" className="data-[state=active]:bg-rest-blue">
+              <Mail className="w-4 h-4 mr-2" />
+              Convites
+            </TabsTrigger>
+            <TabsTrigger value="categories" className="data-[state=active]:bg-rest-blue">
+              <Tags className="w-4 h-4 mr-2" />
+              Categorias
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="invites" className="space-y-8">
         {/* Cards de Estatísticas */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Card className="bg-zinc-900/50 border-white/10">
@@ -407,6 +421,12 @@ export default function AdminInvites() {
             )}
           </CardContent>
         </Card>
+          </TabsContent>
+
+          <TabsContent value="categories">
+            <CategoryManagementPanel />
+          </TabsContent>
+        </Tabs>
       </main>
       
       <Footer />
