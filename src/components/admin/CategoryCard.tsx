@@ -75,8 +75,8 @@ export function CategoryCard({
   });
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="border border-border rounded-lg">
-      <CollapsibleTrigger className="flex items-center justify-between w-full p-4 hover:bg-accent/50 transition-colors">
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="border border-white/10 rounded-lg bg-white/5 backdrop-blur-md">
+      <CollapsibleTrigger className="flex items-center justify-between w-full p-4 transition-all duration-200 hover:scale-[1.02]">
         <div className="flex items-center gap-3">
           <ChevronRight
             className={`h-5 w-5 transition-transform ${isOpen ? 'rotate-90' : ''}`}
