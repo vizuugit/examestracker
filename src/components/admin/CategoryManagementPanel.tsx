@@ -4,8 +4,24 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { CategoryStats } from './CategoryStats';
 import { CategoryCard } from './CategoryCard';
+import { SortableCategoryCard } from './SortableCategoryCard';
 import { useCategoryManagement } from '@/hooks/useCategoryManagement';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
 export function CategoryManagementPanel() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -15,13 +31,33 @@ export function CategoryManagementPanel() {
     updateBiomarkerName,
     moveBiomarker,
     reorderBiomarkers,
+    reorderCategories,
     addBiomarker,
     removeBiomarker,
     getStats,
     refresh,
   } = useCategoryManagement();
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   const stats = getStats();
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = categories.findIndex((cat) => cat.name === active.id);
+      const newIndex = categories.findIndex((cat) => cat.name === over.id);
+
+      const reordered = arrayMove(categories, oldIndex, newIndex);
+      reorderCategories(reordered);
+    }
+  };
 
   const filteredCategories = categories.map(category => {
     if (!searchQuery) return category;
@@ -84,21 +120,49 @@ export function CategoryManagementPanel() {
         </Button>
       </div>
 
-      <div className="space-y-3">
-        {filteredCategories.map((category) => (
-          <CategoryCard
-            key={category.name}
-            name={category.name}
-            displayName={category.displayName}
-            biomarkers={category.biomarkers}
-            onReorder={(biomarkers) => reorderBiomarkers(category.name, biomarkers)}
-            onEditBiomarker={(oldName, newName) => updateBiomarkerName(oldName, newName, category.name)}
-            onDeleteBiomarker={removeBiomarker}
-            onAddBiomarker={(biomarkerName) => addBiomarker(biomarkerName, category.name)}
-            defaultOpen={searchQuery.length > 0}
-          />
-        ))}
-      </div>
+      {searchQuery ? (
+        <div className="space-y-3">
+          {filteredCategories.map((category) => (
+            <CategoryCard
+              key={category.name}
+              name={category.name}
+              displayName={category.displayName}
+              biomarkers={category.biomarkers}
+              onReorder={(biomarkers) => reorderBiomarkers(category.name, biomarkers)}
+              onEditBiomarker={(oldName, newName) => updateBiomarkerName(oldName, newName, category.name)}
+              onDeleteBiomarker={removeBiomarker}
+              onAddBiomarker={(biomarkerName) => addBiomarker(biomarkerName, category.name)}
+              defaultOpen={searchQuery.length > 0}
+            />
+          ))}
+        </div>
+      ) : (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={categories.map(c => c.name)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-3">
+              {categories.map((category) => (
+                <SortableCategoryCard
+                  key={category.name}
+                  name={category.name}
+                  displayName={category.displayName}
+                  biomarkers={category.biomarkers}
+                  onReorder={(biomarkers) => reorderBiomarkers(category.name, biomarkers)}
+                  onEditBiomarker={(oldName, newName) => updateBiomarkerName(oldName, newName, category.name)}
+                  onDeleteBiomarker={removeBiomarker}
+                  onAddBiomarker={(biomarkerName) => addBiomarker(biomarkerName, category.name)}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      )}
 
       {filteredCategories.length === 0 && searchQuery && (
         <div className="text-center py-12 text-muted-foreground">
