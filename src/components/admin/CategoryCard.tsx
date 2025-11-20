@@ -19,7 +19,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, GripVertical } from 'lucide-react';
 import { BiomarkerItem } from './BiomarkerItem';
 import { AddBiomarkerDialog } from './AddBiomarkerDialog';
 import { BiomarkerData } from '@/hooks/useCategoryManagement';
@@ -34,6 +34,7 @@ interface CategoryCardProps {
   onDeleteBiomarker: (name: string) => void;
   onAddBiomarker: (name: string) => void;
   defaultOpen?: boolean;
+  dragHandleProps?: any;
 }
 
 export function CategoryCard({
@@ -45,6 +46,7 @@ export function CategoryCard({
   onDeleteBiomarker,
   onAddBiomarker,
   defaultOpen = false,
+  dragHandleProps,
 }: CategoryCardProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [localBiomarkers, setLocalBiomarkers] = useState(biomarkers);
@@ -78,6 +80,11 @@ export function CategoryCard({
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="border border-white/10 rounded-lg bg-white/5 backdrop-blur-md">
       <CollapsibleTrigger className="flex items-center justify-between w-full p-4 transition-all duration-200 hover:scale-[1.02]">
         <div className="flex items-center gap-3">
+          {dragHandleProps && (
+            <div {...dragHandleProps} className="cursor-grab active:cursor-grabbing">
+              <GripVertical className="h-5 w-5 text-muted-foreground" />
+            </div>
+          )}
           <ChevronRight
             className={`h-5 w-5 transition-transform ${isOpen ? 'rotate-90' : ''}`}
           />

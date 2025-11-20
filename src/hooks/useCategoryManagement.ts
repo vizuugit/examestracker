@@ -48,6 +48,14 @@ export function useCategoryManagement() {
 
       if (error) throw error;
 
+      // Buscar ordem customizada das categorias
+      const { data: categoryOrderData, error: orderError } = await supabase
+        .from('category_display_order')
+        .select('*')
+        .order('display_order');
+
+      if (orderError) throw orderError;
+
       // Criar mapa de overrides
       const overridesMap = new Map();
       overridesData?.forEach(override => {
@@ -55,8 +63,14 @@ export function useCategoryManagement() {
       });
       setOverrides(overridesMap);
 
+      // Criar mapa de ordem de categorias customizada
+      const categoryOrderMap = new Map();
+      categoryOrderData?.forEach(order => {
+        categoryOrderMap.set(order.category_key, order.display_order);
+      });
+
       // Mesclar com BIOMARKER_DISPLAY_ORDER
-      const categoriesData: CategoryData[] = CATEGORY_DISPLAY_ORDER.map((categoryKey, index) => {
+      let categoriesData: CategoryData[] = CATEGORY_DISPLAY_ORDER.map((categoryKey, index) => {
         const biomarkersInCategory = BIOMARKER_DISPLAY_ORDER[categoryKey] || [];
         
         const biomarkers: BiomarkerData[] = biomarkersInCategory.map((biomarkerName, bioIndex) => {
@@ -88,9 +102,12 @@ export function useCategoryManagement() {
           name: categoryKey,
           displayName: CATEGORY_DISPLAY_NAMES[categoryKey] || categoryKey,
           biomarkers,
-          order: index
+          order: categoryOrderMap.get(categoryKey) ?? index
         };
       });
+
+      // Ordenar categorias pela ordem customizada
+      categoriesData.sort((a, b) => a.order - b.order);
 
       setCategories(categoriesData);
     } catch (error) {
@@ -234,6 +251,28 @@ export function useCategoryManagement() {
     }
   };
 
+  const reorderCategories = async (reorderedCategories: CategoryData[]) => {
+    try {
+      const updates = reorderedCategories.map((category, index) => ({
+        category_key: category.name,
+        display_order: index,
+      }));
+
+      const { error } = await supabase
+        .from('category_display_order')
+        .upsert(updates, { onConflict: 'category_key' });
+
+      if (error) throw error;
+
+      clearCategorizationCache();
+      await loadCategories();
+      toast.success('Ordem das categorias atualizada');
+    } catch (error) {
+      console.error('Error reordering categories:', error);
+      toast.error('Erro ao reordenar categorias');
+    }
+  };
+
   const getStats = () => {
     const totalBiomarkers = categories.reduce((sum, cat) => sum + cat.biomarkers.length, 0);
     const totalOverrides = Array.from(overrides.values()).length;
@@ -253,6 +292,7 @@ export function useCategoryManagement() {
     updateBiomarkerName,
     moveBiomarker,
     reorderBiomarkers,
+    reorderCategories,
     addBiomarker,
     removeBiomarker,
     getStats,

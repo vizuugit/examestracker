@@ -126,6 +126,33 @@ export type Database = {
           },
         ]
       }
+      category_display_order: {
+        Row: {
+          category_key: string
+          created_at: string | null
+          created_by: string | null
+          display_order: number
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          category_key: string
+          created_at?: string | null
+          created_by?: string | null
+          display_order: number
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          category_key?: string
+          created_at?: string | null
+          created_by?: string | null
+          display_order?: number
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       corrections: {
         Row: {
           ai_value: string | null
