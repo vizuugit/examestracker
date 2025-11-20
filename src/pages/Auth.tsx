@@ -111,7 +111,7 @@ const Auth = () => {
         </div>
 
         {/* Login Form */}
-        <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-2xl p-8 shadow-2xl transition-all duration-300 ease-in-out hover:shadow-[0_20px_50px_hsl(var(--primary)/0.15)] hover:border-zinc-700">
+        <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-2xl p-8 shadow-2xl transition-all duration-300 ease-in-out hover:shadow-[0_20px_50px_rgba(0,90,156,0.3),0_0_80px_rgba(0,150,255,0.2)] hover:border-rest-blue/50">
           <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
             {/* Email Field */}
             <div className="space-y-2">
