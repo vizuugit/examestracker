@@ -224,9 +224,11 @@ export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '
               {isAdmin && (
                 <>
                   <DropdownMenuSeparator className="bg-white/10" />
-                  <DropdownMenuItem onClick={() => navigate('/admin/invites')} className="cursor-pointer hover:bg-white/10">
-                    <Shield className="mr-2 h-4 w-4" />
-                    Administração
+                  <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10">
+                    <Link to="/admin/invites" className="flex items-center">
+                      <Shield className="mr-2 h-4 w-4" />
+                      Administração
+                    </Link>
                   </DropdownMenuItem>
                 </>
               )}
@@ -283,12 +285,14 @@ export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '
             {isAdmin && (
               <>
                 <DropdownMenuSeparator className="bg-white/10" />
-                <DropdownMenuItem onClick={() => navigate('/admin/invites')} className="cursor-pointer hover:bg-white/10">
-                  <Shield className="mr-2 h-4 w-4" />
-                  Administração
-                  {unreadCount > 0 && (
-                    <Badge className="ml-auto bg-red-500">{unreadCount}</Badge>
-                  )}
+                <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10">
+                  <Link to="/admin/invites" className="flex items-center">
+                    <Shield className="mr-2 h-4 w-4" />
+                    Administração
+                    {unreadCount > 0 && (
+                      <Badge className="ml-auto bg-red-500">{unreadCount}</Badge>
+                    )}
+                  </Link>
                 </DropdownMenuItem>
               </>
             )}
