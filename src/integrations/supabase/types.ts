@@ -126,6 +126,42 @@ export type Database = {
           },
         ]
       }
+      biomarker_variations: {
+        Row: {
+          active: boolean | null
+          biomarker_normalized_name: string
+          category: string | null
+          created_at: string | null
+          created_by: string | null
+          id: string
+          unit: string | null
+          updated_at: string | null
+          variation: string
+        }
+        Insert: {
+          active?: boolean | null
+          biomarker_normalized_name: string
+          category?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          unit?: string | null
+          updated_at?: string | null
+          variation: string
+        }
+        Update: {
+          active?: boolean | null
+          biomarker_normalized_name?: string
+          category?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          unit?: string | null
+          updated_at?: string | null
+          variation?: string
+        }
+        Relationships: []
+      }
       category_display_order: {
         Row: {
           category_key: string
