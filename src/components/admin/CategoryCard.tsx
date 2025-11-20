@@ -81,7 +81,7 @@ export function CategoryCard({
           <ChevronRight
             className={`h-5 w-5 transition-transform ${isOpen ? 'rotate-90' : ''}`}
           />
-          <span className="font-medium text-lg">{displayName}</span>
+          <span className="font-medium text-lg text-white">{displayName}</span>
           <Badge variant="secondary">{biomarkers.length} biomarcadores</Badge>
         </div>
       </CollapsibleTrigger>
