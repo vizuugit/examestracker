@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Menu, LogOut, User, Home, Users, Shield, Bell, Mail, Copy } from "lucide-react";
+import { Menu, LogOut, User, Home, Users, Shield, Bell, Mail, Copy, Info } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -125,6 +125,9 @@ export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '
           >
             Contato
           </button>
+          <Link to="/demo" className="font-medium text-white/80 hover:text-white transition-colors">
+            Como funciona
+          </Link>
         </nav>
 
         {/* Desktop Actions */}
@@ -271,6 +274,10 @@ export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '
             <DropdownMenuItem onClick={() => setContactDialogOpen(true)} className="cursor-pointer hover:bg-white/10">
               <Mail className="mr-2 h-4 w-4" />
               Contato
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/demo')} className="cursor-pointer hover:bg-white/10">
+              <Info className="mr-2 h-4 w-4" />
+              Como funciona
             </DropdownMenuItem>
             
             {isAdmin && (
