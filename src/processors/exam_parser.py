@@ -1,13 +1,14 @@
 """
 Exam Parser - Extração inteligente de exames laboratoriais
-Integração completa: Normalizer + Validators + Claude AI
-Versão: 5.0.0 - Otimizada para laboratórios brasileiros
+Integração completa: Normalizer + Validators + Gemini AI
+Versão: 6.0.0 - Migrado para Gemini (mais barato e eficiente)
 """
 
 import json
 import re
 from typing import List, Dict, Any, Optional
 from pathlib import Path
+import google.generativeai as genai
 
 # Imports locais
 from src.utils.validators import (
@@ -26,14 +27,14 @@ from src.utils.validators import (
 # PROMPT OTIMIZADO PARA LABORATÓRIOS BRASILEIROS
 # ========================================
 
-def build_claude_prompt(
+def build_gemini_prompt(
     extracted_text: str,
     biomarker_examples: str,
     extracted_name: Optional[str] = None,
     extracted_birth_date: Optional[str] = None,
     extracted_lab: Optional[str] = None
 ) -> str:
-    """Constrói prompt otimizado para extração de exames brasileiros"""
+    """Constrói prompt otimizado para Gemini - extração de exames brasileiros"""
     
     # Hints de dados pré-extraídos
     extraction_hints = ""
@@ -225,7 +226,7 @@ def parse_lab_report(
         print('⚠️ Normalization service não disponível')
     
     # Construir prompt
-    prompt = build_claude_prompt(
+    prompt = build_gemini_prompt(
         extracted_text,
         biomarker_examples,
         extracted_name,
@@ -305,6 +306,148 @@ def parse_lab_report(
         print(f'❌ Erro ao parsear JSON: {e}')
         return {'error': f'JSON inválido: {str(e)}'}
     
+    except Exception as e:
+        print(f'❌ Erro no parsing: {e}')
+        return {'error': str(e)}
+
+
+# ========================================
+# PARSING COM GEMINI (NOVA VERSÃO - MAIS BARATA)
+# ========================================
+
+def parse_lab_report_with_gemini(
+    extracted_text: str,
+    gemini_model: str = 'gemini-2.0-flash-exp',
+    normalization_service=None,
+    extracted_name: Optional[str] = None,
+    extracted_birth_date: Optional[str] = None,
+    extracted_lab: Optional[str] = None,
+    max_tokens: int = 8192
+) -> Dict[str, Any]:
+    """
+    Extrai dados estruturados de laudo laboratorial usando Gemini
+
+    Args:
+        extracted_text: Texto extraído do PDF/imagem
+        gemini_model: Modelo Gemini a usar
+        normalization_service: Instância de BiomarkerNormalizationService (opcional)
+        extracted_name: Nome pré-extraído (hint)
+        extracted_birth_date: Data pré-extraída (hint)
+        extracted_lab: Laboratório pré-extraído (hint)
+        max_tokens: Limite de tokens para resposta do Gemini
+
+    Returns:
+        dict com dados estruturados e validados
+    """
+
+    # Limitar tamanho do texto
+    max_chars = 100000
+    if len(extracted_text) > max_chars:
+        extracted_text = extracted_text[:max_chars]
+        print(f'⚠️ Texto truncado para {max_chars} caracteres')
+
+    # Construir lista de biomarcadores válidos
+    biomarker_examples = ""
+    if normalization_service:
+        examples_list = []
+        # Pegar primeiros 100 biomarcadores
+        for bio in normalization_service.biomarkers[:100]:
+            line = f"- {bio['nome_padrao']}"
+            if bio.get('unidade'):
+                line += f" ({bio['unidade']})"
+            if bio.get('sinonimos', [])[:2]:
+                line += f" | Também: {', '.join(bio['sinonimos'][:2])}"
+            examples_list.append(line)
+
+        biomarker_examples = '\n'.join(examples_list)
+        print(f'✅ Usando {len(normalization_service.biomarkers)} biomarcadores da especificação')
+    else:
+        biomarker_examples = "(Serviço de normalização não disponível)"
+        print('⚠️ Normalization service não disponível')
+
+    # Construir prompt
+    prompt = build_gemini_prompt(
+        extracted_text,
+        biomarker_examples,
+        extracted_name,
+        extracted_birth_date,
+        extracted_lab
+    )
+
+    # Chamar Gemini
+    try:
+        print(f'🤖 Chamando Gemini {gemini_model} para parsing...')
+
+        model = genai.GenerativeModel(
+            model_name=gemini_model,
+            generation_config={
+                'temperature': 0,
+                'max_output_tokens': max_tokens,
+            }
+        )
+
+        response = model.generate_content(prompt)
+        response_text = response.text.strip()
+
+        # Remover markdown se presente
+        if response_text.startswith('```'):
+            response_text = re.sub(r'^```json\s*|\s*```$', '', response_text, flags=re.MULTILINE)
+
+        # Tentar encontrar JSON no texto
+        json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+        if not json_match:
+            print('❌ Não foi possível extrair JSON da resposta')
+            return {
+                'error': 'Falha ao extrair JSON',
+                'raw_response': response_text[:500]
+            }
+
+        parsed_data = json.loads(json_match.group(0))
+        print(f'✅ JSON parseado com sucesso')
+
+        # Validar e processar exames
+        exams_raw = parsed_data.get('exams', [])
+        if not exams_raw:
+            exams_raw = parsed_data.get('exames', [])
+
+        exams_processed = []
+
+        for exam in exams_raw:
+            # Validar estrutura básica
+            is_valid, error = validate_exam_structure(exam)
+            if not is_valid:
+                print(f'⚠️ Exame inválido: {error}')
+                continue
+
+            # Normalizar e processar
+            processed_exam = process_exam(exam, normalization_service)
+            exams_processed.append(processed_exam)
+
+        # Deduplicar
+        exams_final = deduplicate_exams(exams_processed)
+
+        print(f'✅ Processados {len(exams_final)} exames (de {len(exams_raw)} brutos)')
+
+        # Construir resultado final
+        result = {
+            'nome': parsed_data.get('nome', extracted_name or ''),
+            'data_nascimento': parsed_data.get('data_nascimento', extracted_birth_date or ''),
+            'laboratorio': parsed_data.get('laboratorio', extracted_lab or ''),
+            'data_exame': parsed_data.get('data_exame', ''),
+            'exams': exams_final,
+            'metadata': {
+                'total_exams': len(exams_final),
+                'extraction_method': f'gemini_{gemini_model}',
+                'normalized_exams': sum(1 for e in exams_final if e.get('biomarker_id'))
+            }
+        }
+
+        return result
+
+    except json.JSONDecodeError as e:
+        print(f'❌ Erro ao parsear JSON: {e}')
+        return {'error': f'JSON inválido: {str(e)}'}
+
     except Exception as e:
         print(f'❌ Erro no parsing: {e}')
         return {'error': str(e)}
