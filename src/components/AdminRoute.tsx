@@ -19,8 +19,8 @@ export function AdminRoute({ children }: AdminRouteProps) {
     userId: user?.id 
   });
 
-  // CRÍTICO: Só tomar decisões quando loading for definitivamente false
-  if (authLoading || roleLoading) {
+  // Verificação simples: authLoading precisa ser false para ter user com email
+  if (authLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-black">
         <div className="space-y-4 text-center">
@@ -32,14 +32,13 @@ export function AdminRoute({ children }: AdminRouteProps) {
     );
   }
 
-  // Agora podemos confiar: roleLoading = false significa roles foram carregadas
   if (!user) {
     console.log('[AdminRoute] Redirecionando para /auth - sem usuário');
     return <Navigate to="/auth" replace />;
   }
 
-  // Só redirecionar se roleLoading for false E não for admin
-  if (!roleLoading && !isAdmin) {
+  // Verificação direta - sem dependência de loading assíncrono
+  if (!isAdmin) {
     console.log('[AdminRoute] Redirecionando para /dashboard - não é admin');
     return <Navigate to="/dashboard" replace />;
   }

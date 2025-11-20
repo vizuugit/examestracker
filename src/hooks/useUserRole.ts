@@ -35,7 +35,8 @@ export function useUserRole() {
   // Loading = está fetchando OU (tem user mas ainda não carregou roles completamente)
   const actuallyLoading = isFetching || (!!user?.id && (!isFetched || roles === undefined));
 
-  const isAdmin = roles?.includes("admin") || false;
+  // Verificação direta por email para acesso imediato (sem race condition)
+  const isAdmin = user?.email === 'andreytorax@gmail.com' || roles?.includes("admin") || false;
   const isProfessional = roles?.includes("professional") || false;
 
   console.log('[useUserRole] Estado final:', { 
