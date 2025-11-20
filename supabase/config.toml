@@ -11,3 +11,12 @@ verify_jwt = false
 
 [functions.analyze-exam]
 verify_jwt = false
+
+[functions.send-invitation]
+verify_jwt = false
+
+[functions.notify-admin-acceptance]
+verify_jwt = false
+
+[functions.expire-invitations]
+verify_jwt = false
