@@ -18,6 +18,15 @@ export interface CategoryData {
   order: number;
 }
 
+interface PendingChanges {
+  categoryOrder: CategoryData[] | null;
+  biomarkerReorders: Map<string, BiomarkerData[]>;
+  biomarkerRenames: Map<string, { newName: string; category: string; oldName: string }>;
+  biomarkerAdditions: Array<{ name: string; category: string }>;
+  biomarkerDeletions: Set<string>;
+  biomarkerMoves: Map<string, string>;
+}
+
 const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
   'hematologico': '🩸 Hematológico',
   'metabolico': '💊 Metabólico',
@@ -36,6 +45,15 @@ export function useCategoryManagement() {
   const [categories, setCategories] = useState<CategoryData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [overrides, setOverrides] = useState<Map<string, any>>(new Map());
+  const [pendingChanges, setPendingChanges] = useState<PendingChanges>({
+    categoryOrder: null,
+    biomarkerReorders: new Map(),
+    biomarkerRenames: new Map(),
+    biomarkerAdditions: [],
+    biomarkerDeletions: new Set(),
+    biomarkerMoves: new Map(),
+  });
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const loadCategories = async () => {
     setIsLoading(true);
@@ -122,155 +140,234 @@ export function useCategoryManagement() {
     loadCategories();
   }, []);
 
-  const updateBiomarkerName = async (oldName: string, newName: string, category: string) => {
+  const updateBiomarkerName = (oldName: string, newName: string, category: string) => {
+    setPendingChanges(prev => {
+      const newRenames = new Map(prev.biomarkerRenames);
+      newRenames.set(oldName, { newName, category, oldName });
+      return { ...prev, biomarkerRenames: newRenames };
+    });
+    
+    setCategories(prev => prev.map(cat => {
+      if (cat.name === category) {
+        return {
+          ...cat,
+          biomarkers: cat.biomarkers.map(b => 
+            b.name === oldName ? { ...b, name: newName } : b
+          )
+        };
+      }
+      return cat;
+    }));
+    
+    setHasUnsavedChanges(true);
+  };
+
+  const moveBiomarker = (biomarkerName: string, newCategory: string) => {
+    setPendingChanges(prev => {
+      const newMoves = new Map(prev.biomarkerMoves);
+      newMoves.set(biomarkerName, newCategory);
+      return { ...prev, biomarkerMoves: newMoves };
+    });
+    setHasUnsavedChanges(true);
+  };
+
+  const reorderBiomarkers = (category: string, biomarkers: BiomarkerData[]) => {
+    setPendingChanges(prev => {
+      const newReorders = new Map(prev.biomarkerReorders);
+      newReorders.set(category, biomarkers);
+      return { ...prev, biomarkerReorders: newReorders };
+    });
+    
+    setCategories(prev => prev.map(cat => 
+      cat.name === category ? { ...cat, biomarkers } : cat
+    ));
+    
+    setHasUnsavedChanges(true);
+  };
+
+  const addBiomarker = (biomarkerName: string, category: string) => {
+    setPendingChanges(prev => ({
+      ...prev,
+      biomarkerAdditions: [...prev.biomarkerAdditions, { name: biomarkerName, category }]
+    }));
+    
+    setCategories(prev => prev.map(cat => {
+      if (cat.name === category) {
+        return {
+          ...cat,
+          biomarkers: [...cat.biomarkers, { 
+            name: biomarkerName, 
+            displayOrder: 999, 
+            hasOverride: true 
+          }]
+        };
+      }
+      return cat;
+    }));
+    
+    setHasUnsavedChanges(true);
+  };
+
+  const removeBiomarker = (biomarkerName: string) => {
+    setPendingChanges(prev => {
+      const newDeletions = new Set(prev.biomarkerDeletions);
+      newDeletions.add(biomarkerName);
+      return { ...prev, biomarkerDeletions: newDeletions };
+    });
+    
+    setCategories(prev => prev.map(cat => ({
+      ...cat,
+      biomarkers: cat.biomarkers.filter(b => b.name !== biomarkerName)
+    })));
+    
+    setHasUnsavedChanges(true);
+  };
+
+  const reorderCategories = (reorderedCategories: CategoryData[]) => {
+    setPendingChanges(prev => ({
+      ...prev,
+      categoryOrder: reorderedCategories
+    }));
+    
+    setCategories(reorderedCategories);
+    setHasUnsavedChanges(true);
+  };
+
+  const saveAllChanges = async () => {
     try {
-      const override = overrides.get(oldName);
-      
-      if (override) {
-        // Atualizar override existente
-        const { error } = await supabase
-          .from('biomarker_category_overrides')
-          .update({ biomarker_name: newName })
-          .eq('id', override.id);
-        
-        if (error) throw error;
-      } else {
-        // Criar novo override
-        const { error } = await supabase
-          .from('biomarker_category_overrides')
-          .insert({
-            biomarker_name: newName,
-            category: category,
-            display_order: 999
-          });
-        
-        if (error) throw error;
+      // 1. Processar remoções primeiro
+      if (pendingChanges.biomarkerDeletions.size > 0) {
+        const deletions = Array.from(pendingChanges.biomarkerDeletions);
+        for (const biomarkerName of deletions) {
+          await supabase
+            .from('biomarker_category_overrides')
+            .delete()
+            .eq('biomarker_name', biomarkerName);
+        }
       }
 
-      clearCategorizationCache();
-      await loadCategories();
-      toast.success(`Biomarcador renomeado para "${newName}"`);
-    } catch (error) {
-      console.error('Error updating biomarker:', error);
-      toast.error('Erro ao renomear biomarcador');
-    }
-  };
-
-  const moveBiomarker = async (biomarkerName: string, newCategory: string) => {
-    try {
-      const override = overrides.get(biomarkerName);
-      
-      if (override) {
-        const { error } = await supabase
-          .from('biomarker_category_overrides')
-          .update({ category: newCategory })
-          .eq('id', override.id);
-        
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from('biomarker_category_overrides')
-          .insert({
-            biomarker_name: biomarkerName,
-            category: newCategory,
-            display_order: 999
-          });
-        
-        if (error) throw error;
+      // 2. Processar renomeações
+      if (pendingChanges.biomarkerRenames.size > 0) {
+        for (const [oldName, { newName, category }] of pendingChanges.biomarkerRenames) {
+          const override = overrides.get(oldName);
+          
+          if (override) {
+            await supabase
+              .from('biomarker_category_overrides')
+              .update({ biomarker_name: newName })
+              .eq('id', override.id);
+          } else {
+            await supabase
+              .from('biomarker_category_overrides')
+              .insert({
+                biomarker_name: newName,
+                category: category,
+                display_order: 999
+              });
+          }
+        }
       }
 
-      clearCategorizationCache();
-      await loadCategories();
-      toast.success(`"${biomarkerName}" movido para ${CATEGORY_DISPLAY_NAMES[newCategory]}`);
-    } catch (error) {
-      console.error('Error moving biomarker:', error);
-      toast.error('Erro ao mover biomarcador');
-    }
-  };
+      // 3. Processar movimentações entre categorias
+      if (pendingChanges.biomarkerMoves.size > 0) {
+        for (const [biomarkerName, newCategory] of pendingChanges.biomarkerMoves) {
+          const override = overrides.get(biomarkerName);
+          
+          if (override) {
+            await supabase
+              .from('biomarker_category_overrides')
+              .update({ category: newCategory })
+              .eq('id', override.id);
+          } else {
+            await supabase
+              .from('biomarker_category_overrides')
+              .insert({
+                biomarker_name: biomarkerName,
+                category: newCategory,
+                display_order: 999
+              });
+          }
+        }
+      }
 
-  const reorderBiomarkers = async (category: string, biomarkers: BiomarkerData[]) => {
-    try {
-      const updates = biomarkers.map((biomarker, index) => ({
-        biomarker_name: biomarker.name,
-        category: category,
-        display_order: index,
-        created_by: null // Will be set by DB
-      }));
-
-      const { error } = await supabase
-        .from('biomarker_category_overrides')
-        .upsert(updates, { onConflict: 'biomarker_name' });
-
-      if (error) throw error;
-
-      clearCategorizationCache();
-      await loadCategories();
-      toast.success('Ordem atualizada com sucesso');
-    } catch (error) {
-      console.error('Error reordering biomarkers:', error);
-      toast.error('Erro ao reordenar biomarcadores');
-    }
-  };
-
-  const addBiomarker = async (biomarkerName: string, category: string) => {
-    try {
-      const { error } = await supabase
-        .from('biomarker_category_overrides')
-        .insert({
-          biomarker_name: biomarkerName,
+      // 4. Processar adições
+      if (pendingChanges.biomarkerAdditions.length > 0) {
+        const insertions = pendingChanges.biomarkerAdditions.map(({ name, category }) => ({
+          biomarker_name: name,
           category: category,
           display_order: 999
-        });
+        }));
+        
+        await supabase
+          .from('biomarker_category_overrides')
+          .insert(insertions);
+      }
 
-      if (error) throw error;
+      // 5. Salvar reordenações de biomarcadores
+      if (pendingChanges.biomarkerReorders.size > 0) {
+        const allUpdates = [];
+        for (const [category, biomarkers] of pendingChanges.biomarkerReorders) {
+          const updates = biomarkers.map((biomarker, index) => ({
+            biomarker_name: biomarker.name,
+            category: category,
+            display_order: index,
+          }));
+          allUpdates.push(...updates);
+        }
+        
+        if (allUpdates.length > 0) {
+          await supabase
+            .from('biomarker_category_overrides')
+            .upsert(allUpdates, { onConflict: 'biomarker_name' });
+        }
+      }
 
+      // 6. Salvar ordem das categorias
+      if (pendingChanges.categoryOrder) {
+        const updates = pendingChanges.categoryOrder.map((category, index) => ({
+          category_key: category.name,
+          display_order: index,
+        }));
+
+        await supabase
+          .from('category_display_order')
+          .upsert(updates, { onConflict: 'category_key' });
+      }
+
+      // Limpar cache e recarregar
       clearCategorizationCache();
       await loadCategories();
-      toast.success(`"${biomarkerName}" adicionado a ${CATEGORY_DISPLAY_NAMES[category]}`);
+      
+      // Resetar alterações pendentes
+      setPendingChanges({
+        categoryOrder: null,
+        biomarkerReorders: new Map(),
+        biomarkerRenames: new Map(),
+        biomarkerAdditions: [],
+        biomarkerDeletions: new Set(),
+        biomarkerMoves: new Map(),
+      });
+      setHasUnsavedChanges(false);
+      
+      toast.success('Todas as alterações foram salvas com sucesso!');
     } catch (error) {
-      console.error('Error adding biomarker:', error);
-      toast.error('Erro ao adicionar biomarcador');
+      console.error('Error saving changes:', error);
+      toast.error('Erro ao salvar alterações');
     }
   };
 
-  const removeBiomarker = async (biomarkerName: string) => {
-    try {
-      const { error } = await supabase
-        .from('biomarker_category_overrides')
-        .delete()
-        .eq('biomarker_name', biomarkerName);
-
-      if (error) throw error;
-
-      clearCategorizationCache();
-      await loadCategories();
-      toast.success(`"${biomarkerName}" removido`);
-    } catch (error) {
-      console.error('Error removing biomarker:', error);
-      toast.error('Erro ao remover biomarcador');
-    }
-  };
-
-  const reorderCategories = async (reorderedCategories: CategoryData[]) => {
-    try {
-      const updates = reorderedCategories.map((category, index) => ({
-        category_key: category.name,
-        display_order: index,
-      }));
-
-      const { error } = await supabase
-        .from('category_display_order')
-        .upsert(updates, { onConflict: 'category_key' });
-
-      if (error) throw error;
-
-      clearCategorizationCache();
-      await loadCategories();
-      toast.success('Ordem das categorias atualizada');
-    } catch (error) {
-      console.error('Error reordering categories:', error);
-      toast.error('Erro ao reordenar categorias');
-    }
+  const discardChanges = async () => {
+    setPendingChanges({
+      categoryOrder: null,
+      biomarkerReorders: new Map(),
+      biomarkerRenames: new Map(),
+      biomarkerAdditions: [],
+      biomarkerDeletions: new Set(),
+      biomarkerMoves: new Map(),
+    });
+    setHasUnsavedChanges(false);
+    await loadCategories();
+    toast.info('Alterações descartadas');
   };
 
   const getStats = () => {
@@ -296,6 +393,9 @@ export function useCategoryManagement() {
     addBiomarker,
     removeBiomarker,
     getStats,
-    refresh: loadCategories
+    refresh: loadCategories,
+    hasUnsavedChanges,
+    saveAllChanges,
+    discardChanges
   };
 }
