@@ -131,51 +131,45 @@ export default function AdminBiomarkerVariations() {
   };
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Variações de Biomarcadores</h1>
-        <p className="text-muted-foreground mt-2">
-          Gerencie sinônimos e variações customizadas de biomarcadores
-        </p>
-      </div>
-
-      <Alert>
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
+    <div className="space-y-6">
+      <Alert className="bg-zinc-900/50 border-white/10">
+        <AlertCircle className="h-4 w-4 text-white" />
+        <AlertDescription className="text-white/80">
           As variações customizadas complementam o sistema de normalização padrão. 
           Variações inativas não serão usadas no processo de normalização.
         </AlertDescription>
       </Alert>
 
-      <Card>
+      <Card className="bg-zinc-900/50 border-white/10">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Variações Cadastradas</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-white">Variações Cadastradas</CardTitle>
+              <CardDescription className="text-white/60">
                 Total: {variations?.length || 0} variações
               </CardDescription>
             </div>
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="bg-rest-blue hover:bg-rest-cyan">
                   <Plus className="mr-2 h-4 w-4" />
                   Nova Variação
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="bg-zinc-900 border-white/10">
                 <DialogHeader>
-                  <DialogTitle>Adicionar Nova Variação</DialogTitle>
-                  <DialogDescription>
+                  <DialogTitle className="text-white">Adicionar Nova Variação</DialogTitle>
+                  <DialogDescription className="text-white/60">
                     Adicione uma nova variação/sinônimo de biomarcador
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="normalized-name">Nome Normalizado *</Label>
+                    <Label htmlFor="normalized-name" className="text-white">Nome Normalizado *</Label>
                     <Input
                       id="normalized-name"
                       placeholder="Ex: Glicemia Jejum"
+                      className="bg-black/50 border-white/10 text-white"
                       value={newVariation.biomarker_normalized_name}
                       onChange={(e) =>
                         setNewVariation({ ...newVariation, biomarker_normalized_name: e.target.value })
@@ -183,10 +177,11 @@ export default function AdminBiomarkerVariations() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="variation">Variação/Sinônimo *</Label>
+                    <Label htmlFor="variation" className="text-white">Variação/Sinônimo *</Label>
                     <Input
                       id="variation"
                       placeholder="Ex: glicose, glucose fasting"
+                      className="bg-black/50 border-white/10 text-white"
                       value={newVariation.variation}
                       onChange={(e) =>
                         setNewVariation({ ...newVariation, variation: e.target.value })
@@ -194,10 +189,11 @@ export default function AdminBiomarkerVariations() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="category">Categoria</Label>
+                    <Label htmlFor="category" className="text-white">Categoria</Label>
                     <Input
                       id="category"
                       placeholder="Ex: Glicemia"
+                      className="bg-black/50 border-white/10 text-white"
                       value={newVariation.category}
                       onChange={(e) =>
                         setNewVariation({ ...newVariation, category: e.target.value })
@@ -205,10 +201,11 @@ export default function AdminBiomarkerVariations() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="unit">Unidade</Label>
+                    <Label htmlFor="unit" className="text-white">Unidade</Label>
                     <Input
                       id="unit"
                       placeholder="Ex: mg/dL"
+                      className="bg-black/50 border-white/10 text-white"
                       value={newVariation.unit}
                       onChange={(e) =>
                         setNewVariation({ ...newVariation, unit: e.target.value })
@@ -223,14 +220,14 @@ export default function AdminBiomarkerVariations() {
                         setNewVariation({ ...newVariation, active: checked })
                       }
                     />
-                    <Label htmlFor="active">Ativa</Label>
+                    <Label htmlFor="active" className="text-white">Ativa</Label>
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} className="border-white/10 text-white hover:bg-white/10">
                     Cancelar
                   </Button>
-                  <Button onClick={handleAddVariation} disabled={addMutation.isPending}>
+                  <Button onClick={handleAddVariation} disabled={addMutation.isPending} className="bg-rest-blue hover:bg-rest-cyan">
                     {addMutation.isPending ? "Adicionando..." : "Adicionar"}
                   </Button>
                 </DialogFooter>
@@ -241,43 +238,43 @@ export default function AdminBiomarkerVariations() {
         <CardContent>
           <div className="mb-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
               <Input
                 placeholder="Buscar variações..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-black/50 border-white/10 text-white"
               />
             </div>
           </div>
 
           {isLoading ? (
-            <div className="text-center py-8 text-muted-foreground">Carregando...</div>
+            <div className="text-center py-8 text-white/60">Carregando...</div>
           ) : filteredVariations?.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
+            <div className="text-center py-8 text-white/60">
               Nenhuma variação encontrada
             </div>
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Nome Normalizado</TableHead>
-                  <TableHead>Variação</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Unidade</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
+                <TableRow className="border-white/10">
+                  <TableHead className="text-white/80">Nome Normalizado</TableHead>
+                  <TableHead className="text-white/80">Variação</TableHead>
+                  <TableHead className="text-white/80">Categoria</TableHead>
+                  <TableHead className="text-white/80">Unidade</TableHead>
+                  <TableHead className="text-white/80">Status</TableHead>
+                  <TableHead className="text-right text-white/80">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredVariations?.map((variation) => (
-                  <TableRow key={variation.id}>
-                    <TableCell className="font-medium">
+                  <TableRow key={variation.id} className="border-white/10">
+                    <TableCell className="font-medium text-white">
                       {variation.biomarker_normalized_name}
                     </TableCell>
-                    <TableCell>{variation.variation}</TableCell>
-                    <TableCell>{variation.category || "-"}</TableCell>
-                    <TableCell>{variation.unit || "-"}</TableCell>
+                    <TableCell className="text-white">{variation.variation}</TableCell>
+                    <TableCell className="text-white">{variation.category || "-"}</TableCell>
+                    <TableCell className="text-white">{variation.unit || "-"}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         <Switch
