@@ -7,9 +7,13 @@ export const BIOMARKER_REFERENCE_TABLE: Record<string, {
 }> = {
   // Hemograma - Série Vermelha
   'hemoglobina': { normalizedName: 'Hemoglobina', category: 'hematologico', unit: 'g/dL' },
-  'hemoglobina glicada': { normalizedName: 'Hemoglobina', category: 'hematologico', unit: 'g/dL' },
   'hb': { normalizedName: 'Hemoglobina', category: 'hematologico', unit: 'g/dL' },
   'hgb': { normalizedName: 'Hemoglobina', category: 'hematologico', unit: 'g/dL' },
+  
+  // Hemoglobina Glicada (HbA1c) - Metabólico
+  'hemoglobina glicada': { normalizedName: 'HbA1c', category: 'metabolico', unit: '%' },
+  'hba1c': { normalizedName: 'HbA1c', category: 'metabolico', unit: '%' },
+  'a1c': { normalizedName: 'HbA1c', category: 'metabolico', unit: '%' },
   
   'hemacias': { normalizedName: 'Hemácias', category: 'hematologico', unit: 'milhões/mm³' },
   'segmentados (absoluto)': { normalizedName: 'Segmentados', category: 'hematologico', unit: '/mm³' },
@@ -260,9 +264,18 @@ export function normalizeBiomarkerWithTable(biomarkerName: string): {
     return match;
   }
   
-  // Busca parcial (se o nome contém alguma chave da tabela)
+  // Busca parcial mais rigorosa (evitar falsos positivos como "hb" dentro de "SHBG")
   for (const [key, value] of Object.entries(BIOMARKER_REFERENCE_TABLE)) {
-    if (searchKey.includes(key) || key.includes(searchKey)) {
+    // Apenas buscar se a chave tem mais de 2 caracteres para evitar matches muito curtos
+    if (key.length > 2) {
+      // Verificar se a chave aparece como palavra isolada ou no início/fim
+      const keyPattern = new RegExp(`(^|\\s)${key}(\\s|$)`, 'i');
+      if (keyPattern.test(searchKey)) {
+        return value;
+      }
+    }
+    // Para chaves curtas (<=2), apenas exact match
+    if (key.length <= 2 && searchKey === key) {
       return value;
     }
   }

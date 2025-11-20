@@ -319,6 +319,18 @@ export default function PatientDashboard() {
           const existing = biomarkerMap.get(finalKey)!;
           const newScore = calculateCompletenessScore(result);
           
+          // ⚠️ VALIDAÇÃO: Detectar consolidações suspeitas de biomarcadores diferentes
+          if (existing.unit && result.unit && existing.unit !== result.unit) {
+            console.warn('⚠️ [CONSOLIDAÇÃO SUSPEITA] Biomarcadores com unidades diferentes sendo consolidados:', {
+              biomarker: finalKey,
+              existingUnit: existing.unit,
+              newUnit: result.unit,
+              existingValue: Array.from(existing.values.values())[0],
+              newValue: result.value,
+              originalNames: { existing: existing.biomarker_name, new: originalName }
+            });
+          }
+          
           if (tableMatch?.category && existing.category_source !== 'normalization_table') {
             existing.category = category;
             existing.category_source = 'normalization_table';

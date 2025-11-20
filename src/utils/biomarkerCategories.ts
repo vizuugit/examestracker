@@ -136,14 +136,33 @@ export const BIOMARKER_CATEGORIES = {
 export type CategoryKey = keyof typeof BIOMARKER_CATEGORIES;
 
 export function categorizeBiomarker(biomarkerName: string): CategoryKey {
+  const name = biomarkerName.toLowerCase();
+  
+  // PRIORIZAR matches específicos para evitar confusão entre biomarcadores similares
+  
+  // 1. Hemoglobina Glicada (HbA1c) - ESPECÍFICO para Metabólico
+  if (name.includes('glicada') || name.includes('hba1c') || name === 'a1c') {
+    return 'metabolico';
+  }
+  
+  // 2. Hemoglobina comum - Hematológico (só se NÃO for glicada)
+  if (name.includes('hemoglobina') && !name.includes('glicada')) {
+    return 'hematologico';
+  }
+  
+  // 3. Busca genérica para outras categorias
   for (const [key, category] of Object.entries(BIOMARKER_CATEGORIES)) {
-    if (category.biomarkers.some(b => 
-      biomarkerName.toLowerCase().includes(b.toLowerCase()) ||
-      b.toLowerCase().includes(biomarkerName.toLowerCase())
-    )) {
+    if (category.biomarkers.some(b => {
+      const biomarkerLower = b.toLowerCase();
+      // Match exato tem prioridade
+      if (name === biomarkerLower) return true;
+      // Match parcial mais criterioso
+      return name.includes(biomarkerLower) || biomarkerLower.includes(name);
+    })) {
       return key as CategoryKey;
     }
   }
+  
   return 'outros' as CategoryKey; // fallback
 }
 
