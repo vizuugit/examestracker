@@ -11,6 +11,14 @@ export function AdminRoute({ children }: AdminRouteProps) {
   const { user, loading: authLoading } = useAuth();
   const { isAdmin, isLoading: roleLoading } = useUserRole();
 
+  console.log('[AdminRoute] Debug:', { 
+    user: user?.email, 
+    authLoading, 
+    roleLoading, 
+    isAdmin,
+    userId: user?.id 
+  });
+
   if (authLoading || roleLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-black">
@@ -24,12 +32,15 @@ export function AdminRoute({ children }: AdminRouteProps) {
   }
 
   if (!user) {
+    console.log('[AdminRoute] Redirecionando para /auth - sem usuário');
     return <Navigate to="/auth" replace />;
   }
 
   if (!isAdmin) {
+    console.log('[AdminRoute] Redirecionando para /dashboard - não é admin');
     return <Navigate to="/dashboard" replace />;
   }
 
+  console.log('[AdminRoute] Renderizando children - usuário é admin');
   return <>{children}</>;
 }
