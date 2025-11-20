@@ -28,13 +28,12 @@ export function useUserRole() {
       return userRoles;
     },
     enabled: !!user?.id,
-    staleTime: 1000 * 60 * 5, // Cache por 5 minutos
+    staleTime: 0, // SEMPRE refetch - não usar cache
     gcTime: 1000 * 60 * 10, // Garbage collection após 10 minutos
   });
 
-  // Loading REAL: dados não foram carregados pelo menos uma vez OU está fetchando
-  // Se user existe mas ainda não fetched = está loading
-  const actuallyLoading = (!!user?.id && !isFetched) || isLoading || isFetching;
+  // Loading = está fetchando OU (tem user mas ainda não carregou roles completamente)
+  const actuallyLoading = isFetching || (!!user?.id && (!isFetched || roles === undefined));
 
   const isAdmin = roles?.includes("admin") || false;
   const isProfessional = roles?.includes("professional") || false;
