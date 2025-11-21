@@ -478,22 +478,30 @@ def process_exam(exam: Dict[str, Any], normalization_service=None) -> Dict[str, 
     biomarker_id = None
     normalized_name = exam_name
     category = None
-    
+    category_order = None
+    biomarker_order = None
+
     if normalization_service and exam_name:
         match, rejection = normalization_service.find_biomarker(exam_name)
         if match:
             normalized_name = match.normalized_name
             biomarker_id = f"bio_{normalized_name.lower().replace(' ', '_')}"
             category = match.category
+            category_order = match.category_order
+            biomarker_order = match.biomarker_order
             print(f'✅ Normalizado: {exam_name} → {normalized_name} ({match.match_type})')
         elif rejection:
             print(f'⚠️ Não normalizado: {exam_name} ({rejection.reason})')
-    
+
     processed['normalized_name'] = normalized_name
     if biomarker_id:
         processed['biomarker_id'] = biomarker_id
     if category:
         processed['category'] = category
+    if category_order is not None:
+        processed['category_order'] = category_order
+    if biomarker_order is not None:
+        processed['biomarker_order'] = biomarker_order
     
     # Valor
     value_raw = exam.get('value', '')

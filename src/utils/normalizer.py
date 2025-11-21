@@ -9,11 +9,11 @@ Este módulo fornece normalização avançada de biomarcadores laboratoriais usa
 - Detecção de duplicatas
 - Validação de payload completo
 
-Sincronizado com: especificacao_biomarcadores.json (213 biomarcadores)
+Sincronizado com: biomarker-specification-v2.json (220 biomarcadores, 20 categorias)
 
 Autor: Sistema HealthTrack
-Data: 2025-10-27
-Versão: 3.0.0
+Data: 2025-11-21
+Versão: 4.0.0
 """
 
 import json
@@ -40,6 +40,8 @@ class BiomarkerMatch:
     """Biomarcador normalizado com sucesso"""
     normalized_name: str
     category: str
+    category_order: int  # Ordem da categoria (1-20)
+    biomarker_order: int  # Ordem dentro da categoria
     unit: str
     synonyms: List[str]
     confidence: float
@@ -94,8 +96,13 @@ class BiomarkerNormalizationService:
                       Se None, usa o caminho padrão (mesmo diretório)
         """
         if spec_path is None:
-            # Caminho padrão: mesmo diretório deste arquivo
-            spec_path = Path(__file__).parent.parent.parent / 'especificacao_biomarcadores.json'
+            # Priorizar arquivo v2 reorganizado
+            v2_path = Path(__file__).parent.parent / 'data' / 'biomarker-specification-v2.json'
+            if v2_path.exists():
+                spec_path = v2_path
+            else:
+                # Fallback para arquivo antigo
+                spec_path = Path(__file__).parent.parent.parent / 'especificacao_biomarcadores.json'
         
         self.spec_path = Path(spec_path)
         self.spec_data = self._load_specification()
@@ -257,6 +264,8 @@ class BiomarkerNormalizationService:
             return (BiomarkerMatch(
                 normalized_name=biomarker['nome_padrao'],
                 category=biomarker['categoria'],
+                category_order=biomarker.get('category_order', 999),
+                biomarker_order=biomarker.get('biomarker_order', 999),
                 unit=self._infer_unit(biomarker['nome_padrao']),
                 synonyms=biomarker.get('sinonimos', []),
                 confidence=1.0,
@@ -270,6 +279,8 @@ class BiomarkerNormalizationService:
                 return (BiomarkerMatch(
                     normalized_name=biomarker['nome_padrao'],
                     category=biomarker['categoria'],
+                    category_order=biomarker.get('category_order', 999),
+                    biomarker_order=biomarker.get('biomarker_order', 999),
                     unit=self._infer_unit(biomarker['nome_padrao']),
                     synonyms=biomarker.get('sinonimos', []),
                     confidence=0.95,
@@ -279,12 +290,14 @@ class BiomarkerNormalizationService:
         
         # 3️⃣ BUSCA FUZZY
         best_match, confidence = self._fuzzy_search(normalized)
-        
+
         if best_match and confidence >= self.FUZZY_THRESHOLD:
             biomarker = self.synonym_map[best_match]
             return (BiomarkerMatch(
                 normalized_name=biomarker['nome_padrao'],
                 category=biomarker['categoria'],
+                category_order=biomarker.get('category_order', 999),
+                biomarker_order=biomarker.get('biomarker_order', 999),
                 unit=self._infer_unit(biomarker['nome_padrao']),
                 synonyms=biomarker.get('sinonimos', []),
                 confidence=confidence / 100.0,  # Converter para 0-1
