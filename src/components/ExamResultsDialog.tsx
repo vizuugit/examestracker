@@ -30,12 +30,18 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, TrendingUp, TrendingDown, CheckCircle, Brain } from "lucide-react";
+import { Search, TrendingUp, TrendingDown, CheckCircle, Brain, FileDown, FileSpreadsheet } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
 // Ordenação agora vem do backend via category_order e biomarker_order
 import { useExamAnalysis } from "@/hooks/useExamAnalysis";
 import { ExamInsightsPanel } from "@/components/ExamInsightsPanel";
 import type { ExamWithInsights } from "@/types/exam-insights";
 import { getBiomarkerCategory } from "@/services/biomarkerCategoryService";
+import { toast } from "sonner";
 
 interface ExamResultsDialogProps {
   open: boolean;
@@ -59,6 +65,228 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
       // Invalidar query para recarregar dados atualizados
       queryClient.invalidateQueries({ queryKey: ["exam-results", examId] });
     }
+  };
+
+  // Exportar para PDF
+  const exportToPDF = () => {
+    if (!examData) return;
+
+    const doc = new jsPDF();
+    
+    // Cabeçalho
+    doc.setFontSize(16);
+    doc.setTextColor(0, 90, 156); // rest-blue
+    doc.text('HealthTrack - Resultados do Exame', 14, 20);
+    
+    // Dados do exame
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
+    if (examData.patientName) {
+      doc.text(`Paciente: ${examData.patientName}`, 14, 30);
+    }
+    if (examData.exam) {
+      doc.text(`Laboratório: ${examData.exam.laboratory}`, 14, 37);
+      doc.text(`Data do Exame: ${format(new Date(examData.exam.exam_date), 'dd/MM/yyyy', { locale: ptBR })}`, 14, 44);
+    }
+    doc.text(`Emitido em: ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, 14, 51);
+    
+    let yPosition = 60;
+
+    // Usar estrutura nova ou fallback
+    if (examData.categorias) {
+      // Estrutura nova: usar categorias do backend
+      examData.categorias.forEach((categoria: any) => {
+        // Cabeçalho da categoria
+        doc.setFillColor(0, 90, 156);
+        doc.rect(14, yPosition, 182, 8, 'F');
+        doc.setFontSize(12);
+        doc.setTextColor(255, 255, 255);
+        doc.text(categoria.nome.toUpperCase(), 16, yPosition + 6);
+        yPosition += 12;
+
+        // Tabela de biomarcadores
+        const biomarkerRows = categoria.biomarcadores.map((bio: any) => [
+          bio.nome,
+          bio.resultado,
+          bio.unidade || '-',
+          bio.referencia_min !== null && bio.referencia_max !== null
+            ? `${bio.referencia_min} - ${bio.referencia_max}`
+            : '-',
+          bio.status === 'normal' ? 'Normal' : 
+          bio.status === 'alto' ? 'Alto' : 
+          bio.status === 'baixo' ? 'Baixo' : bio.status
+        ]);
+
+        autoTable(doc, {
+          startY: yPosition,
+          head: [['Biomarcador', 'Valor', 'Unidade', 'Referência', 'Status']],
+          body: biomarkerRows,
+          theme: 'striped',
+          headStyles: { 
+            fillColor: [240, 240, 240],
+            textColor: [0, 0, 0],
+            fontSize: 9,
+            fontStyle: 'bold'
+          },
+          bodyStyles: { fontSize: 8 },
+          margin: { left: 14, right: 14 },
+        });
+
+        yPosition = (doc as any).lastAutoTable.finalY + 8;
+        
+        // Nova página se necessário
+        if (yPosition > 270) {
+          doc.addPage();
+          yPosition = 20;
+        }
+      });
+    } else if (examData.results) {
+      // Fallback: estrutura antiga
+      const groupedByCategory = groupedResults;
+      
+      groupedByCategory.forEach(([category, results]: [string, any[]]) => {
+        // Cabeçalho da categoria
+        doc.setFillColor(0, 90, 156);
+        doc.rect(14, yPosition, 182, 8, 'F');
+        doc.setFontSize(12);
+        doc.setTextColor(255, 255, 255);
+        doc.text(category.toUpperCase(), 16, yPosition + 6);
+        yPosition += 12;
+
+        const biomarkerRows = results.map(result => [
+          result.biomarker_name,
+          result.value,
+          result.unit || '-',
+          result.reference_min !== null && result.reference_max !== null
+            ? `${result.reference_min} - ${result.reference_max}`
+            : '-',
+          result.status === 'normal' ? 'Normal' : 
+          result.status === 'alto' ? 'Alto' : 
+          result.status === 'baixo' ? 'Baixo' : result.status
+        ]);
+
+        autoTable(doc, {
+          startY: yPosition,
+          head: [['Biomarcador', 'Valor', 'Unidade', 'Referência', 'Status']],
+          body: biomarkerRows,
+          theme: 'striped',
+          headStyles: { 
+            fillColor: [240, 240, 240],
+            textColor: [0, 0, 0],
+            fontSize: 9,
+            fontStyle: 'bold'
+          },
+          bodyStyles: { fontSize: 8 },
+          margin: { left: 14, right: 14 },
+        });
+
+        yPosition = (doc as any).lastAutoTable.finalY + 8;
+        
+        if (yPosition > 270) {
+          doc.addPage();
+          yPosition = 20;
+        }
+      });
+    }
+    
+    const fileName = `exame-${examData.patientName || 'paciente'}-${format(new Date(examData.exam?.exam_date || new Date()), 'yyyy-MM-dd')}.pdf`;
+    doc.save(fileName);
+    toast.success("PDF exportado com sucesso!");
+  };
+
+  // Exportar para Excel
+  const exportToExcel = () => {
+    if (!examData) return;
+
+    const wb = XLSX.utils.book_new();
+    const excelData: any[] = [];
+    
+    // Cabeçalho
+    excelData.push(['HealthTrack - Resultados do Exame']);
+    excelData.push([`Paciente: ${examData.patientName || 'N/A'}`]);
+    excelData.push([`Laboratório: ${examData.exam?.laboratory || 'N/A'}`]);
+    excelData.push([`Data do Exame: ${examData.exam?.exam_date ? format(new Date(examData.exam.exam_date), 'dd/MM/yyyy', { locale: ptBR }) : 'N/A'}`]);
+    excelData.push([`Emitido em: ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: ptBR })}`]);
+    excelData.push([]);
+
+    // Cabeçalhos da tabela
+    const headers = ['Categoria', 'Biomarcador', 'Valor', 'Unidade', 'Referência', 'Status'];
+    excelData.push(headers);
+
+    // Dados
+    if (examData.categorias) {
+      // Estrutura nova: já organizada
+      examData.categorias.forEach((categoria: any) => {
+        categoria.biomarcadores.forEach((bio: any, index: number) => {
+          const refText = bio.referencia_min !== null && bio.referencia_max !== null
+            ? `${bio.referencia_min} - ${bio.referencia_max}`
+            : '-';
+          
+          const statusText = bio.status === 'normal' ? 'Normal' : 
+                           bio.status === 'alto' ? 'Alto' : 
+                           bio.status === 'baixo' ? 'Baixo' : bio.status;
+
+          excelData.push([
+            index === 0 ? categoria.nome : '', // Categoria só na primeira linha
+            bio.nome,
+            bio.resultado,
+            bio.unidade || '-',
+            refText,
+            statusText
+          ]);
+        });
+      });
+    } else if (examData.results) {
+      // Fallback
+      groupedResults.forEach(([category, results]: [string, any[]]) => {
+        results.forEach((result, index) => {
+          const refText = result.reference_min !== null && result.reference_max !== null
+            ? `${result.reference_min} - ${result.reference_max}`
+            : '-';
+          
+          const statusText = result.status === 'normal' ? 'Normal' : 
+                           result.status === 'alto' ? 'Alto' : 
+                           result.status === 'baixo' ? 'Baixo' : result.status;
+
+          excelData.push([
+            index === 0 ? category : '',
+            result.biomarker_name,
+            result.value,
+            result.unit || '-',
+            refText,
+            statusText
+          ]);
+        });
+      });
+    }
+
+    // Criar worksheet
+    const ws = XLSX.utils.aoa_to_sheet(excelData);
+
+    // Larguras de coluna
+    ws['!cols'] = [
+      { wch: 20 }, // Categoria
+      { wch: 30 }, // Biomarcador
+      { wch: 12 }, // Valor
+      { wch: 10 }, // Unidade
+      { wch: 18 }, // Referência
+      { wch: 12 }  // Status
+    ];
+
+    // Mesclar células do cabeçalho
+    ws['!merges'] = [
+      { s: { r: 0, c: 0 }, e: { r: 0, c: 5 } },
+      { s: { r: 1, c: 0 }, e: { r: 1, c: 5 } },
+      { s: { r: 2, c: 0 }, e: { r: 2, c: 5 } },
+      { s: { r: 3, c: 0 }, e: { r: 3, c: 5 } },
+      { s: { r: 4, c: 0 }, e: { r: 4, c: 5 } }
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Resultados');
+    
+    const fileName = `exame-${examData.patientName || 'paciente'}-${format(new Date(examData.exam?.exam_date || new Date()), 'yyyy-MM-dd')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    toast.success("Excel exportado com sucesso!");
   };
 
   const { data: examData, isLoading } = useQuery({
@@ -252,7 +480,7 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
               )}
             </div>
 
-            {/* Filtros no header (lado direito) */}
+            {/* Filtros e ações no header (lado direito) */}
             <div className="flex items-center gap-3 flex-wrap">
               <div className="relative">
                 <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
@@ -294,6 +522,27 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
                   <SelectItem value="altered" className="rounded-lg">Apenas alterados</SelectItem>
                 </SelectContent>
               </Select>
+
+              {/* Botões de exportação */}
+              <Button
+                onClick={exportToPDF}
+                disabled={isLoading}
+                variant="outline"
+                className="h-12 border-2 border-gray-200 hover:border-rest-blue hover:bg-rest-blue/5 rounded-xl font-semibold transition-all"
+              >
+                <FileDown className="w-4 h-4 mr-2" />
+                PDF
+              </Button>
+
+              <Button
+                onClick={exportToExcel}
+                disabled={isLoading}
+                variant="outline"
+                className="h-12 border-2 border-gray-200 hover:border-green-600 hover:bg-green-50 rounded-xl font-semibold transition-all"
+              >
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                Excel
+              </Button>
 
               <Button
                 onClick={handleGenerateInsights}
