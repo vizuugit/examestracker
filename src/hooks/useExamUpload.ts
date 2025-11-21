@@ -61,6 +61,15 @@ interface AWSExamData {
       exames_alterados: number;
       exames_criticos: number;
     };
+    
+    biomarcadores_rejeitados?: Array<{
+      nome_original: string;
+      valor_original: string;
+      motivo: string;
+      motivo_rejeicao?: string;
+      sugestoes?: string[];
+      similaridade?: number;
+    }>;
   };
   processedAt: string | null;
   s3Key: string;
@@ -613,7 +622,7 @@ export function useExamUpload() {
             exam_id: examId,
             original_name: rejected.nome_original,
             original_value: rejected.valor_original || null,
-            rejection_reason: rejected.motivo_rejeicao,
+            rejection_reason: rejected.motivo_rejeicao || rejected.motivo,
             suggestions: rejected.sugestoes || [],
             similarity_score: rejected.similaridade || null,
           }));

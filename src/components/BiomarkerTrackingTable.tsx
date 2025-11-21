@@ -36,6 +36,8 @@ interface BiomarkerRow {
   reference_min: number | null;
   reference_max: number | null;
   category: string;
+  category_order?: number;
+  biomarker_order?: number;
   values: BiomarkerValue[];
 }
 

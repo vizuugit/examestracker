@@ -31,7 +31,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, TrendingUp, TrendingDown, CheckCircle, Brain } from "lucide-react";
-import { categorizeBiomarker } from "@/utils/biomarkerCategories";
 // Ordenação agora vem do backend via category_order e biomarker_order
 import { useExamAnalysis } from "@/hooks/useExamAnalysis";
 import { ExamInsightsPanel } from "@/components/ExamInsightsPanel";
@@ -137,11 +136,9 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
       return acc;
     }, {} as Record<string, typeof filteredResults>);
     
-    // Ordenar categorias usando category_order do backend
+    // Ordenar categorias alfabeticamente
     return Object.entries(grouped).sort((a, b) => {
-      const orderA = a[1][0]?.category_order ?? 999;
-      const orderB = b[1][0]?.category_order ?? 999;
-      return orderA - orderB;
+      return a[0].localeCompare(b[0]);
     });
   }, [filteredResults]);
 
@@ -332,11 +329,7 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
                           
                           {/* Biomarcadores da categoria (ordenados alfabeticamente) */}
                           {results
-                            .sort((a, b) => {
-                              const orderA = a.biomarker_order ?? 999;
-                              const orderB = b.biomarker_order ?? 999;
-                              return orderA - orderB;
-                            })
+                            .sort((a, b) => a.biomarker_name.localeCompare(b.biomarker_name))
                             .map((result) => (
                               <TableRow key={result.id} className="border-b border-gray-100 hover:bg-gray-50">
                                 <TableCell className="py-4 px-6">
