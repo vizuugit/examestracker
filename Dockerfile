@@ -3,11 +3,9 @@ FROM public.ecr.aws/lambda/python:3.11
 # Copiar código Python principal
 COPY lambda_function.py ${LAMBDA_TASK_ROOT}/
 
-# Copiar pasta src/ com módulos auxiliares
+# Copiar pasta src/ com módulos auxiliares e dados
+# Inclui src/data/biomarker-specification-v2.json automaticamente
 COPY src/ ${LAMBDA_TASK_ROOT}/src/
-
-# Copiar especificação de biomarcadores
-COPY src/utils/especificacao_biomarcadores.json ${LAMBDA_TASK_ROOT}/src/utils/
 
 # Instalar dependências Python 
 RUN pip install --no-cache-dir \

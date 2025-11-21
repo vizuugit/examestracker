@@ -23,11 +23,12 @@ mkdir -p dist
 echo "📥 Instalando dependências..."
 pip install -r requirements.txt -t dist/ --quiet
 
-# Copiar código fonte
+# Copiar código fonte (inclui src/data/biomarker-specification-v2.json)
 echo "📋 Copiando código fonte..."
 cp -r src dist/
 cp lambda_function.py dist/
-cp especificacao_biomarcadores.json dist/
+# Arquivo antigo mantido para compatibilidade (caso exista)
+[ -f especificacao_biomarcadores.json ] && cp especificacao_biomarcadores.json dist/ || true
 
 # Criar ZIP
 echo "🗜️ Criando pacote ZIP..."

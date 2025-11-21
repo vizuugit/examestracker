@@ -1,7 +1,7 @@
 """
 Lambda Function - Processamento de Exames Médicos
-Versão otimizada com estrutura modular e suporte a HEIC
-Economia estimada: 50-60% em custos de IA
+Versão otimizada com Gemini AI - 100% Gemini (mais barato)
+Economia estimada: 70-80% em custos de IA
 """
 
 import os
@@ -12,7 +12,6 @@ import requests
 from decimal import Decimal
 from pathlib import Path
 from datetime import datetime
-from anthropic import Anthropic
 from urllib.parse import unquote_plus
 import google.generativeai as genai
 
@@ -31,7 +30,7 @@ from src.processors import (
     extract_text_universal,
     extract_text_from_image_with_vision,
     extract_header_with_cache,
-    parse_lab_report,
+    parse_lab_report_with_gemini,
     ImageProcessor,
     is_image_supported
 )
@@ -52,16 +51,16 @@ logger.setLevel(logging.INFO)
 s3_client = boto3.client('s3')
 textract_client = boto3.client('textract')
 dynamodb = boto3.resource('dynamodb')
-anthropic_client = Anthropic(api_key=os.environ['ANTHROPIC_API_KEY'])
 
-# Configurar Gemini para extração de headers
+# Configurar Gemini (100% do sistema agora usa Gemini)
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
     gemini_client = genai
-    logger.info("✅ Gemini Flash configurado para extração de headers")
+    logger.info("✅ Gemini Flash configurado para headers E parsing de biomarcadores")
 else:
     gemini_client = None
-    logger.warning("⚠️ GEMINI_API_KEY não configurada - headers usarão fallback")
+    logger.error("❌ GEMINI_API_KEY não configurada - sistema não funcionará!")
+    raise Exception("GEMINI_API_KEY is required")
 
 table = dynamodb.Table(os.environ.get('DYNAMODB_TABLE', 'exames-resultados'))
 corrections_table = dynamodb.Table(os.environ.get('CORRECTIONS_TABLE', 'exames-training-corrections'))
@@ -422,18 +421,18 @@ def process_exam_main(event: dict) -> dict:
         exam_date = header_data.get('data_exame')
         
         logger.info(f"✅ Header extracted: {extracted_name}")
-        
-        # 8. Parse biomarkers (Claude Haiku v5.0 - integrado)
-        result = parse_lab_report(
+
+        # 8. Parse biomarkers (Gemini 2.0 Flash - 70-80% mais barato que Claude)
+        result = parse_lab_report_with_gemini(
             extracted_text=extracted_text,
-            anthropic_client=anthropic_client,
+            gemini_model=GEMINI_VISION_MODEL,
             normalization_service=normalization_service,
             extracted_name=extracted_name,
             extracted_birth_date=extracted_birth_date,
             extracted_lab=extracted_lab
         )
-        
-        # Atualizar campos do header com dados validados do Claude
+
+        # Atualizar campos do header com dados validados do Gemini
         if result.get('nome'):
             extracted_name = result['nome']
         if result.get('data_nascimento'):

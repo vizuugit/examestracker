@@ -1,0 +1,3111 @@
+{
+  "versao": "2.0.0",
+  "data_atualizacao": "2025-11-21",
+  "descricao": "Especificação reorganizada de biomarcadores com ordenação",
+  "total_categorias": 20,
+  "total_biomarcadores": 209,
+  "categorias": [
+    {
+      "id": 1,
+      "nome": "HEMATOLOGIA COMPLETA",
+      "ordem": 1,
+      "biomarcadores": [
+        "HEMOGRAMA",
+        "Hgb: (Hemoglobina)",
+        "HTC: (Hematócrito)",
+        "VCM: (Volume Corpuscular Médio)",
+        "HCM: (Hemoglobina Corpuscular Média)",
+        "CHCM: (Concentração da Hemoglobina Corpuscular Média)",
+        "RDW: (Red Cell Distribution Width)",
+        "GL: (Global Leucócitos)",
+        "NEUTRÓFILOS: (no absoluto)",
+        "LINFOCITOS: (no absoluto)",
+        "MONÓCITOS",
+        "EOSINÓFILOS",
+        "BASÓFILOS",
+        "PTL: (Plaquetas)",
+        "Reticulócitos"
+      ]
+    },
+    {
+      "id": 2,
+      "nome": "PERFIL GLICÊMICO E INSULINÊMICO",
+      "ordem": 2,
+      "biomarcadores": [
+        "GLICEMIA JEJUM",
+        "G0H75GD GESTANTE",
+        "G1H75GD GESTANTE",
+        "G2H75GD GESTANTE",
+        "G2HPP",
+        "HbA1c (Hemoglobina Glicada)",
+        "FRUTOSAMINA",
+        "INSULINA VR<5",
+        "PEPTÍDEO C",
+        "HOMA IR",
+        "MICROALB REL"
+      ]
+    },
+    {
+      "id": 3,
+      "nome": "PERFIL LIPÍDICO COMPLETO",
+      "ordem": 3,
+      "biomarcadores": [
+        "CT (Coleterol Total)",
+        "LDL (Low Density Lipoproteins)",
+        "VLDL (Very Low Density Lipoprotein)",
+        "HDL (High Density Lipoproteins)",
+        "TG (Triglicérides)",
+        "NÃO-HDL",
+        "RELAÇÃO TG/HDL",
+        "RELAÇÃO CT/HDL",
+        "LP(A)",
+        "APO A1",
+        "APO B",
+        "APOB/APOA1",
+        "LDL PEQUENO",
+        "LDL MÉDIO",
+        "HDL GRANDE",
+        "PADRÃO DE LDL A/B",
+        "LDL OX/HDL",
+        "LDL OXIDADO: (mmol/l)",
+        "ANTI-LDL-OXIDADO: (VR DE 100 A 700 MU/ML)",
+        "CPK (Creatinofosfoquinase)",
+        "LDH (Desidrogenase Lática)",
+        "PKM2 (Marcador do Efeito Walburg)"
+      ]
+    },
+    {
+      "id": 4,
+      "nome": "FUNÇÃO RENAL",
+      "ordem": 4,
+      "biomarcadores": [
+        "URÉIA",
+        "CREATININA",
+        "TFG CKD - EPI"
+      ]
+    },
+    {
+      "id": 5,
+      "nome": "FUNÇÃO HEPÁTICA",
+      "ordem": 5,
+      "biomarcadores": [
+        "TGO /AST - H<40 M<33",
+        "TGP /ALT  - H<58 M<41",
+        "GGT - H<73 M<38",
+        "FA (Fosfatase Alcalina)",
+        "BBD (Bilirrubina Direta)",
+        "BBI (Bilirrubina Indireta)",
+        "BBT (Bilirrubina Total)",
+        "ALBUMINA",
+        "GLOBULINAS",
+        "ÁCIDO ÚRICO",
+        "ALFA 1 ANTI-TRIPSINA"
+      ]
+    },
+    {
+      "id": 6,
+      "nome": "COAGULAÇÃO",
+      "ordem": 6,
+      "biomarcadores": [
+        "RNI",
+        "PTT",
+        "FIBRINOGÊNIO"
+      ]
+    },
+    {
+      "id": 7,
+      "nome": "ELETRÓLITOS E IONOGRAMA",
+      "ordem": 7,
+      "biomarcadores": [
+        "Na",
+        "K",
+        "Mg",
+        "FÓSFORO"
+      ]
+    },
+    {
+      "id": 8,
+      "nome": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "ordem": 8,
+      "biomarcadores": [
+        "CaT (Cálcio Total)",
+        "Cai (Cálcio Iônico)",
+        "CÁLCIO CORRIGIDO",
+        "PTH",
+        "OSTEOCALCINA",
+        "CTX (Telopeptídeo C-terminal do colágeno tipo 1)",
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L1-L4",
+        "COLO",
+        "WARDS"
+      ]
+    },
+    {
+      "id": 9,
+      "nome": "VITAMINAS",
+      "ordem": 9,
+      "biomarcadores": [
+        "1,25-OH VIT D",
+        "25-OH VIT D",
+        "VIT A",
+        "VIT B1",
+        "VIT B2",
+        "VIT B3",
+        "VIT B5",
+        "VIT B6",
+        "VIT B12",
+        "VIT C",
+        "ÁCIDO FÓLICO",
+        "HOMOCISTEÍNA VR<8",
+        "MUTAÇÃO MTHFR"
+      ]
+    },
+    {
+      "id": 10,
+      "nome": "MINERAIS E OLIGOELEMENTOS",
+      "ordem": 10,
+      "biomarcadores": [
+        "FERRO",
+        "FERRITINA",
+        "TRANSFERRINA",
+        "CTLF: (Capacidade Total de Ligação do Ferro)",
+        "IST: (Indice de Saturação Transferrina)",
+        "ZINCO",
+        "SELÊNIO"
+      ]
+    },
+    {
+      "id": 11,
+      "nome": "FUNÇÃO TIREOIDEANA",
+      "ordem": 11,
+      "biomarcadores": [
+        "TSH",
+        "T3 LIVRE (2,3-4,54)",
+        "T3 TOTAL (0,6-1,76)",
+        "T4 LIVRE",
+        "T4 TOTAL",
+        "ANTI-TPO",
+        "ANTI-TG",
+        "TIREOGLOBULINA",
+        "TRAb",
+        "LEVOTIROXINA",
+        "T3 SLOW RELEASE"
+      ]
+    },
+    {
+      "id": 12,
+      "nome": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "ordem": 12,
+      "biomarcadores": [
+        "LH",
+        "FSH",
+        "ESTRADIOL",
+        "ESTRONA",
+        "PROGESTERONA",
+        "TESTOSTERONA TOTAL",
+        "TESTOSTERONA LIVRE",
+        "DHEA (Dehidroepiandrosterona)",
+        "SDHEA (Sulfato de Dehidroepiandrosterona)",
+        "DHT (Dihidrotestosterona)",
+        "SHBG",
+        "PRL TOTAL",
+        "PRL DILUIDA",
+        "MACRO PRL",
+        "PSA TOTAL",
+        "PSA LIVRE",
+        "DOSE DE ESTRADIOL",
+        "DOSE DE ESTRIOL",
+        "DOSE DE PROGESTERONA",
+        "DOSE DE TESTOSTERONA",
+        "IGF-1"
+      ]
+    },
+    {
+      "id": 13,
+      "nome": "EIXO ADRENAL E CORTISOL",
+      "ordem": 13,
+      "biomarcadores": [
+        "CORTISOL SALIVAR ACORDAR",
+        "CORTISOL SALIVAR 12H",
+        "CORTISOL SALIVAR 17H",
+        "CORTISOL SALIVAR 23H"
+      ]
+    },
+    {
+      "id": 14,
+      "nome": "MARCADORES INFLAMATÓRIOS",
+      "ordem": 14,
+      "biomarcadores": [
+        "PCR ULTRA SENSÍVEL",
+        "PCR QUANTIT",
+        "VHS: (Velocidade de Hemossedimentação)"
+      ]
+    },
+    {
+      "id": 15,
+      "nome": "MARCADORES TUMORAIS",
+      "ordem": 15,
+      "biomarcadores": [
+        "CEA (antígeno carcinoembrionário)",
+        "CA 15-3",
+        "CA 19-9",
+        "CA 125",
+        "CA 72-4",
+        "CA 27-29 (MAMA)",
+        "ALFAFETOPROTEINA",
+        "PROTEÍNA MMP2 (MAMA) (Indica risco de metástase)",
+        "SCC - AG EM CÂNCER DE CÉLULAS ESCAMOSAS CERVICAIS (COLO DE ÚTERO)",
+        "BETA 2 MICROGLOBULINA",
+        "PSOF: (Sangue Oculto nas Fezes)"
+      ]
+    },
+    {
+      "id": 16,
+      "nome": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "ordem": 16,
+      "biomarcadores": [
+        "ANTI GLIADINA IGA",
+        "ANTI GLIADINA IGG",
+        "ANTI-TTG IGA",
+        "ANTI-TTG IGG",
+        "ANTI-ENDOMISIO IGA",
+        "ANTI-ENDOMISIO IGG",
+        "ANTI-GAD",
+        "ANTI-INSULINA",
+        "ANTI-IA2",
+        "ANTI-ILHOTA",
+        "ANTI-CCP (Anticorpos Anti-Peptídeo Citrulinado Cíclico)",
+        "FAN (Fator Antinúcleo)",
+        "FATOR REUMATOIDE",
+        "C-ANCA",
+        "P-ANCA",
+        "C3",
+        "C4",
+        "CH50",
+        "ANTI LKM 1",
+        "ANTI MITOCÔNDRIA",
+        "ANTI MÚSCULO LISO",
+        "ANTI HIV",
+        "ANTI HAV",
+        "HBSAG",
+        "ANTI-HBS",
+        "ANTI-HBC",
+        "ANTI-HCV"
+      ]
+    },
+    {
+      "id": 17,
+      "nome": "METAIS PESADOS",
+      "ordem": 17,
+      "biomarcadores": [
+        "CHUMBO",
+        "MERCURIO",
+        "CÁDMIO",
+        "ALUMÍNIO"
+      ]
+    },
+    {
+      "id": 18,
+      "nome": "METABOLISMO ENERGÉTICO",
+      "ordem": 18,
+      "biomarcadores": [
+        "PIRUVATO KINASE ERITROCITARIA (PKE)",
+        "PIRUVATO mmol/l",
+        "LACTATO mmol/l",
+        "G6PD",
+        "L-CARNITINA TOTAL",
+        "L-CARNITINA LIVRE",
+        "INTERLEUCINA IL - 12",
+        "KD ABC SCORE",
+        "KD ABC SCORE GLICOSE"
+      ]
+    },
+    {
+      "id": 19,
+      "nome": "EXAMES DE URINA",
+      "ordem": 19,
+      "biomarcadores": [
+        "URINA ROTINA:",
+        "URINA 24H:",
+        "CITRATO:",
+        "OXALATO:",
+        "URATO:",
+        "CÁLCIO:",
+        "SÓDIO:",
+        "NORMETANEFRINA:",
+        "METANEFRINA:",
+        "ADRENALINA:",
+        "EPINEFRINA:",
+        "NOREPINEFRINA:",
+        "NORADRENALINA:",
+        "DOPAMINA:",
+        "ÁCIDO 5-OH IA:",
+        "5-HIAA:"
+      ]
+    },
+    {
+      "id": 20,
+      "nome": "EXAMES DE IMAGEM",
+      "ordem": 20,
+      "biomarcadores": [
+        "DOPPLER CARÓTIDAS",
+        "ECOCARDIOGRAMA",
+        "TESTE ERGOMÉTRICO",
+        "ANGIO TC CORONARIAS",
+        "ESCORE DE CÁLCIO",
+        "CINTILOGRAFIA MIOCÁRDICA",
+        "ULTRASSOM ABDOME",
+        "ULTRASSOM ENDOVAGINAL",
+        "ULTRASSOM MAMAS",
+        "ULTRASSOM AXILAS",
+        "MAMOGRAFIA",
+        "COLONOSCOPIA"
+      ]
+    }
+  ],
+  "biomarcadores": [
+    {
+      "nome_padrao": "HEMOGRAMA",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Hemograma Completo",
+        "CBC",
+        "Complete Blood Count",
+        "Exame de Sangue"
+      ]
+    },
+    {
+      "nome_padrao": "Hgb: (Hemoglobina)",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Hemoglobina",
+        "Hgb",
+        "Hb",
+        "Hemoglobin"
+      ]
+    },
+    {
+      "nome_padrao": "HTC: (Hematócrito)",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Hematócrito",
+        "HTC",
+        "Ht",
+        "Hematocrit",
+        "Hct"
+      ]
+    },
+    {
+      "nome_padrao": "VCM: (Volume Corpuscular Médio)",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "VCM",
+        "MCV",
+        "Volume Corpuscular Médio",
+        "Mean Corpuscular Volume"
+      ]
+    },
+    {
+      "nome_padrao": "HCM: (Hemoglobina Corpuscular Média)",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "HCM",
+        "MCH",
+        "Mean Corpuscular Hemoglobin"
+      ]
+    },
+    {
+      "nome_padrao": "CHCM: (Concentração da Hemoglobina Corpuscular Média)",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "CHCM",
+        "MCHC",
+        "Mean Corpuscular Hemoglobin Concentration"
+      ]
+    },
+    {
+      "nome_padrao": "RDW: (Red Cell Distribution Width)",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "RDW",
+        "Amplitude de Distribuição das Hemácias",
+        "Red Cell Distribution Width"
+      ]
+    },
+    {
+      "nome_padrao": "GL: (Global Leucócitos)",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 8,
+      "sinonimos": [
+        "Leucócitos",
+        "GL",
+        "WBC",
+        "Glóbulos Brancos",
+        "White Blood Cells"
+      ]
+    },
+    {
+      "nome_padrao": "NEUTRÓFILOS: (no absoluto)",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 9,
+      "sinonimos": [
+        "Neutrófilos",
+        "Neutrophils",
+        "Neutrófilos Absolutos",
+        "Segmentados"
+      ]
+    },
+    {
+      "nome_padrao": "LINFOCITOS: (no absoluto)",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 10,
+      "sinonimos": [
+        "Linfócitos",
+        "Lymphocytes",
+        "Linfócitos Absolutos"
+      ]
+    },
+    {
+      "nome_padrao": "MONÓCITOS",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 11,
+      "sinonimos": [
+        "Monocytes",
+        "Monócitos Absolutos"
+      ]
+    },
+    {
+      "nome_padrao": "EOSINÓFILOS",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 12,
+      "sinonimos": [
+        "Eosinophils",
+        "Eosinófilos Absolutos"
+      ]
+    },
+    {
+      "nome_padrao": "BASÓFILOS",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 13,
+      "sinonimos": [
+        "Basophils",
+        "Basófilos Absolutos"
+      ]
+    },
+    {
+      "nome_padrao": "PTL: (Plaquetas)",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 14,
+      "sinonimos": [
+        "Plaquetas",
+        "PTL",
+        "Platelets",
+        "Contagem de Plaquetas",
+        "PLT"
+      ]
+    },
+    {
+      "nome_padrao": "Reticulócitos",
+      "categoria": "HEMATOLOGIA COMPLETA",
+      "category_id": 1,
+      "category_order": 1,
+      "biomarker_order": 15,
+      "sinonimos": [
+        "Reticulocytes",
+        "Contagem de Reticulócitos"
+      ]
+    },
+    {
+      "nome_padrao": "GLICEMIA JEJUM",
+      "categoria": "PERFIL GLICÊMICO E INSULINÊMICO",
+      "category_id": 2,
+      "category_order": 2,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Glicose",
+        "Glicose Jejum",
+        "Glicemia",
+        "Glucose",
+        "Glicemia de Jejum",
+        "Glicose em Jejum",
+        "Glucose Fasting"
+      ]
+    },
+    {
+      "nome_padrao": "G0H75GD GESTANTE",
+      "categoria": "PERFIL GLICÊMICO E INSULINÊMICO",
+      "category_id": 2,
+      "category_order": 2,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "G0H75 Gestante",
+        "Glicemia 0h TOTG Gestante",
+        "TOTG 0h Gestante",
+        "Glicose Basal TOTG"
+      ]
+    },
+    {
+      "nome_padrao": "G1H75GD GESTANTE",
+      "categoria": "PERFIL GLICÊMICO E INSULINÊMICO",
+      "category_id": 2,
+      "category_order": 2,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "G1H75 Gestante",
+        "Glicemia 1h TOTG Gestante",
+        "TOTG 1h Gestante",
+        "Glicose 1 hora"
+      ]
+    },
+    {
+      "nome_padrao": "G2H75GD GESTANTE",
+      "categoria": "PERFIL GLICÊMICO E INSULINÊMICO",
+      "category_id": 2,
+      "category_order": 2,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "G2H75 Gestante",
+        "Glicemia 2h TOTG Gestante",
+        "TOTG 2h Gestante",
+        "Glicose 2 horas"
+      ]
+    },
+    {
+      "nome_padrao": "G2HPP",
+      "categoria": "PERFIL GLICÊMICO E INSULINÊMICO",
+      "category_id": 2,
+      "category_order": 2,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "Glicemia 2h Pós-Prandial",
+        "Glicose 2h PP",
+        "Glicemia Pós-Prandial",
+        "Glicose Pos Prandial"
+      ]
+    },
+    {
+      "nome_padrao": "HbA1c (Hemoglobina Glicada)",
+      "categoria": "PERFIL GLICÊMICO E INSULINÊMICO",
+      "category_id": 2,
+      "category_order": 2,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "HbA1c",
+        "Hemoglobina Glicada",
+        "A1C",
+        "Hemoglobina glicosilada",
+        "Hemoglobina Glicosilada",
+        "Glicohemoglobina"
+      ]
+    },
+    {
+      "nome_padrao": "FRUTOSAMINA",
+      "categoria": "PERFIL GLICÊMICO E INSULINÊMICO",
+      "category_id": 2,
+      "category_order": 2,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "Fructosamine",
+        "Frutosamina Sérica"
+      ]
+    },
+    {
+      "nome_padrao": "INSULINA VR<5",
+      "categoria": "PERFIL GLICÊMICO E INSULINÊMICO",
+      "category_id": 2,
+      "category_order": 2,
+      "biomarker_order": 8,
+      "sinonimos": [
+        "Insulina",
+        "Insulina Basal",
+        "Insulinemia",
+        "Insulina em Jejum"
+      ]
+    },
+    {
+      "nome_padrao": "PEPTÍDEO C",
+      "categoria": "PERFIL GLICÊMICO E INSULINÊMICO",
+      "category_id": 2,
+      "category_order": 2,
+      "biomarker_order": 9,
+      "sinonimos": [
+        "Peptideo C",
+        "C-Peptide",
+        "C Peptide",
+        "Peptídeo C Basal"
+      ]
+    },
+    {
+      "nome_padrao": "HOMA IR",
+      "categoria": "PERFIL GLICÊMICO E INSULINÊMICO",
+      "category_id": 2,
+      "category_order": 2,
+      "biomarker_order": 10,
+      "sinonimos": [
+        "HOMA-IR",
+        "HOMA Index",
+        "Índice HOMA",
+        "HOMA Beta",
+        "Resistência Insulínica"
+      ]
+    },
+    {
+      "nome_padrao": "MICROALB REL",
+      "categoria": "PERFIL GLICÊMICO E INSULINÊMICO",
+      "category_id": 2,
+      "category_order": 2,
+      "biomarker_order": 11,
+      "sinonimos": [
+        "Microalbuminúria Relação",
+        "Microalbumina Relação",
+        "Microalbuminuria",
+        "Relação Albumina/Creatinina"
+      ]
+    },
+    {
+      "nome_padrao": "CT (Coleterol Total)",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Colesterol Total",
+        "CT",
+        "Total Cholesterol",
+        "Colesterol"
+      ]
+    },
+    {
+      "nome_padrao": "LDL (Low Density Lipoproteins)",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "LDL",
+        "Colesterol LDL",
+        "LDL Colesterol",
+        "LDL-C",
+        "Low Density Lipoprotein"
+      ]
+    },
+    {
+      "nome_padrao": "VLDL (Very Low Density Lipoprotein)",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "VLDL",
+        "VLDL Colesterol",
+        "VLDL-C",
+        "Very Low Density Lipoprotein"
+      ]
+    },
+    {
+      "nome_padrao": "HDL (High Density Lipoproteins)",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "HDL",
+        "Colesterol HDL",
+        "HDL Colesterol",
+        "HDL-C",
+        "High Density Lipoprotein"
+      ]
+    },
+    {
+      "nome_padrao": "TG (Triglicérides)",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "Triglicérides",
+        "TG",
+        "Triglicerídeos",
+        "Triglycerides",
+        "Triglicerides"
+      ]
+    },
+    {
+      "nome_padrao": "NÃO-HDL",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "Não HDL",
+        "Non-HDL",
+        "Colesterol não HDL",
+        "Non HDL Cholesterol"
+      ]
+    },
+    {
+      "nome_padrao": "RELAÇÃO TG/HDL",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "Razão TG/HDL",
+        "TG/HDL Ratio",
+        "Índice TG/HDL"
+      ]
+    },
+    {
+      "nome_padrao": "RELAÇÃO CT/HDL",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 8,
+      "sinonimos": [
+        "Razão CT/HDL",
+        "CT/HDL Ratio",
+        "Índice de Castelli"
+      ]
+    },
+    {
+      "nome_padrao": "LP(A)",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 9,
+      "sinonimos": [
+        "Lipoproteína A",
+        "Lipoproteina A",
+        "Lp(a)",
+        "Lipoprotein A"
+      ]
+    },
+    {
+      "nome_padrao": "APO A1",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 10,
+      "sinonimos": [
+        "Apolipoproteína A1",
+        "Apolipoproteina A1",
+        "APOA1",
+        "Apo A-1",
+        "Apolipoprotein A1"
+      ]
+    },
+    {
+      "nome_padrao": "APO B",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 11,
+      "sinonimos": [
+        "Apolipoproteína B",
+        "Apolipoproteina B",
+        "APOB",
+        "Apo B-100",
+        "Apolipoprotein B"
+      ]
+    },
+    {
+      "nome_padrao": "APOB/APOA1",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 12,
+      "sinonimos": [
+        "Relação ApoB/ApoA1",
+        "Razão ApoB/ApoA1",
+        "ApoB/ApoA1 Ratio"
+      ]
+    },
+    {
+      "nome_padrao": "LDL PEQUENO",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 13,
+      "sinonimos": [
+        "Small LDL",
+        "LDL Pequena",
+        "LDL Pequenas Densas",
+        "sdLDL"
+      ]
+    },
+    {
+      "nome_padrao": "LDL MÉDIO",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 14,
+      "sinonimos": [
+        "Medium LDL",
+        "LDL Média",
+        "LDL Intermediária"
+      ]
+    },
+    {
+      "nome_padrao": "HDL GRANDE",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 15,
+      "sinonimos": [
+        "Large HDL",
+        "HDL Grande",
+        "HDL2"
+      ]
+    },
+    {
+      "nome_padrao": "PADRÃO DE LDL A/B",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 16,
+      "sinonimos": [
+        "LDL Padrão A/B",
+        "LDL Pattern",
+        "Fenótipo LDL"
+      ]
+    },
+    {
+      "nome_padrao": "LDL OX/HDL",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 17,
+      "sinonimos": [
+        "Relação LDL Oxidado/HDL",
+        "LDL Oxidado sobre HDL",
+        "Razão LDL-ox/HDL"
+      ]
+    },
+    {
+      "nome_padrao": "LDL OXIDADO: (mmol/l)",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 18,
+      "sinonimos": [
+        "LDL Oxidado",
+        "LDL-ox",
+        "Oxidized LDL",
+        "oxLDL"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-LDL-OXIDADO: (VR DE 100 A 700 MU/ML)",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 19,
+      "sinonimos": [
+        "Anti-LDL Oxidado",
+        "Anticorpos Anti-LDL Oxidado",
+        "Anti-oxLDL"
+      ]
+    },
+    {
+      "nome_padrao": "CPK (Creatinofosfoquinase)",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 20,
+      "sinonimos": [
+        "CPK",
+        "Creatina Fosfoquinase",
+        "CK",
+        "Creatine Kinase",
+        "Creatinofosfoquinase"
+      ]
+    },
+    {
+      "nome_padrao": "LDH (Desidrogenase Lática)",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 21,
+      "sinonimos": [
+        "LDH",
+        "Lactato Desidrogenase",
+        "Desidrogenase Láctica",
+        "Lactate Dehydrogenase"
+      ]
+    },
+    {
+      "nome_padrao": "PKM2 (Marcador do Efeito Walburg)",
+      "categoria": "PERFIL LIPÍDICO COMPLETO",
+      "category_id": 3,
+      "category_order": 3,
+      "biomarker_order": 22,
+      "sinonimos": [
+        "PKM2",
+        "Pyruvate Kinase M2",
+        "Tumor M2-PK"
+      ]
+    },
+    {
+      "nome_padrao": "URÉIA",
+      "categoria": "FUNÇÃO RENAL",
+      "category_id": 4,
+      "category_order": 4,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Ureia",
+        "Uréia",
+        "BUN",
+        "Blood Urea Nitrogen",
+        "Ureia Serica"
+      ]
+    },
+    {
+      "nome_padrao": "CREATININA",
+      "categoria": "FUNÇÃO RENAL",
+      "category_id": 4,
+      "category_order": 4,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Creatinina",
+        "Creat",
+        "Cr",
+        "Creatinine",
+        "Creatinina Sérica"
+      ]
+    },
+    {
+      "nome_padrao": "TFG CKD - EPI",
+      "categoria": "FUNÇÃO RENAL",
+      "category_id": 4,
+      "category_order": 4,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Taxa de Filtração Glomerular",
+        "TFG",
+        "TFG CKD-EPI",
+        "eGFR",
+        "RFG",
+        "Clearance de Creatinina Estimado"
+      ]
+    },
+    {
+      "nome_padrao": "TGO /AST - H<40 M<33",
+      "categoria": "FUNÇÃO HEPÁTICA",
+      "category_id": 5,
+      "category_order": 5,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "TGO",
+        "AST",
+        "Transaminase Oxalacética",
+        "SGOT",
+        "TGO/AST",
+        "Aspartato Aminotransferase"
+      ]
+    },
+    {
+      "nome_padrao": "TGP /ALT  - H<58 M<41",
+      "categoria": "FUNÇÃO HEPÁTICA",
+      "category_id": 5,
+      "category_order": 5,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "TGP",
+        "ALT",
+        "Transaminase Pirúvica",
+        "SGPT",
+        "TGP/ALT",
+        "Alanina Aminotransferase"
+      ]
+    },
+    {
+      "nome_padrao": "GGT - H<73 M<38",
+      "categoria": "FUNÇÃO HEPÁTICA",
+      "category_id": 5,
+      "category_order": 5,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "GGT",
+        "Gama GT",
+        "Gama Glutamil Transferase",
+        "Gamma GT",
+        "γ-GT"
+      ]
+    },
+    {
+      "nome_padrao": "FA (Fosfatase Alcalina)",
+      "categoria": "FUNÇÃO HEPÁTICA",
+      "category_id": 5,
+      "category_order": 5,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "Fosfatase Alcalina",
+        "FA",
+        "ALP",
+        "Fosfatase",
+        "Alkaline Phosphatase"
+      ]
+    },
+    {
+      "nome_padrao": "BBD (Bilirrubina Direta)",
+      "categoria": "FUNÇÃO HEPÁTICA",
+      "category_id": 5,
+      "category_order": 5,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "Bilirrubina Direta",
+        "BBD",
+        "BD",
+        "Direct Bilirubin"
+      ]
+    },
+    {
+      "nome_padrao": "BBI (Bilirrubina Indireta)",
+      "categoria": "FUNÇÃO HEPÁTICA",
+      "category_id": 5,
+      "category_order": 5,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "Bilirrubina Indireta",
+        "BBI",
+        "BI",
+        "Indirect Bilirubin"
+      ]
+    },
+    {
+      "nome_padrao": "BBT (Bilirrubina Total)",
+      "categoria": "FUNÇÃO HEPÁTICA",
+      "category_id": 5,
+      "category_order": 5,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "Bilirrubina Total",
+        "BBT",
+        "BT",
+        "Total Bilirubin"
+      ]
+    },
+    {
+      "nome_padrao": "ALBUMINA",
+      "categoria": "FUNÇÃO HEPÁTICA",
+      "category_id": 5,
+      "category_order": 5,
+      "biomarker_order": 8,
+      "sinonimos": [
+        "Albumina",
+        "Alb",
+        "Albumin",
+        "Albumina Sérica"
+      ]
+    },
+    {
+      "nome_padrao": "GLOBULINAS",
+      "categoria": "FUNÇÃO HEPÁTICA",
+      "category_id": 5,
+      "category_order": 5,
+      "biomarker_order": 9,
+      "sinonimos": [
+        "Globulina",
+        "Globulinas Séricas",
+        "Globulins"
+      ]
+    },
+    {
+      "nome_padrao": "ÁCIDO ÚRICO",
+      "categoria": "FUNÇÃO HEPÁTICA",
+      "category_id": 5,
+      "category_order": 5,
+      "biomarker_order": 10,
+      "sinonimos": [
+        "Ácido Úrico",
+        "Uric Acid",
+        "Urato",
+        "Acido Urico",
+        "Ácido Úrico Sérico"
+      ]
+    },
+    {
+      "nome_padrao": "ALFA 1 ANTI-TRIPSINA",
+      "categoria": "FUNÇÃO HEPÁTICA",
+      "category_id": 5,
+      "category_order": 5,
+      "biomarker_order": 11,
+      "sinonimos": [
+        "Alpha-1 Antitrypsin",
+        "A1AT",
+        "AAT"
+      ]
+    },
+    {
+      "nome_padrao": "RNI",
+      "categoria": "COAGULAÇÃO",
+      "category_id": 6,
+      "category_order": 6,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Razão Normalizada Internacional",
+        "INR",
+        "International Normalized Ratio"
+      ]
+    },
+    {
+      "nome_padrao": "PTT",
+      "categoria": "COAGULAÇÃO",
+      "category_id": 6,
+      "category_order": 6,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Tempo de Tromboplastina Parcial",
+        "TTPA",
+        "aPTT",
+        "PTT Ativado"
+      ]
+    },
+    {
+      "nome_padrao": "FIBRINOGÊNIO",
+      "categoria": "COAGULAÇÃO",
+      "category_id": 6,
+      "category_order": 6,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Fibrinogenio",
+        "Fibrinogen",
+        "Fibrinogênio Plasmático"
+      ]
+    },
+    {
+      "nome_padrao": "Na",
+      "categoria": "ELETRÓLITOS E IONOGRAMA",
+      "category_id": 7,
+      "category_order": 7,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Sódio",
+        "Sodio",
+        "Sodium",
+        "Na+",
+        "Sódio Sérico"
+      ]
+    },
+    {
+      "nome_padrao": "K",
+      "categoria": "ELETRÓLITOS E IONOGRAMA",
+      "category_id": 7,
+      "category_order": 7,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Potássio",
+        "Potassio",
+        "Potassium",
+        "K+",
+        "Potássio Sérico"
+      ]
+    },
+    {
+      "nome_padrao": "Mg",
+      "categoria": "ELETRÓLITOS E IONOGRAMA",
+      "category_id": 7,
+      "category_order": 7,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Magnésio",
+        "Magnesio",
+        "Magnesium",
+        "Mg++",
+        "Magnésio Sérico"
+      ]
+    },
+    {
+      "nome_padrao": "FÓSFORO",
+      "categoria": "ELETRÓLITOS E IONOGRAMA",
+      "category_id": 7,
+      "category_order": 7,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "Fosforo",
+        "Phosphorus",
+        "Fósforo Sérico",
+        "Fosfato"
+      ]
+    },
+    {
+      "nome_padrao": "CaT (Cálcio Total)",
+      "categoria": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "category_id": 8,
+      "category_order": 8,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Cálcio Total",
+        "Calcio Total",
+        "Total Calcium",
+        "Cálcio Sérico"
+      ]
+    },
+    {
+      "nome_padrao": "Cai (Cálcio Iônico)",
+      "categoria": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "category_id": 8,
+      "category_order": 8,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Cálcio Iônico",
+        "Calcio Ionico",
+        "Ca++",
+        "Ionized Calcium"
+      ]
+    },
+    {
+      "nome_padrao": "CÁLCIO CORRIGIDO",
+      "categoria": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "category_id": 8,
+      "category_order": 8,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Calcio Corrigido",
+        "Corrected Calcium",
+        "Cálcio Ajustado"
+      ]
+    },
+    {
+      "nome_padrao": "PTH",
+      "categoria": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "category_id": 8,
+      "category_order": 8,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "Paratormônio",
+        "Paratormonio",
+        "Hormônio Paratireoidiano",
+        "Parathyroid Hormone",
+        "PTH Intacto",
+        "PTH Intact"
+      ]
+    },
+    {
+      "nome_padrao": "OSTEOCALCINA",
+      "categoria": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "category_id": 8,
+      "category_order": 8,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "Osteocalcin",
+        "Bone Gla Protein",
+        "BGP"
+      ]
+    },
+    {
+      "nome_padrao": "CTX (Telopeptídeo C-terminal do colágeno tipo 1)",
+      "categoria": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "category_id": 8,
+      "category_order": 8,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "CTX",
+        "Beta-CTX",
+        "C-Telopeptídeo",
+        "Crosslaps"
+      ]
+    },
+    {
+      "nome_padrao": "L1",
+      "categoria": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "category_id": 8,
+      "category_order": 8,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "Vértebra L1",
+        "Primeira Lombar"
+      ]
+    },
+    {
+      "nome_padrao": "L2",
+      "categoria": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "category_id": 8,
+      "category_order": 8,
+      "biomarker_order": 8,
+      "sinonimos": [
+        "Vértebra L2",
+        "Segunda Lombar"
+      ]
+    },
+    {
+      "nome_padrao": "L3",
+      "categoria": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "category_id": 8,
+      "category_order": 8,
+      "biomarker_order": 9,
+      "sinonimos": [
+        "Vértebra L3",
+        "Terceira Lombar"
+      ]
+    },
+    {
+      "nome_padrao": "L4",
+      "categoria": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "category_id": 8,
+      "category_order": 8,
+      "biomarker_order": 10,
+      "sinonimos": [
+        "Vértebra L4",
+        "Quarta Lombar"
+      ]
+    },
+    {
+      "nome_padrao": "L1-L4",
+      "categoria": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "category_id": 8,
+      "category_order": 8,
+      "biomarker_order": 11,
+      "sinonimos": [
+        "Coluna Lombar",
+        "Lumbar Spine"
+      ]
+    },
+    {
+      "nome_padrao": "COLO",
+      "categoria": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "category_id": 8,
+      "category_order": 8,
+      "biomarker_order": 12,
+      "sinonimos": [
+        "Colo Femoral",
+        "Femoral Neck"
+      ]
+    },
+    {
+      "nome_padrao": "WARDS",
+      "categoria": "METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA",
+      "category_id": 8,
+      "category_order": 8,
+      "biomarker_order": 13,
+      "sinonimos": [
+        "Triângulo de Ward",
+        "Ward's Triangle"
+      ]
+    },
+    {
+      "nome_padrao": "1,25-OH VIT D",
+      "categoria": "VITAMINAS",
+      "category_id": 9,
+      "category_order": 9,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "1,25 Vitamina D",
+        "Calcitriol",
+        "1,25-Dihidroxivitamina D",
+        "1,25(OH)2D"
+      ]
+    },
+    {
+      "nome_padrao": "25-OH VIT D",
+      "categoria": "VITAMINAS",
+      "category_id": 9,
+      "category_order": 9,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Vitamina D",
+        "25-OH Vitamina D",
+        "25-Hidroxivitamina D",
+        "Vit D",
+        "25(OH)D",
+        "Calcidiol"
+      ]
+    },
+    {
+      "nome_padrao": "VIT A",
+      "categoria": "VITAMINAS",
+      "category_id": 9,
+      "category_order": 9,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Vitamina A",
+        "Retinol",
+        "Vitamin A"
+      ]
+    },
+    {
+      "nome_padrao": "VIT B1",
+      "categoria": "VITAMINAS",
+      "category_id": 9,
+      "category_order": 9,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "Vitamina B1",
+        "B1",
+        "Tiamina",
+        "Thiamine"
+      ]
+    },
+    {
+      "nome_padrao": "VIT B2",
+      "categoria": "VITAMINAS",
+      "category_id": 9,
+      "category_order": 9,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "Vitamina B2",
+        "B2",
+        "Riboflavina",
+        "Riboflavin"
+      ]
+    },
+    {
+      "nome_padrao": "VIT B3",
+      "categoria": "VITAMINAS",
+      "category_id": 9,
+      "category_order": 9,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "Vitamina B3",
+        "B3",
+        "Niacina",
+        "Niacin",
+        "Ácido Nicotínico"
+      ]
+    },
+    {
+      "nome_padrao": "VIT B5",
+      "categoria": "VITAMINAS",
+      "category_id": 9,
+      "category_order": 9,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "Vitamina B5",
+        "B5",
+        "Ácido Pantotênico",
+        "Pantothenic Acid"
+      ]
+    },
+    {
+      "nome_padrao": "VIT B6",
+      "categoria": "VITAMINAS",
+      "category_id": 9,
+      "category_order": 9,
+      "biomarker_order": 8,
+      "sinonimos": [
+        "Vitamina B6",
+        "B6",
+        "Piridoxina",
+        "Pyridoxine"
+      ]
+    },
+    {
+      "nome_padrao": "VIT B12",
+      "categoria": "VITAMINAS",
+      "category_id": 9,
+      "category_order": 9,
+      "biomarker_order": 9,
+      "sinonimos": [
+        "Vitamina B12",
+        "B12",
+        "Cobalamina",
+        "Cianocobalamina",
+        "Vitamin B12"
+      ]
+    },
+    {
+      "nome_padrao": "VIT C",
+      "categoria": "VITAMINAS",
+      "category_id": 9,
+      "category_order": 9,
+      "biomarker_order": 10,
+      "sinonimos": [
+        "Vitamina C",
+        "Ácido Ascórbico",
+        "Ascorbic Acid",
+        "Acido Ascorbico"
+      ]
+    },
+    {
+      "nome_padrao": "ÁCIDO FÓLICO",
+      "categoria": "VITAMINAS",
+      "category_id": 9,
+      "category_order": 9,
+      "biomarker_order": 11,
+      "sinonimos": [
+        "Ácido Fólico",
+        "Folato",
+        "Vitamina B9",
+        "Folic Acid",
+        "Acido Folico"
+      ]
+    },
+    {
+      "nome_padrao": "HOMOCISTEÍNA VR<8",
+      "categoria": "VITAMINAS",
+      "category_id": 9,
+      "category_order": 9,
+      "biomarker_order": 12,
+      "sinonimos": [
+        "Homocisteína",
+        "Homocysteine",
+        "Homocisteina"
+      ]
+    },
+    {
+      "nome_padrao": "MUTAÇÃO MTHFR",
+      "categoria": "VITAMINAS",
+      "category_id": 9,
+      "category_order": 9,
+      "biomarker_order": 13,
+      "sinonimos": [
+        "Mutacao MTHFR",
+        "MTHFR",
+        "Polimorfismo MTHFR",
+        "Gene MTHFR"
+      ]
+    },
+    {
+      "nome_padrao": "FERRO",
+      "categoria": "MINERAIS E OLIGOELEMENTOS",
+      "category_id": 10,
+      "category_order": 10,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Ferro",
+        "Ferro Sérico",
+        "Fe",
+        "Iron",
+        "Ferro Serico"
+      ]
+    },
+    {
+      "nome_padrao": "FERRITINA",
+      "categoria": "MINERAIS E OLIGOELEMENTOS",
+      "category_id": 10,
+      "category_order": 10,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Ferritina",
+        "Ferritin",
+        "Ferritina Sérica",
+        "Ferritina Serica"
+      ]
+    },
+    {
+      "nome_padrao": "TRANSFERRINA",
+      "categoria": "MINERAIS E OLIGOELEMENTOS",
+      "category_id": 10,
+      "category_order": 10,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Transferrina",
+        "Transferrin",
+        "Transferrina Sérica"
+      ]
+    },
+    {
+      "nome_padrao": "CTLF: (Capacidade Total de Ligação do Ferro)",
+      "categoria": "MINERAIS E OLIGOELEMENTOS",
+      "category_id": 10,
+      "category_order": 10,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "CTLF",
+        "Capacidade Total de Ligação do Ferro",
+        "TIBC",
+        "Total Iron Binding Capacity"
+      ]
+    },
+    {
+      "nome_padrao": "IST: (Indice de Saturação Transferrina)",
+      "categoria": "MINERAIS E OLIGOELEMENTOS",
+      "category_id": 10,
+      "category_order": 10,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "IST",
+        "Índice de Saturação",
+        "Índice de Saturação da Transferrina",
+        "Saturação de Transferrina",
+        "Sat Transferrina",
+        "Iron Saturation"
+      ]
+    },
+    {
+      "nome_padrao": "ZINCO",
+      "categoria": "MINERAIS E OLIGOELEMENTOS",
+      "category_id": 10,
+      "category_order": 10,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "Zinco",
+        "Zn",
+        "Zinco Sérico",
+        "Zinc"
+      ]
+    },
+    {
+      "nome_padrao": "SELÊNIO",
+      "categoria": "MINERAIS E OLIGOELEMENTOS",
+      "category_id": 10,
+      "category_order": 10,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "Selenio",
+        "Se",
+        "Selenium",
+        "Selênio Sérico"
+      ]
+    },
+    {
+      "nome_padrao": "TSH",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "category_id": 11,
+      "category_order": 11,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "TSH",
+        "Hormônio Tireoestimulante",
+        "TSH Ultra Sensível",
+        "Tireotropina",
+        "Thyroid Stimulating Hormone"
+      ]
+    },
+    {
+      "nome_padrao": "T3 LIVRE (2,3-4,54)",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "category_id": 11,
+      "category_order": 11,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "T3 Livre",
+        "T3L",
+        "Free T3",
+        "Triiodotironina Livre",
+        "FT3"
+      ]
+    },
+    {
+      "nome_padrao": "T3 TOTAL (0,6-1,76)",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "category_id": 11,
+      "category_order": 11,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "T3 Total",
+        "T3",
+        "Triiodotironina",
+        "Total T3"
+      ]
+    },
+    {
+      "nome_padrao": "T4 LIVRE",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "category_id": 11,
+      "category_order": 11,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "T4 Livre",
+        "T4L",
+        "Free T4",
+        "Tiroxina Livre",
+        "FT4"
+      ]
+    },
+    {
+      "nome_padrao": "T4 TOTAL",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "category_id": 11,
+      "category_order": 11,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "T4 Total",
+        "T4",
+        "Tiroxina",
+        "Total T4"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-TPO",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "category_id": 11,
+      "category_order": 11,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "Anticorpos Anti-TPO",
+        "Anti-Peroxidase",
+        "Anti-Tireoperoxidase",
+        "TPO Antibodies"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-TG",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "category_id": 11,
+      "category_order": 11,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "Anticorpos Anti-Tireoglobulina",
+        "Anti-Tireoglobulina",
+        "TG Antibodies"
+      ]
+    },
+    {
+      "nome_padrao": "TIREOGLOBULINA",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "category_id": 11,
+      "category_order": 11,
+      "biomarker_order": 8,
+      "sinonimos": [
+        "Thyroglobulin",
+        "TG"
+      ]
+    },
+    {
+      "nome_padrao": "TRAb",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "category_id": 11,
+      "category_order": 11,
+      "biomarker_order": 9,
+      "sinonimos": [
+        "Anticorpos Anti-Receptor TSH",
+        "TSH Receptor Antibodies",
+        "TRAB"
+      ]
+    },
+    {
+      "nome_padrao": "LEVOTIROXINA",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "category_id": 11,
+      "category_order": 11,
+      "biomarker_order": 10,
+      "sinonimos": [
+        "L-Tiroxina",
+        "LT4",
+        "Levothyroxine"
+      ]
+    },
+    {
+      "nome_padrao": "T3 SLOW RELEASE",
+      "categoria": "FUNÇÃO TIREOIDEANA",
+      "category_id": 11,
+      "category_order": 11,
+      "biomarker_order": 11,
+      "sinonimos": [
+        "T3 SR",
+        "T3 Liberação Lenta",
+        "Triiodotironina Liberação Controlada"
+      ]
+    },
+    {
+      "nome_padrao": "LH",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Hormônio Luteinizante",
+        "Luteinizing Hormone",
+        "LH Basal"
+      ]
+    },
+    {
+      "nome_padrao": "FSH",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Hormônio Folículo Estimulante",
+        "Follicle Stimulating Hormone",
+        "FSH Basal"
+      ]
+    },
+    {
+      "nome_padrao": "ESTRADIOL",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Estradiol",
+        "E2",
+        "17-Beta Estradiol",
+        "Estradiol, 17 Beta",
+        "17β-Estradiol"
+      ]
+    },
+    {
+      "nome_padrao": "ESTRONA",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "E1",
+        "Estrone"
+      ]
+    },
+    {
+      "nome_padrao": "PROGESTERONA",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "Progesterona",
+        "Prog",
+        "P4",
+        "Progesterone"
+      ]
+    },
+    {
+      "nome_padrao": "TESTOSTERONA TOTAL",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "Testosterona Total",
+        "Testosterona",
+        "Testosterone Total",
+        "Total Testosterone"
+      ]
+    },
+    {
+      "nome_padrao": "TESTOSTERONA LIVRE",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "Testosterona Livre",
+        "Free Testosterone",
+        "Testosterona Livre Calculada"
+      ]
+    },
+    {
+      "nome_padrao": "DHEA (Dehidroepiandrosterona)",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 8,
+      "sinonimos": [
+        "DHEA",
+        "Dehidroepiandrosterona",
+        "DHEA-S",
+        "Dehydroepiandrosterone"
+      ]
+    },
+    {
+      "nome_padrao": "SDHEA (Sulfato de Dehidroepiandrosterona)",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 9,
+      "sinonimos": [
+        "SDHEA",
+        "DHEA-S",
+        "S-DHEA",
+        "Sulfato de DHEA",
+        "DHEA Sulfate"
+      ]
+    },
+    {
+      "nome_padrao": "DHT (Dihidrotestosterona)",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 10,
+      "sinonimos": [
+        "DHT",
+        "Dihidrotestosterona",
+        "Dihydrotestosterone",
+        "5α-DHT"
+      ]
+    },
+    {
+      "nome_padrao": "SHBG",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 11,
+      "sinonimos": [
+        "Globulina Ligadora de Hormônios Sexuais",
+        "Sex Hormone Binding Globulin",
+        "SHBG"
+      ]
+    },
+    {
+      "nome_padrao": "PRL TOTAL",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 12,
+      "sinonimos": [
+        "Prolactina Total",
+        "Prolactin Total"
+      ]
+    },
+    {
+      "nome_padrao": "PRL DILUIDA",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 13,
+      "sinonimos": [
+        "Prolactina Diluída",
+        "Prolactin Diluted"
+      ]
+    },
+    {
+      "nome_padrao": "MACRO PRL",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 14,
+      "sinonimos": [
+        "Macroprolactina",
+        "Macro-PRL",
+        "Macroprolactin"
+      ]
+    },
+    {
+      "nome_padrao": "PSA TOTAL",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 15,
+      "sinonimos": [
+        "PSA Total",
+        "PSA",
+        "Antígeno Prostático",
+        "Prostate Specific Antigen"
+      ]
+    },
+    {
+      "nome_padrao": "PSA LIVRE",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 16,
+      "sinonimos": [
+        "PSA Livre",
+        "Free PSA",
+        "PSA Free"
+      ]
+    },
+    {
+      "nome_padrao": "DOSE DE ESTRADIOL",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 17,
+      "sinonimos": [
+        "Dosagem de Estradiol",
+        "Dose Estradiol"
+      ]
+    },
+    {
+      "nome_padrao": "DOSE DE ESTRIOL",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 18,
+      "sinonimos": [
+        "Dosagem de Estriol",
+        "Dose Estriol"
+      ]
+    },
+    {
+      "nome_padrao": "DOSE DE PROGESTERONA",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 19,
+      "sinonimos": [
+        "Dosagem de Progesterona",
+        "Dose Progesterona"
+      ]
+    },
+    {
+      "nome_padrao": "DOSE DE TESTOSTERONA",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 20,
+      "sinonimos": [
+        "Dosagem de Testosterona",
+        "Dose Testosterona"
+      ]
+    },
+    {
+      "nome_padrao": "IGF-1",
+      "categoria": "HORMÔNIOS SEXUAIS E REPRODUTIVOS",
+      "category_id": 12,
+      "category_order": 12,
+      "biomarker_order": 21,
+      "sinonimos": [
+        "Fator de Crescimento Semelhante à Insulina",
+        "Somatomedina C",
+        "IGF1"
+      ]
+    },
+    {
+      "nome_padrao": "CORTISOL SALIVAR ACORDAR",
+      "categoria": "EIXO ADRENAL E CORTISOL",
+      "category_id": 13,
+      "category_order": 13,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Cortisol Salivar Despertar",
+        "Cortisol Saliva Acordar",
+        "CAR"
+      ]
+    },
+    {
+      "nome_padrao": "CORTISOL SALIVAR 12H",
+      "categoria": "EIXO ADRENAL E CORTISOL",
+      "category_id": 13,
+      "category_order": 13,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Cortisol Salivar 12 horas",
+        "Cortisol Saliva Meio-dia"
+      ]
+    },
+    {
+      "nome_padrao": "CORTISOL SALIVAR 17H",
+      "categoria": "EIXO ADRENAL E CORTISOL",
+      "category_id": 13,
+      "category_order": 13,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Cortisol Salivar 17 horas",
+        "Cortisol Saliva Tarde"
+      ]
+    },
+    {
+      "nome_padrao": "CORTISOL SALIVAR 23H",
+      "categoria": "EIXO ADRENAL E CORTISOL",
+      "category_id": 13,
+      "category_order": 13,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "Cortisol Salivar 23 horas",
+        "Cortisol Saliva Noite"
+      ]
+    },
+    {
+      "nome_padrao": "PCR ULTRA SENSÍVEL",
+      "categoria": "MARCADORES INFLAMATÓRIOS",
+      "category_id": 14,
+      "category_order": 14,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "PCR",
+        "Proteína C Reativa",
+        "PCR Ultrassensível",
+        "hs-CRP",
+        "CRP",
+        "PCR US",
+        "Proteina C Reativa"
+      ]
+    },
+    {
+      "nome_padrao": "PCR QUANTIT",
+      "categoria": "MARCADORES INFLAMATÓRIOS",
+      "category_id": 14,
+      "category_order": 14,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "PCR Quantitativa",
+        "Proteína C Reativa Quantitativa",
+        "CRP Quantitative"
+      ]
+    },
+    {
+      "nome_padrao": "VHS: (Velocidade de Hemossedimentação)",
+      "categoria": "MARCADORES INFLAMATÓRIOS",
+      "category_id": 14,
+      "category_order": 14,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "VHS",
+        "Velocidade de Hemossedimentação",
+        "ESR",
+        "Velocidade de Sedimentação",
+        "VS"
+      ]
+    },
+    {
+      "nome_padrao": "CEA (antígeno carcinoembrionário)",
+      "categoria": "MARCADORES TUMORAIS",
+      "category_id": 15,
+      "category_order": 15,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "CEA",
+        "Antígeno Carcinoembrionário",
+        "Carcinoembryonic Antigen"
+      ]
+    },
+    {
+      "nome_padrao": "CA 15-3",
+      "categoria": "MARCADORES TUMORAIS",
+      "category_id": 15,
+      "category_order": 15,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "CA15-3",
+        "Cancer Antigen 15-3",
+        "Marcador CA 15-3"
+      ]
+    },
+    {
+      "nome_padrao": "CA 19-9",
+      "categoria": "MARCADORES TUMORAIS",
+      "category_id": 15,
+      "category_order": 15,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "CA19-9",
+        "Cancer Antigen 19-9",
+        "Marcador CA 19-9"
+      ]
+    },
+    {
+      "nome_padrao": "CA 125",
+      "categoria": "MARCADORES TUMORAIS",
+      "category_id": 15,
+      "category_order": 15,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "CA125",
+        "Cancer Antigen 125",
+        "Marcador CA 125"
+      ]
+    },
+    {
+      "nome_padrao": "CA 72-4",
+      "categoria": "MARCADORES TUMORAIS",
+      "category_id": 15,
+      "category_order": 15,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "CA72-4",
+        "Cancer Antigen 72-4",
+        "Marcador CA 72-4"
+      ]
+    },
+    {
+      "nome_padrao": "CA 27-29 (MAMA)",
+      "categoria": "MARCADORES TUMORAIS",
+      "category_id": 15,
+      "category_order": 15,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "CA27-29",
+        "CA 27.29",
+        "Cancer Antigen 27-29"
+      ]
+    },
+    {
+      "nome_padrao": "ALFAFETOPROTEINA",
+      "categoria": "MARCADORES TUMORAIS",
+      "category_id": 15,
+      "category_order": 15,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "AFP",
+        "Alpha-Fetoprotein",
+        "Alfa-Fetoproteína"
+      ]
+    },
+    {
+      "nome_padrao": "PROTEÍNA MMP2 (MAMA) (Indica risco de metástase)",
+      "categoria": "MARCADORES TUMORAIS",
+      "category_id": 15,
+      "category_order": 15,
+      "biomarker_order": 8,
+      "sinonimos": [
+        "MMP2",
+        "Matrix Metalloproteinase-2",
+        "Metaloproteinase 2"
+      ]
+    },
+    {
+      "nome_padrao": "SCC - AG EM CÂNCER DE CÉLULAS ESCAMOSAS CERVICAIS (COLO DE ÚTERO)",
+      "categoria": "MARCADORES TUMORAIS",
+      "category_id": 15,
+      "category_order": 15,
+      "biomarker_order": 9,
+      "sinonimos": [
+        "SCC",
+        "Squamous Cell Carcinoma Antigen",
+        "Antígeno SCC"
+      ]
+    },
+    {
+      "nome_padrao": "BETA 2 MICROGLOBULINA",
+      "categoria": "MARCADORES TUMORAIS",
+      "category_id": 15,
+      "category_order": 15,
+      "biomarker_order": 10,
+      "sinonimos": [
+        "Beta-2 Microglobulina",
+        "B2M",
+        "β2-Microglobulin"
+      ]
+    },
+    {
+      "nome_padrao": "PSOF: (Sangue Oculto nas Fezes)",
+      "categoria": "MARCADORES TUMORAIS",
+      "category_id": 15,
+      "category_order": 15,
+      "biomarker_order": 11,
+      "sinonimos": [
+        "Sangue Oculto nas Fezes",
+        "PSOF",
+        "Fecal Occult Blood",
+        "FOB"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI GLIADINA IGA",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Anticorpos Anti-Gliadina IgA",
+        "Anti-Gliadin IgA",
+        "AGA IgA"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI GLIADINA IGG",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Anticorpos Anti-Gliadina IgG",
+        "Anti-Gliadin IgG",
+        "AGA IgG"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-TTG IGA",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Anticorpos Anti-Transglutaminase IgA",
+        "Anti-Transglutaminase IgA",
+        "tTG IgA"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-TTG IGG",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "Anticorpos Anti-Transglutaminase IgG",
+        "Anti-Transglutaminase IgG",
+        "tTG IgG"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-ENDOMISIO IGA",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "Anticorpos Anti-Endomísio IgA",
+        "Anti-Endomysial IgA",
+        "EMA IgA"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-ENDOMISIO IGG",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "Anticorpos Anti-Endomísio IgG",
+        "Anti-Endomysial IgG",
+        "EMA IgG"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-GAD",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "Anticorpos Anti-GAD",
+        "Anti-Glutamic Acid Decarboxylase",
+        "GAD Antibodies"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-INSULINA",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 8,
+      "sinonimos": [
+        "Anticorpos Anti-Insulina",
+        "IAA",
+        "Insulin Antibodies"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-IA2",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 9,
+      "sinonimos": [
+        "Anticorpos Anti-IA2",
+        "Anti-Tyrosine Phosphatase",
+        "IA2 Antibodies"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-ILHOTA",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 10,
+      "sinonimos": [
+        "Anticorpos Anti-Ilhota",
+        "ICA",
+        "Islet Cell Antibodies"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-CCP (Anticorpos Anti-Peptídeo Citrulinado Cíclico)",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 11,
+      "sinonimos": [
+        "Anti-CCP",
+        "Anticorpos Anti-Peptídeo Citrulinado Cíclico",
+        "Anticorpos Antipeptídeo Citrulinado",
+        "ACCP",
+        "Anti-Peptídeo Cíclico Citrulinado",
+        "Fator Anti-CCP",
+        "Anti-Cyclic Citrullinated Peptide"
+      ]
+    },
+    {
+      "nome_padrao": "FAN (Fator Antinúcleo)",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 12,
+      "sinonimos": [
+        "FAN",
+        "Fator Antinúcleo",
+        "ANA",
+        "Antinuclear Antibodies"
+      ]
+    },
+    {
+      "nome_padrao": "FATOR REUMATOIDE",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 13,
+      "sinonimos": [
+        "FR",
+        "Rheumatoid Factor",
+        "RF"
+      ]
+    },
+    {
+      "nome_padrao": "C-ANCA",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 14,
+      "sinonimos": [
+        "ANCA-C",
+        "Anticorpos Citoplasmáticos",
+        "c-ANCA"
+      ]
+    },
+    {
+      "nome_padrao": "P-ANCA",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 15,
+      "sinonimos": [
+        "ANCA-P",
+        "Anticorpos Perinucleares",
+        "p-ANCA"
+      ]
+    },
+    {
+      "nome_padrao": "C3",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 16,
+      "sinonimos": [
+        "Complemento C3",
+        "Complement C3"
+      ]
+    },
+    {
+      "nome_padrao": "C4",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 17,
+      "sinonimos": [
+        "Complemento C4",
+        "Complement C4"
+      ]
+    },
+    {
+      "nome_padrao": "CH50",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 18,
+      "sinonimos": [
+        "Complemento Total",
+        "Total Hemolytic Complement"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI LKM 1",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 19,
+      "sinonimos": [
+        "Anticorpos Anti-LKM-1",
+        "Anti-Liver Kidney Microsomal",
+        "LKM-1"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI MITOCÔNDRIA",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 20,
+      "sinonimos": [
+        "Anticorpos Antimitocôndria",
+        "AMA",
+        "Antimitochondrial Antibodies"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI MÚSCULO LISO",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 21,
+      "sinonimos": [
+        "Anticorpos Anti-Músculo Liso",
+        "ASMA",
+        "Anti-Smooth Muscle Antibodies"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI HIV",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 22,
+      "sinonimos": [
+        "Anticorpos Anti-HIV",
+        "HIV Test",
+        "Teste HIV"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI HAV",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 23,
+      "sinonimos": [
+        "Anticorpos Anti-HAV",
+        "Hepatite A",
+        "HAV Antibodies"
+      ]
+    },
+    {
+      "nome_padrao": "HBSAG",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 24,
+      "sinonimos": [
+        "Antígeno de Superfície HBV",
+        "HBsAg",
+        "Hepatitis B Surface Antigen"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-HBS",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 25,
+      "sinonimos": [
+        "Anticorpos Anti-HBs",
+        "Anti-HBsAg",
+        "Hepatitis B Antibodies"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-HBC",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 26,
+      "sinonimos": [
+        "Anticorpos Anti-HBc",
+        "Anti-HBcAg",
+        "Hepatitis B Core Antibodies"
+      ]
+    },
+    {
+      "nome_padrao": "ANTI-HCV",
+      "categoria": "IMUNOLOGIA E AUTOIMUNIDADE",
+      "category_id": 16,
+      "category_order": 16,
+      "biomarker_order": 27,
+      "sinonimos": [
+        "Anticorpos Anti-HCV",
+        "Hepatite C",
+        "HCV Antibodies"
+      ]
+    },
+    {
+      "nome_padrao": "CHUMBO",
+      "categoria": "METAIS PESADOS",
+      "category_id": 17,
+      "category_order": 17,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Pb",
+        "Lead",
+        "Chumbo Sérico"
+      ]
+    },
+    {
+      "nome_padrao": "MERCURIO",
+      "categoria": "METAIS PESADOS",
+      "category_id": 17,
+      "category_order": 17,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Mercúrio",
+        "Hg",
+        "Mercury"
+      ]
+    },
+    {
+      "nome_padrao": "CÁDMIO",
+      "categoria": "METAIS PESADOS",
+      "category_id": 17,
+      "category_order": 17,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Cadmio",
+        "Cd",
+        "Cadmium"
+      ]
+    },
+    {
+      "nome_padrao": "ALUMÍNIO",
+      "categoria": "METAIS PESADOS",
+      "category_id": 17,
+      "category_order": 17,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "Aluminio",
+        "Al",
+        "Aluminum"
+      ]
+    },
+    {
+      "nome_padrao": "PIRUVATO KINASE ERITROCITARIA (PKE)",
+      "categoria": "METABOLISMO ENERGÉTICO",
+      "category_id": 18,
+      "category_order": 18,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "PKE",
+        "Pyruvate Kinase Eritrocitária",
+        "PK Deficiency"
+      ]
+    },
+    {
+      "nome_padrao": "PIRUVATO mmol/l",
+      "categoria": "METABOLISMO ENERGÉTICO",
+      "category_id": 18,
+      "category_order": 18,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Piruvato",
+        "Pyruvate",
+        "Ácido Pirúvico"
+      ]
+    },
+    {
+      "nome_padrao": "LACTATO mmol/l",
+      "categoria": "METABOLISMO ENERGÉTICO",
+      "category_id": 18,
+      "category_order": 18,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Lactato",
+        "Lactate",
+        "Ácido Láctico"
+      ]
+    },
+    {
+      "nome_padrao": "G6PD",
+      "categoria": "METABOLISMO ENERGÉTICO",
+      "category_id": 18,
+      "category_order": 18,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "Glicose-6-Fosfato Desidrogenase",
+        "G6PD Deficiency",
+        "Deficiência de G6PD"
+      ]
+    },
+    {
+      "nome_padrao": "L-CARNITINA TOTAL",
+      "categoria": "METABOLISMO ENERGÉTICO",
+      "category_id": 18,
+      "category_order": 18,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "Carnitina Total",
+        "Total Carnitine"
+      ]
+    },
+    {
+      "nome_padrao": "L-CARNITINA LIVRE",
+      "categoria": "METABOLISMO ENERGÉTICO",
+      "category_id": 18,
+      "category_order": 18,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "Carnitina Livre",
+        "Free Carnitine"
+      ]
+    },
+    {
+      "nome_padrao": "INTERLEUCINA IL - 12",
+      "categoria": "METABOLISMO ENERGÉTICO",
+      "category_id": 18,
+      "category_order": 18,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "IL-12",
+        "Interleukin 12",
+        "Interleucina 12"
+      ]
+    },
+    {
+      "nome_padrao": "KD ABC SCORE",
+      "categoria": "METABOLISMO ENERGÉTICO",
+      "category_id": 18,
+      "category_order": 18,
+      "biomarker_order": 8,
+      "sinonimos": [
+        "Kidney Disease ABC Score"
+      ]
+    },
+    {
+      "nome_padrao": "KD ABC SCORE GLICOSE",
+      "categoria": "METABOLISMO ENERGÉTICO",
+      "category_id": 18,
+      "category_order": 18,
+      "biomarker_order": 9,
+      "sinonimos": [
+        "KD ABC Score Glicemia"
+      ]
+    },
+    {
+      "nome_padrao": "URINA ROTINA:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Urina Rotina",
+        "Urina I",
+        "EAS",
+        "Exame de Urina",
+        "Urinalysis"
+      ]
+    },
+    {
+      "nome_padrao": "URINA 24H:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Urina 24h",
+        "Urina 24 horas",
+        "24-Hour Urine"
+      ]
+    },
+    {
+      "nome_padrao": "CITRATO:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Citrato Urinário",
+        "Citrate",
+        "Citrato na Urina"
+      ]
+    },
+    {
+      "nome_padrao": "OXALATO:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "Oxalato Urinário",
+        "Oxalate",
+        "Ácido Oxálico"
+      ]
+    },
+    {
+      "nome_padrao": "URATO:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "Urato Urinário",
+        "Ácido Úrico Urinário",
+        "Urate"
+      ]
+    },
+    {
+      "nome_padrao": "CÁLCIO:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "Cálcio Urinário",
+        "Calciúria",
+        "Calcium Urine"
+      ]
+    },
+    {
+      "nome_padrao": "SÓDIO:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "Sódio Urinário",
+        "Sodium Urine",
+        "Natriúria"
+      ]
+    },
+    {
+      "nome_padrao": "NORMETANEFRINA:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 8,
+      "sinonimos": [
+        "Normetanefrina Urinária",
+        "Normetanephrine"
+      ]
+    },
+    {
+      "nome_padrao": "METANEFRINA:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 9,
+      "sinonimos": [
+        "Metanefrina Urinária",
+        "Metanephrine"
+      ]
+    },
+    {
+      "nome_padrao": "ADRENALINA:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 10,
+      "sinonimos": [
+        "Adrenalina Urinária",
+        "Adrenaline",
+        "Epinefrina"
+      ]
+    },
+    {
+      "nome_padrao": "EPINEFRINA:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 11,
+      "sinonimos": [
+        "Epinefrina Urinária",
+        "Epinephrine",
+        "Adrenalina"
+      ]
+    },
+    {
+      "nome_padrao": "NOREPINEFRINA:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 12,
+      "sinonimos": [
+        "Norepinefrina Urinária",
+        "Norepinephrine",
+        "Noradrenalina"
+      ]
+    },
+    {
+      "nome_padrao": "NORADRENALINA:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 13,
+      "sinonimos": [
+        "Noradrenalina Urinária",
+        "Noradrenaline",
+        "Norepinefrina"
+      ]
+    },
+    {
+      "nome_padrao": "DOPAMINA:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 14,
+      "sinonimos": [
+        "Dopamina Urinária",
+        "Dopamine"
+      ]
+    },
+    {
+      "nome_padrao": "ÁCIDO 5-OH IA:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 15,
+      "sinonimos": [
+        "5-HIAA",
+        "Ácido 5-Hidroxi-Indolacético",
+        "5-Hydroxyindoleacetic Acid"
+      ]
+    },
+    {
+      "nome_padrao": "5-HIAA:",
+      "categoria": "EXAMES DE URINA",
+      "category_id": 19,
+      "category_order": 19,
+      "biomarker_order": 16,
+      "sinonimos": [
+        "Ácido 5-OH IA",
+        "Ácido 5-Hidroxi-Indolacético",
+        "5-Hydroxyindoleacetic Acid"
+      ]
+    },
+    {
+      "nome_padrao": "DOPPLER CARÓTIDAS",
+      "categoria": "EXAMES DE IMAGEM",
+      "category_id": 20,
+      "category_order": 20,
+      "biomarker_order": 1,
+      "sinonimos": [
+        "Doppler de Carótidas",
+        "USG Doppler Carotídeo",
+        "Carotid Doppler"
+      ]
+    },
+    {
+      "nome_padrao": "ECOCARDIOGRAMA",
+      "categoria": "EXAMES DE IMAGEM",
+      "category_id": 20,
+      "category_order": 20,
+      "biomarker_order": 2,
+      "sinonimos": [
+        "Eco",
+        "Echocardiogram",
+        "Ecocardiografia"
+      ]
+    },
+    {
+      "nome_padrao": "TESTE ERGOMÉTRICO",
+      "categoria": "EXAMES DE IMAGEM",
+      "category_id": 20,
+      "category_order": 20,
+      "biomarker_order": 3,
+      "sinonimos": [
+        "Teste de Esforço",
+        "Stress Test",
+        "Ergometria"
+      ]
+    },
+    {
+      "nome_padrao": "ANGIO TC CORONARIAS",
+      "categoria": "EXAMES DE IMAGEM",
+      "category_id": 20,
+      "category_order": 20,
+      "biomarker_order": 4,
+      "sinonimos": [
+        "Angiotomografia Coronária",
+        "TC Coronárias",
+        "Coronary CT Angiography"
+      ]
+    },
+    {
+      "nome_padrao": "ESCORE DE CÁLCIO",
+      "categoria": "EXAMES DE IMAGEM",
+      "category_id": 20,
+      "category_order": 20,
+      "biomarker_order": 5,
+      "sinonimos": [
+        "Score de Cálcio",
+        "Calcium Score",
+        "Escore de Cálcio Coronário"
+      ]
+    },
+    {
+      "nome_padrao": "CINTILOGRAFIA MIOCÁRDICA",
+      "categoria": "EXAMES DE IMAGEM",
+      "category_id": 20,
+      "category_order": 20,
+      "biomarker_order": 6,
+      "sinonimos": [
+        "Cintilografia do Coração",
+        "Myocardial Scintigraphy"
+      ]
+    },
+    {
+      "nome_padrao": "ULTRASSOM ABDOME",
+      "categoria": "EXAMES DE IMAGEM",
+      "category_id": 20,
+      "category_order": 20,
+      "biomarker_order": 7,
+      "sinonimos": [
+        "USG Abdome",
+        "Ultrassonografia Abdominal",
+        "Abdominal Ultrasound"
+      ]
+    },
+    {
+      "nome_padrao": "ULTRASSOM ENDOVAGINAL",
+      "categoria": "EXAMES DE IMAGEM",
+      "category_id": 20,
+      "category_order": 20,
+      "biomarker_order": 8,
+      "sinonimos": [
+        "USG Endovaginal",
+        "Ultrassonografia Transvaginal",
+        "Transvaginal Ultrasound"
+      ]
+    },
+    {
+      "nome_padrao": "ULTRASSOM MAMAS",
+      "categoria": "EXAMES DE IMAGEM",
+      "category_id": 20,
+      "category_order": 20,
+      "biomarker_order": 9,
+      "sinonimos": [
+        "USG Mamas",
+        "Ultrassonografia Mamária",
+        "Breast Ultrasound"
+      ]
+    },
+    {
+      "nome_padrao": "ULTRASSOM AXILAS",
+      "categoria": "EXAMES DE IMAGEM",
+      "category_id": 20,
+      "category_order": 20,
+      "biomarker_order": 10,
+      "sinonimos": [
+        "USG Axilas",
+        "Ultrassonografia Axilar"
+      ]
+    },
+    {
+      "nome_padrao": "MAMOGRAFIA",
+      "categoria": "EXAMES DE IMAGEM",
+      "category_id": 20,
+      "category_order": 20,
+      "biomarker_order": 11,
+      "sinonimos": [
+        "Mammography",
+        "Raio-X das Mamas"
+      ]
+    },
+    {
+      "nome_padrao": "COLONOSCOPIA",
+      "categoria": "EXAMES DE IMAGEM",
+      "category_id": 20,
+      "category_order": 20,
+      "biomarker_order": 12,
+      "sinonimos": [
+        "Colonoscopy",
+        "Endoscopia do Cólon"
+      ]
+    }
+  ]
+}

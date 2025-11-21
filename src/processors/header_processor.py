@@ -17,11 +17,11 @@ from src.processors.vision_text_extractor import _compress_image_for_vision
 
 def extract_patient_identifiers_from_text(text: str) -> Dict[str, Optional[str]]:
     """
-    Extração rápida via regex (sem IA)
-    
+    Extração rápida via regex (sem IA) - OTIMIZADA para aumentar cache hits
+
     Args:
         text: Texto extraído do PDF
-        
+
     Returns:
         Dict com nome e data_nascimento (ou None)
     """
@@ -29,53 +29,96 @@ def extract_patient_identifiers_from_text(text: str) -> Dict[str, Optional[str]]
     if not text or not isinstance(text, str):
         print("⚠️ extract_patient_identifiers_from_text recebeu texto inválido")
         return {'nome': None, 'data_nascimento': None}
-    
+
     identifiers = {
         'nome': None,
         'data_nascimento': None
     }
-    
-    # Regex para data de nascimento (DD/MM/YYYY)
-    date_pattern = r'\b(\d{2}[\/\-]\d{2}[\/\-]\d{4})\b'
-    dates = re.findall(date_pattern, text)
-    if dates:
-        identifiers['data_nascimento'] = dates[0].replace('-', '/')
-    
-    # Regex para nome (linhas com 2+ palavras capitalizadas)
-    name_pattern = r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b'
-    names = re.findall(name_pattern, text)
-    
-    # Pegar o primeiro nome válido
-    for name in names:
-        if len(name) >= 8 and len(name.split()) >= 2:
-            identifiers['nome'] = name
+
+    # 🚀 OTIMIZAÇÃO 1: Buscar em primeiras 1000 caracteres (header geralmente está no topo)
+    header_text = text[:1000]
+
+    # 🚀 OTIMIZAÇÃO 2: Múltiplos padrões para data de nascimento
+    date_patterns = [
+        r'(?:Data\s+(?:de\s+)?Nasc(?:imento)?|Nascimento|D\.?\s*Nasc\.?)[:\s]*(\d{2}[\/\-]\d{2}[\/\-]\d{4})',  # "Data Nascimento: 01/01/1990"
+        r'Nasc\.?[:\s]*(\d{2}[\/\-]\d{2}[\/\-]\d{4})',  # "Nasc: 01/01/1990"
+        r'\b(\d{2}[\/\-]\d{2}[\/\-](?:19|20)\d{2})\b',  # Datas entre 1900-2099
+    ]
+
+    for pattern in date_patterns:
+        match = re.search(pattern, header_text, re.IGNORECASE)
+        if match:
+            identifiers['data_nascimento'] = match.group(1).replace('-', '/')
             break
-    
+
+    # Se não achou com contexto, pegar primeira data válida (nascimento geralmente é antes de outras datas)
+    if not identifiers['data_nascimento']:
+        dates = re.findall(r'\b(\d{2}[\/\-]\d{2}[\/\-](?:19|20)\d{2})\b', header_text)
+        if dates:
+            identifiers['data_nascimento'] = dates[0].replace('-', '/')
+
+    # 🚀 OTIMIZAÇÃO 3: Múltiplos padrões para nome do paciente
+    name_patterns = [
+        r'(?:Paciente|Nome|Patient)[:\s]+([A-Z][a-zá-ú]+(?:\s+[A-Z][a-zá-ú]+)+)',  # "Paciente: João Silva"
+        r'\n([A-Z][A-ZÁ-Ú\s]{8,})\n',  # Nome todo em maiúsculas (comum em laudos)
+        r'\b([A-Z][a-zá-ú]+(?:\s+[A-Z][a-zá-ú]+){2,})\b',  # 3+ palavras capitalizadas (nome completo)
+    ]
+
+    for pattern in name_patterns:
+        match = re.search(pattern, header_text, re.MULTILINE)
+        if match:
+            name = match.group(1).strip()
+            # Validar nome (mínimo 8 caracteres, 2 palavras, não contém números)
+            if len(name) >= 8 and len(name.split()) >= 2 and not re.search(r'\d', name):
+                identifiers['nome'] = name.title() if name.isupper() else name
+                break
+
+    # Se não achou com contexto, usar padrão genérico
+    if not identifiers['nome']:
+        names = re.findall(r'\b([A-Z][a-zá-ú]+(?:\s+[A-Z][a-zá-ú]+)+)\b', header_text)
+        for name in names:
+            # Filtrar nomes comuns de campos/títulos
+            if (len(name) >= 8 and len(name.split()) >= 2 and
+                not re.search(r'\d', name) and
+                name.lower() not in ['laboratorio', 'hospital', 'resultado', 'exame']):
+                identifiers['nome'] = name
+                break
+
+    if identifiers['nome'] or identifiers['data_nascimento']:
+        print(f"📋 Identificadores extraídos via regex: nome={bool(identifiers['nome'])}, data_nasc={bool(identifiers['data_nascimento'])}")
+
     return identifiers
 
 
 def extract_lab_hint_from_text(text: str) -> str:
     """
-    Detecta nome do laboratório no texto (dica para cache)
-    
+    Detecta nome do laboratório no texto (dica para cache) - OTIMIZADO
+
     Args:
         text: Texto extraído
-        
+
     Returns:
         str: Nome do laboratório ou vazio
     """
-    # Regex para laboratórios comuns
+    # 🚀 OTIMIZAÇÃO: Buscar apenas no início do documento (primeiras 500 caracteres)
+    header_text = text[:500]
+
+    # Regex para laboratórios comuns (expandido)
     lab_patterns = [
-        r'Laborat[óo]rio\s+([A-Z][a-zA-Z\s]+)',
-        r'LAB\s+([A-Z][a-zA-Z\s]+)',
-        r'([A-Z][a-zA-Z]+)\s+Laborat[óo]rio'
+        r'Laborat[óo]rio\s+([A-Z][a-zA-ZÁ-Ú\s]+?)(?:\n|$|\s{2,})',  # "Laboratório Nome"
+        r'LAB[\.:\s]+([A-Z][a-zA-ZÁ-Ú\s]+?)(?:\n|$|\s{2,})',  # "LAB: Nome"
+        r'([A-Z][a-zA-ZÁ-Ú]+)\s+Laborat[óo]rio',  # "Nome Laboratório"
+        r'([A-Z][A-ZÁ-Ú\s]{3,20})\s+(?:LTDA|S/A|SA)',  # Razão social
     ]
-    
+
     for pattern in lab_patterns:
-        match = re.search(pattern, text)
+        match = re.search(pattern, header_text, re.IGNORECASE | re.MULTILINE)
         if match:
-            return match.group(1).strip()
-    
+            lab_name = match.group(1).strip()
+            # Filtrar nomes muito curtos ou muito longos
+            if 3 <= len(lab_name) <= 50:
+                return lab_name
+
     return ''
 
 
@@ -196,12 +239,18 @@ def extract_header_with_cache(
     
     # Passo 2: Tentar cache (se temos identificadores)
     if nome and data_nasc:
+        print(f'🔍 Verificando cache para: {nome[:20]}... ({data_nasc})')
         cached_header = cache.get(nome, data_nasc, lab_hint)
         if cached_header:
+            print(f'✅ Cache HIT! Economia de ~500ms e custo de Vision API')
             return cached_header
-    
+        print('❌ Cache MISS - Paciente não encontrado no cache')
+    else:
+        print(f'⚠️ Regex não extraiu identificadores suficientes (nome={bool(nome)}, data_nasc={bool(data_nasc)})')
+        print('   Pulando verificação de cache, indo direto para Vision API')
+
     # Passo 3: Usar Gemini Flash Vision (cache miss)
-    print('🔍 Cache miss, usando Gemini Flash Vision...')
+    print('🔍 Usando Gemini Flash Vision para extrair header...')
     header = extract_header_with_vision(pdf_path, vision_client)
     
     # Passo 4: Salvar no cache (se válido)

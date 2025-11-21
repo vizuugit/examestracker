@@ -23,24 +23,24 @@ CACHE_PREFIX = 'header-cache/'
 CACHE_TTL_DAYS = 90
 
 # ========================================
-# ANTHROPIC API
-# ========================================
-
-ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
-CLAUDE_HAIKU_MODEL = 'claude-3-5-haiku-20241022'
-
-# Configuração de chamadas Claude Haiku
-CLAUDE_MAX_TOKENS = 4096
-CLAUDE_TEMPERATURE = 0.3
-
-# ========================================
-# GOOGLE GEMINI API
+# GOOGLE GEMINI API (PRINCIPAL - 100% do sistema)
 # ========================================
 
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 GEMINI_VISION_MODEL = 'gemini-2.0-flash-exp'
-GEMINI_MAX_TOKENS = 500
-GEMINI_TEMPERATURE = 0.2
+GEMINI_MAX_TOKENS = 8192  # Aumentado para parsing de biomarcadores
+GEMINI_TEMPERATURE = 0  # Zero para máxima precisão
+
+# ========================================
+# ANTHROPIC API (OPCIONAL - Não usado atualmente)
+# ========================================
+# Sistema migrado 100% para Gemini (70-80% mais barato)
+# Mantenha as variáveis caso queira voltar para Claude
+
+ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')  # Opcional
+CLAUDE_HAIKU_MODEL = 'claude-3-5-haiku-20241022'
+CLAUDE_MAX_TOKENS = 4096
+CLAUDE_TEMPERATURE = 0.3
 
 # ========================================
 # SUPABASE WEBHOOK

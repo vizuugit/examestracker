@@ -2,9 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { deduplicateExams } from "@/utils/examDeduplication";
-import { normalizeBiomarkerWithTable } from "@/utils/biomarkerNormalization";
 import { normalizeHematologicalValue, calculateAbsoluteReference } from "@/utils/valueNormalizer";
-import { getBiomarkerNormalizationService } from "@/services/BiomarkerNormalizationService";
 
 const EDGE_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/aws-proxy`;
 
@@ -242,56 +240,34 @@ export function useExamUpload() {
   };
 
   const pollExamStatus = async (
-    userId: string, 
-    s3Key: string, 
+    userId: string,
+    s3Key: string,
     examId: string,
     onStatusUpdate?: (message: string, progress: number, status?: FileQueueItem['status']) => void
   ) => {
     const startTime = Date.now();
     let attempts = 0;
     let currentIntervalId: NodeJS.Timeout | null = null;
-
-    // 🧠 Função para calcular intervalo dinâmico
-    const getPollingInterval = (elapsedSeconds: number): number => {
-      if (elapsedSeconds < 10) return 5000;  // 5s - Lambda ainda iniciando
-      if (elapsedSeconds < 30) return 3000;  // 3s - processamento ativo
-      if (elapsedSeconds < 60) return 2000;  // 2s - próximo de concluir
-      if (elapsedSeconds < 120) return 3000; // 3s - documento grande
-      return 4000;                           // 4s - documento muito grande
-    };
-
-    // 🎯 Função para determinar qual fonte verificar
-    const getCheckSource = (elapsedSeconds: number): 'aws-only' | 'supabase-first' | 'supabase-only' => {
-      if (elapsedSeconds < 20) return 'aws-only';        // Webhook pode não ter chegado
-      if (elapsedSeconds < 90) return 'supabase-first';  // Webhook já deve ter chegado
-      return 'supabase-only';                            // Webhook já chegou ou Lambda timeout
-    };
+    let realtimeChannel: any = null;
 
     return new Promise<void>((resolve, reject) => {
-      const scheduleNextCheck = () => {
-        const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-        const nextInterval = getPollingInterval(elapsedSeconds);
-        
-        currentIntervalId = setTimeout(checkStatus, nextInterval);
+      // 🔄 Função para limpar recursos
+      const cleanup = () => {
+        if (currentIntervalId) {
+          clearTimeout(currentIntervalId);
+          currentIntervalId = null;
+        }
+        if (realtimeChannel) {
+          supabase.removeChannel(realtimeChannel);
+          realtimeChannel = null;
+        }
       };
 
-      const checkStatus = async () => {
-        attempts++;
-        const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-        
-        // Timeout de 5 minutos (300 segundos)
-        if (elapsedSeconds >= 300) {
-          console.log(`[Polling Inteligente] ⏱️ Timeout de 5 minutos atingido`);
-          if (currentIntervalId) clearTimeout(currentIntervalId);
-          onStatusUpdate?.("Processamento em background...", 95);
-          resolve();
-          return;
-        }
-        
-        // 📊 Progresso visual detalhado
+      // 📊 Função para atualizar progresso baseado no tempo
+      const updateProgress = (elapsedSeconds: number) => {
         let currentProgress = 50;
         let statusMsg = '';
-        
+
         if (elapsedSeconds < 10) {
           currentProgress = 50 + (elapsedSeconds / 10) * 10; // 50% -> 60%
           statusMsg = `Extraindo texto do documento... (${elapsedSeconds}s)`;
@@ -302,7 +278,7 @@ export function useExamUpload() {
           currentProgress = 80 + ((elapsedSeconds - 30) / 60) * 12; // 80% -> 92%
           const mins = Math.floor(elapsedSeconds / 60);
           const secs = elapsedSeconds % 60;
-          statusMsg = mins > 0 
+          statusMsg = mins > 0
             ? `Organizando biomarcadores... (${mins}min ${secs}s)`
             : `Organizando biomarcadores... (${elapsedSeconds}s)`;
         } else {
@@ -311,110 +287,132 @@ export function useExamUpload() {
           const secs = elapsedSeconds % 60;
           statusMsg = `Finalizando processamento... (${mins}min ${secs}s)`;
         }
-        
+
         setProgress(Math.min(currentProgress, 98));
         setStatus(statusMsg);
         onStatusUpdate?.(statusMsg, Math.min(currentProgress, 98), 'processing');
+      };
+
+      // 🚀 OTIMIZAÇÃO: Usar Supabase Realtime em vez de polling constante
+      console.log('[Realtime] 📡 Conectando ao Supabase Realtime...');
+
+      realtimeChannel = supabase
+        .channel(`exam-${examId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'exams',
+            filter: `id=eq.${examId}`
+          },
+          (payload) => {
+            const newRecord = payload.new as any;
+            const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+
+            console.log(`[Realtime] 🔔 Atualização recebida: status=${newRecord.processing_status} (${elapsedSeconds}s)`);
+
+            if (newRecord.processing_status === 'completed') {
+              const successMsg = newRecord.total_biomarkers
+                ? `✅ Concluído! ${newRecord.total_biomarkers} biomarcadores extraídos`
+                : '✅ Concluído!';
+
+              onStatusUpdate?.(successMsg, 100, 'completed');
+              setProgress(100);
+              setStatus(successMsg);
+
+              console.log(`[Realtime] ✅ Processamento concluído via Realtime (${elapsedSeconds}s)`);
+              cleanup();
+              resolve();
+            } else if (newRecord.processing_status === 'error') {
+              console.error(`[Realtime] ❌ Erro detectado via Realtime`);
+              cleanup();
+              reject(new Error('Erro no processamento do exame'));
+            }
+          }
+        )
+        .subscribe((status) => {
+          console.log(`[Realtime] Status da subscrição: ${status}`);
+        });
+
+      // ⏱️ Timer para atualização visual de progresso
+      const progressInterval = setInterval(() => {
+        const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+
+        // Timeout de 5 minutos
+        if (elapsedSeconds >= 300) {
+          console.log(`[Realtime] ⏱️ Timeout de 5 minutos atingido`);
+          clearInterval(progressInterval);
+          cleanup();
+          onStatusUpdate?.("Processamento em background...", 95);
+          resolve();
+          return;
+        }
+
+        updateProgress(elapsedSeconds);
+      }, 1000); // Atualiza progresso a cada 1 segundo
+
+      // 🔍 FALLBACK: Polling AWS apenas nos primeiros 20 segundos (caso webhook demore)
+      const checkAWS = async () => {
+        const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+
+        // Só verifica AWS nos primeiros 20 segundos
+        if (elapsedSeconds >= 20) {
+          console.log('[Realtime] ⏭️ Polling AWS encerrado, confiando apenas no Realtime');
+          if (currentIntervalId) clearTimeout(currentIntervalId);
+          return;
+        }
+
+        attempts++;
+        console.log(`[Realtime] 🔍 Polling AWS (tentativa ${attempts}, ${elapsedSeconds}s)`);
 
         try {
-          const checkSource = getCheckSource(elapsedSeconds);
-          console.log(`[Polling Inteligente] Tentativa ${attempts} (${elapsedSeconds}s) - Fonte: ${checkSource}`);
-          
-          // 🗄️ Verificar Supabase
-          if (checkSource === 'supabase-first' || checkSource === 'supabase-only') {
-            const { data: examData, error: examError } = await supabase
-              .from('exams')
-              .select('processing_status, total_biomarkers, patient_name_extracted')
-              .eq('id', examId)
-              .single();
-            
-            if (!examError && examData) {
-              console.log(`[Polling Inteligente] Status Supabase: ${examData.processing_status}`);
-              
-              if (examData.processing_status === 'completed') {
-                console.log(`[Polling Inteligente] ✅ Concluído via Supabase (${elapsedSeconds}s)`);
-                
-                const successMsg = examData.total_biomarkers 
-                  ? `✅ Concluído! ${examData.total_biomarkers} biomarcadores extraídos`
-                  : '✅ Concluído!';
-                
-                onStatusUpdate?.(successMsg, 100);
-                
-                if (currentIntervalId) clearTimeout(currentIntervalId);
-                resolve();
-                return;
-              }
-              
-              if (examData.processing_status === 'error') {
-                console.error(`[Polling Inteligente] ❌ Erro no Supabase`);
-                if (currentIntervalId) clearTimeout(currentIntervalId);
-                reject(new Error('Erro no processamento do exame'));
-                return;
-              }
+          const response = await fetch(`${EDGE_FUNCTION_URL}?userId=${userId}&s3Key=${encodeURIComponent(s3Key)}`, {
+            headers: {
+              "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             }
-            
-            // Se for 'supabase-only', não verificar AWS
-            if (checkSource === 'supabase-only') {
-              scheduleNextCheck();
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+
+            if (data.status === 'completed' && data.data) {
+              console.log(`[Realtime] ✅ Concluído via AWS antes do webhook (${elapsedSeconds}s)`);
+
+              const totalBiomarkers = data.data.metadata?.total_exames || data.data.total_exames || 0;
+              const successMsg = totalBiomarkers
+                ? `✅ Concluído! ${totalBiomarkers} biomarcadores extraídos`
+                : '✅ Concluído!';
+
+              onStatusUpdate?.(successMsg, 100, 'completed');
+              setProgress(100);
+              setStatus(successMsg);
+
+              clearInterval(progressInterval);
+              cleanup();
+              await syncExamToSupabase(examId, data);
+              resolve();
+              return;
+            } else if (data.status === 'failed') {
+              console.error(`[Realtime] ❌ AWS retornou 'failed'`);
+              clearInterval(progressInterval);
+              cleanup();
+              reject(new Error('Erro no processamento AWS'));
               return;
             }
           }
-          
-          // ☁️ Verificar AWS
-          if (checkSource === 'aws-only' || checkSource === 'supabase-first') {
-            console.log(`[Polling Inteligente] Verificando AWS...`);
-            
-            const response = await fetch(`${EDGE_FUNCTION_URL}?userId=${userId}&s3Key=${encodeURIComponent(s3Key)}`, {
-              headers: {
-                "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-              }
-            });
-            
-            if (response.ok) {
-              const data = await response.json();
-              console.log(`[Polling Inteligente] Status AWS:`, data.status);
-
-              if (data.status === 'completed' && data.data) {
-                console.log(`[Polling Inteligente] ✅ Concluído via AWS (${elapsedSeconds}s)`);
-                
-                const totalBiomarkers = data.data.metadata?.total_exames || data.data.total_exames || 0;
-                const successMsg = totalBiomarkers 
-                  ? `✅ Concluído! ${totalBiomarkers} biomarcadores extraídos`
-                  : '✅ Concluído!';
-                
-                onStatusUpdate?.(successMsg, 100);
-                
-                if (currentIntervalId) clearTimeout(currentIntervalId);
-                await syncExamToSupabase(examId, data);
-                resolve();
-                return;
-              } else if (data.status === 'failed') {
-                console.error(`[Polling Inteligente] ❌ AWS retornou 'failed'`);
-                if (currentIntervalId) clearTimeout(currentIntervalId);
-                reject(new Error('Erro no processamento AWS'));
-                return;
-              }
-            } else {
-              console.warn(`[Polling Inteligente] Erro na AWS (continuando...)`);
-            }
-          }
-
-          // Agendar próxima verificação
-          scheduleNextCheck();
         } catch (error) {
-          console.error(`[Polling Inteligente] Erro:`, error);
-          
-          if (elapsedSeconds >= 300) {
-            if (currentIntervalId) clearTimeout(currentIntervalId);
-            reject(error);
-          } else {
-            scheduleNextCheck();
-          }
+          console.warn(`[Realtime] ⚠️ Erro ao verificar AWS:`, error);
+        }
+
+        // Agendar próxima verificação (apenas se ainda estiver dentro dos 20s)
+        if (elapsedSeconds < 20) {
+          currentIntervalId = setTimeout(checkAWS, 5000); // Verifica AWS a cada 5s
         }
       };
 
-      // Iniciar primeira verificação
-      checkStatus();
+      // Iniciar verificação AWS (fallback para primeiros 20s)
+      checkAWS();
     });
   };
 
@@ -480,47 +478,19 @@ export function useExamUpload() {
         throw updateError;
       }
 
-      // 🔍 PASSO 2: Normalizar e inserir biomarcadores
+      // 🔍 PASSO 2: Processar e inserir biomarcadores (já normalizados pelo Lambda)
       if (awsData.exames && awsData.exames.length > 0) {
         const originalCount = awsData.exames.length;
-        
+
         // ✅ USAR DEDUPLICAÇÃO AVANÇADA
         const dedupedExams = deduplicateExams(awsData.exames);
         const removedCount = originalCount - dedupedExams.length;
-        
-        console.log(`[syncExamToSupabase] 📊 Biomarcadores: ${originalCount} → ${dedupedExams.length} (${removedCount} duplicata${removedCount !== 1 ? 's' : ''} removida${removedCount !== 1 ? 's' : ''})`);
-        
-        // 🆕 NORMALIZAR BIOMARCADORES COM O NOVO SERVIÇO
-        console.log('[syncExamToSupabase] 🔄 Normalizando biomarcadores...');
-        const normalizationService = await getBiomarkerNormalizationService();
-        const validationResult = normalizationService.validatePayload({
-          biomarcadores: dedupedExams.map(b => ({
-            nome: b.nome,
-            valor: b.resultado,
-            unidade: b.unidade,
-            referencia: `${b.referencia_min || ''}-${b.referencia_max || ''}`,
-          })),
-          data_exame: dadosBasicos.data_exame,
-        });
 
-        console.log(`[syncExamToSupabase] ✅ Normalização concluída:`);
-        console.log(`  - Processados: ${validationResult.stats.processed}`);
-        console.log(`  - Rejeitados: ${validationResult.stats.rejected}`);
-        console.log(`  - Exact: ${validationResult.stats.exactMatches}`);
-        console.log(`  - Synonym: ${validationResult.stats.synonymMatches}`);
-        console.log(`  - Fuzzy: ${validationResult.stats.fuzzyMatches}`);
+        console.log(`[syncExamToSupabase] 📊 Biomarcadores: ${originalCount} → ${dedupedExams.length} (${removedCount} duplicata${removedCount !== 1 ? 's' : ''} removida${removedCount !== 1 ? 's' : ''})`);
+        console.log('[syncExamToSupabase] ✅ Usando dados já normalizados pelo Lambda (sem re-normalização)');
 
         // Find total leukocytes for absolute value calculations
-        const leucocitosData = validationResult.processedBiomarkers.find((b) => 
-          b.normalizedName && (
-            b.normalizedName.toLowerCase().includes('leucócito') ||
-            b.normalizedName.toLowerCase().includes('leucocito') ||
-            b.normalizedName.toLowerCase() === 'wbc'
-          ) && b.unit !== '%'
-        );
-        
-        // Get original exam data for leukocyte value
-        const leucocitosOriginal = dedupedExams.find((b) => 
+        const leucocitosOriginal = dedupedExams.find((b) =>
           b.nome && (
             b.nome.toLowerCase().includes('leucócito') ||
             b.nome.toLowerCase().includes('leucocito') ||
@@ -529,93 +499,79 @@ export function useExamUpload() {
         );
         const leucocitosTotal = leucocitosOriginal ? parseFloat(leucocitosOriginal.resultado) : null;
         console.log('[syncExamToSupabase] Total leukocytes found:', leucocitosTotal);
-        
-        const biomarkers = validationResult.processedBiomarkers.map((match) => {
-          // Find original exam data
-          const originalExam = dedupedExams.find(e => e.nome === match.originalName);
-          if (!originalExam) {
-            console.warn(`[syncExamToSupabase] Original exam not found for: ${match.originalName}`);
-            return null;
-          }
-          
+
+        // Map biomarkers using data already normalized by Lambda
+        const biomarkers = dedupedExams.map((exam) => {
           // Parse original value once
-          const originalValue = typeof originalExam.resultado === 'string' 
-            ? parseFloat(originalExam.resultado.replace(',', '.'))
-            : originalExam.resultado;
-          
+          const originalValue = typeof exam.resultado === 'string'
+            ? parseFloat(exam.resultado.replace(',', '.'))
+            : exam.resultado;
+
           // Normalize large values (like hemácias)
           const { normalizedValue, normalizedUnit } = normalizeHematologicalValue(
-            originalExam.resultado,
-            match.normalizedName,
-            match.unit
+            exam.resultado,
+            exam.nome, // Lambda already normalized the name
+            exam.unidade
           );
-          
+
           let valueNumeric: number | null = normalizedValue;
-          let finalUnit = normalizedUnit || match.unit;
-          
+          let finalUnit = normalizedUnit || exam.unidade;
+
           // If normalization didn't work, use the parsed original
           if (valueNumeric === originalValue || (typeof valueNumeric === 'number' && isNaN(valueNumeric))) {
             valueNumeric = isNaN(originalValue) ? null : originalValue;
           }
 
           // Normalize reference values if the main value was normalized
-          let normalizedRefMin = originalExam.referencia_min;
-          let normalizedRefMax = originalExam.referencia_max;
-          
+          let normalizedRefMin = exam.referencia_min;
+          let normalizedRefMax = exam.referencia_max;
+
           // If the value was normalized (changed), normalize references too
           if (valueNumeric !== null && !isNaN(originalValue) && valueNumeric !== originalValue && originalValue > 0) {
             const normalizationFactor = valueNumeric / originalValue;
-            normalizedRefMin = originalExam.referencia_min ? originalExam.referencia_min * normalizationFactor : null;
-            normalizedRefMax = originalExam.referencia_max ? originalExam.referencia_max * normalizationFactor : null;
+            normalizedRefMin = exam.referencia_min ? exam.referencia_min * normalizationFactor : null;
+            normalizedRefMax = exam.referencia_max ? exam.referencia_max * normalizationFactor : null;
           }
 
           return {
             exam_id: examId,
-            biomarker_name: match.normalizedName,
-            category: match.category,
-            value: String(originalExam.resultado),
+            biomarker_name: exam.nome, // Already normalized by Lambda
+            category: exam.categoria, // Already normalized by Lambda
+            value: String(exam.resultado),
             value_numeric: valueNumeric,
             unit: finalUnit,
             reference_min: normalizedRefMin,
             reference_max: normalizedRefMax,
-            status: originalExam.status as "normal" | "alto" | "baixo" | "alterado",
-            observation: originalExam.observacao || null,
-            deviation_percentage: originalExam.desvio_percentual,
-            layman_explanation: originalExam.explicacao_leiga,
-            possible_causes: originalExam.possiveis_causas_alteracao,
-            // 🆕 Campos de auditoria
-            original_name: match.originalName,
-            normalization_confidence: match.confidence,
-            normalization_type: match.matchType,
+            status: exam.status as "normal" | "alto" | "baixo" | "alterado",
+            observation: exam.observacao || null,
+            deviation_percentage: exam.desvio_percentual,
+            layman_explanation: exam.explicacao_leiga,
+            possible_causes: exam.possiveis_causas_alteracao,
+            // Audit fields (from Lambda normalization)
+            original_name: exam.nome_original || exam.nome,
+            normalization_confidence: exam.confianca_normalizacao || null,
+            normalization_type: exam.tipo_normalizacao || null,
           };
-        }).filter(Boolean);
+        });
         
         // Calculate absolute values for leukogram cells (neutrophils, lymphocytes, etc.)
         if (leucocitosTotal) {
           const cellTypes = ['segmentado', 'bastonete', 'linfócito', 'linfocito', 'monócito', 'monocito', 'eosinófilo', 'eosinofilo', 'basófilo', 'basofilo'];
-          
+
           for (const biomarker of dedupedExams) {
-            const isLeukogramCell = cellTypes.some(type => 
+            const isLeukogramCell = cellTypes.some(type =>
               biomarker.nome && biomarker.nome.toLowerCase().includes(type)
             );
-            
+
             if (isLeukogramCell && biomarker.unidade === '%' && biomarker.resultado) {
               const percentValue = parseFloat(biomarker.resultado);
               if (!isNaN(percentValue)) {
                 const absoluteValue = (percentValue / 100) * leucocitosTotal;
-                
-                // Normalize the absolute biomarker name
-                const normalizationService = await getBiomarkerNormalizationService();
-                const absoluteNameResult = normalizationService.validatePayload({
-                  biomarcadores: [{ nome: `${biomarker.nome} (Absoluto)`, valor: absoluteValue, unidade: '/mm³' }],
-                });
-                
-                const absoluteMatch = absoluteNameResult.processedBiomarkers[0];
-                
+
                 biomarkers.push({
                   exam_id: examId,
-                  biomarker_name: absoluteMatch?.normalizedName || `${biomarker.nome} (Absoluto)`,
-                  category: absoluteMatch?.category || 'hematologico',
+                  biomarker_name: `${biomarker.nome} (Absoluto)`,
+                  category: biomarker.categoria || 'hematologico',
                   value: Math.round(absoluteValue).toString(),
                   value_numeric: Math.round(absoluteValue),
                   unit: '/mm³',
@@ -626,10 +582,10 @@ export function useExamUpload() {
                   deviation_percentage: biomarker.desvio_percentual,
                   layman_explanation: biomarker.explicacao_leiga,
                   possible_causes: biomarker.possiveis_causas_alteracao,
-                  // 🆕 Campos de auditoria
+                  // Audit fields
                   original_name: `${biomarker.nome} (Absoluto)`,
-                  normalization_confidence: absoluteMatch?.confidence || null,
-                  normalization_type: absoluteMatch?.matchType || 'manual',
+                  normalization_confidence: biomarker.confianca_normalizacao || null,
+                  normalization_type: 'calculated',
                 });
               }
             }
@@ -648,51 +604,28 @@ export function useExamUpload() {
         }
         
         console.log(`[syncExamToSupabase] ✅ ${biomarkers.length} biomarcadores salvos com sucesso`);
-        
-        // 🆕 SALVAR BIOMARCADORES REJEITADOS
-        if (validationResult.rejectedBiomarkers.length > 0) {
-          console.log(`[syncExamToSupabase] ⚠️ Salvando ${validationResult.rejectedBiomarkers.length} biomarcadores rejeitados...`);
-          
-          const rejectedRecords = validationResult.rejectedBiomarkers.map(rejected => ({
+
+        // SALVAR BIOMARCADORES REJEITADOS (se o Lambda enviou algum)
+        if (awsData.biomarcadores_rejeitados && awsData.biomarcadores_rejeitados.length > 0) {
+          console.log(`[syncExamToSupabase] ⚠️ Salvando ${awsData.biomarcadores_rejeitados.length} biomarcadores rejeitados pelo Lambda...`);
+
+          const rejectedRecords = awsData.biomarcadores_rejeitados.map(rejected => ({
             exam_id: examId,
-            original_name: rejected.originalName,
-            original_value: dedupedExams.find(e => e.nome === rejected.originalName)?.resultado || null,
-            rejection_reason: rejected.reason,
-            suggestions: rejected.suggestions,
-            similarity_score: rejected.similarity || null,
+            original_name: rejected.nome_original,
+            original_value: rejected.valor_original || null,
+            rejection_reason: rejected.motivo_rejeicao,
+            suggestions: rejected.sugestoes || [],
+            similarity_score: rejected.similaridade || null,
           }));
-          
+
           const { error: rejectedError } = await supabase
             .from('rejected_biomarkers')
             .insert(rejectedRecords);
-          
+
           if (rejectedError) {
             console.error('[syncExamToSupabase] ❌ Erro ao salvar biomarcadores rejeitados:', rejectedError);
           } else {
             console.log(`[syncExamToSupabase] ✅ ${rejectedRecords.length} biomarcadores rejeitados registrados`);
-          }
-        }
-        
-        // 🆕 REGISTRAR DUPLICATAS DETECTADAS
-        if (validationResult.duplicates.length > 0) {
-          console.log(`[syncExamToSupabase] ⚠️ Salvando ${validationResult.duplicates.length} duplicatas detectadas...`);
-          
-          const duplicateRecords = validationResult.duplicates.map(dup => ({
-            exam_id: examId,
-            biomarker_name: dup.biomarkerName,
-            conflict_type: dup.conflictType,
-            conflicting_values: dup.values,
-            resolved: !dup.requiresManualReview,
-          }));
-          
-          const { error: duplicateError } = await supabase
-            .from('biomarker_duplicates')
-            .insert(duplicateRecords);
-          
-          if (duplicateError) {
-            console.error('[syncExamToSupabase] ❌ Erro ao salvar duplicatas:', duplicateError);
-          } else {
-            console.log(`[syncExamToSupabase] ✅ ${duplicateRecords.length} duplicatas registradas`);
           }
         }
       }

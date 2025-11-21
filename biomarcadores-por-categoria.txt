@@ -1,0 +1,377 @@
+================================================================================
+BIOMARCADORES ORGANIZADOS POR CATEGORIA
+================================================================================
+Total de Biomarcadores: 214
+Total de Categorias: 25
+================================================================================
+
+1. AVALIAÇÃO DO PERFIL GLICÊMICO E INSULINÊMICO
+   Total: 11 biomarcadores
+
+   1.1 GLICEMIA JEJUM
+   1.2 G0H75GD GESTANTE
+   1.3 G1H75GD GESTANTE
+   1.4 G2H75GD GESTANTE
+   1.5 G2HPP
+   1.6 FRUTOSAMINA
+   1.7 PEPTÍDEO C
+   1.8 HbA1c (Hemoglobina Glicada)
+   1.9 INSULINA VR<5
+   1.10 HOMA IR
+   1.11 MICROALB REL
+
+--------------------------------------------------------------------------------
+
+2. FATORES DE RISCO CARDIOVASCULAR
+   Total: 29 biomarcadores
+
+   2.1 LP(A)
+   2.2 APO A1
+   2.3 APO B
+   2.4 APOB/APOA1
+   2.5 FIBRINOGÊNIO
+   2.6 FERRITINA
+   2.7 PCR ULTRA SENSÍVEL
+   2.8 PCR QUANTIT
+   2.9 VHS: (Velocidade de Hemossedimentação)
+   2.10 HOMOCISTEÍNA VR<8
+   2.11 VITAMINAS
+   2.12 MUTAÇÃO MTHFR
+   2.13 ÁCIDO FÓLICO
+   2.14 VIT B12
+   2.15 ZINCO
+   2.16 1,25-OH VIT D
+   2.17 25-OH VIT D
+   2.18 VIT B1
+   2.19 VIT B2
+   2.20 VIT B3
+   2.21 VIT B5
+   2.22 VIT B6
+   2.23 VIT A
+   2.24 SELÊNIO
+   2.25 VIT C
+   2.26 FERRO
+   2.27 TRANSFERRINA
+   2.28 CTLF: (Capacidade Total de Ligação do Ferro)
+   2.29 IST: (Indice de Saturação Transferrina)
+
+--------------------------------------------------------------------------------
+
+3. PERFIL LIPÍDICO
+   Total: 9 biomarcadores
+
+   3.1 CPK (Creatinofosfoquinase)
+   3.2 CT (Coleterol Total)
+   3.3 LDL (Low Density Lipoproteins)
+   3.4 VLDL (Very Low Density Lipoprotein)
+   3.5 HDL (High Density Lipoproteins)
+   3.6 TG (Triglicérides)
+   3.7 RELAÇÃO TG/HDL
+   3.8 RELAÇÃO CT/HDL
+   3.9 NÃO-HDL
+
+--------------------------------------------------------------------------------
+
+4. CONCENTRAÇÃO DE PARTÍCULAS LDL
+   Total: 4 biomarcadores
+
+   4.1 LDL PEQUENO
+   4.2 LDL MÉDIO
+   4.3 HDL GRANDE
+   4.4 PADRÃO DE LDL A/B
+
+--------------------------------------------------------------------------------
+
+5. TAMANHO DO PICO DE LDL
+   Total: 3 biomarcadores
+
+   5.1 LDL OX/HDL
+   5.2 LDL OXIDADO: (mmol/l)
+   5.3 ANTI-LDL-OXIDADO: (VR DE 100 A 700 MU/ML)
+
+--------------------------------------------------------------------------------
+
+6. FUNÇÃO RENAL
+   Total: 3 biomarcadores
+
+   6.1 URÉIA
+   6.2 CREATININA
+   6.3 TFG CKD - EPI
+
+--------------------------------------------------------------------------------
+
+7. FUNÇÃO HEPÁTICA
+   Total: 3 biomarcadores
+
+   7.1 ÁCIDO ÚRICO
+   7.2 TGO /AST - H<40 M<33
+   7.3 TGP /ALT  - H<58 M<41
+
+--------------------------------------------------------------------------------
+
+8. TGP /ALT  - H<58 M<41
+   Total: 9 biomarcadores
+
+   8.1 FA (Fosfatase Alcalina)
+   8.2 GGT - H<73 M<38
+   8.3 BBD (Bilirrubina Direta)
+   8.4 BBI (Bilirrubina Indireta)
+   8.5 BBT (Bilirrubina Total)
+   8.6 RNI
+   8.7 PTT
+   8.8 GLOBULINAS
+   8.9 ALBUMINA
+
+--------------------------------------------------------------------------------
+
+9. IONOGRAMA E BIOQUÍMICA DO CÁLCIO
+   Total: 10 biomarcadores
+
+   9.1 Na
+   9.2 K
+   9.3 Mg
+   9.4 PTH
+   9.5 OSTEOCALCINA
+   9.6 CTX (Telopeptídeo C-terminal do colágeno tipo 1)
+   9.7 Cai (Cálcio Iônico)
+   9.8 CaT (Cálcio Total)
+   9.9 CÁLCIO CORRIGIDO
+   9.10 FÓSFORO
+
+--------------------------------------------------------------------------------
+
+10. EXAMES DE URINA
+   Total: 16 biomarcadores
+
+   10.1 URINA ROTINA:
+   10.2 URINA 24H:
+   10.3 CITRATO:
+   10.4 OXALATO:
+   10.5 URATO:
+   10.6 CÁLCIO:
+   10.7 SÓDIO:
+   10.8 NORMETANEFRINA:
+   10.9 METANEFRINA:
+   10.10 ADRENALINA:
+   10.11 EPINEFRINA:
+   10.12 NOREPINEFRINA:
+   10.13 NORADRENALINA:
+   10.14 DOPAMINA:
+   10.15 ÁCIDO 5-OH IA:
+   10.16 5-HIAA:
+
+--------------------------------------------------------------------------------
+
+11. FUNÇÃO TIREOIDEANA
+   Total: 11 biomarcadores
+
+   11.1 LEVOTIROXINA
+   11.2 T3 SLOW RELEASE
+   11.3 TSH
+   11.4 T4 LIVRE
+   11.5 T4 TOTAL
+   11.6 T3 TOTAL (0,6-1,76)
+   11.7 T3 LIVRE (2,3-4,54)
+   11.8 ANTI-TPO
+   11.9 ANTI-TG
+   11.10 TIREOGLOBULINA
+   11.11 TRAb
+
+--------------------------------------------------------------------------------
+
+12. HORMÔNIOS SEXUAIS E OUTROS HORMÔNIOS
+   Total: 21 biomarcadores
+
+   12.1 DOSE DE ESTRADIOL
+   12.2 DOSE DE ESTRIOL
+   12.3 DOSE DE PROGESTERONA
+   12.4 DOSE DE TESTOSTERONA
+   12.5 LH
+   12.6 FSH
+   12.7 ESTRADIOL
+   12.8 ESTRONA
+   12.9 PROGESTERONA
+   12.10 DHEA (Dehidroepiandrosterona)
+   12.11 SDHEA (Sulfato de Dehidroepiandrosterona)
+   12.12 DHT (Dihidrotestosterona)
+   12.13 TESTOSTERONA TOTAL
+   12.14 TESTOSTERONA LIVRE
+   12.15 SHBG
+   12.16 IGF-1
+   12.17 PRL TOTAL
+   12.18 PRL DILUIDA
+   12.19 MACRO PRL
+   12.20 PSA TOTAL
+   12.21 PSA LIVRE
+
+--------------------------------------------------------------------------------
+
+13. CORTISOL SALIVAR ACORDAR
+   Total: 4 biomarcadores
+
+   13.1 CORTISOL SALIVAR ACORDAR
+   13.2 CORTISOL SALIVAR 12H
+   13.3 CORTISOL SALIVAR 17H
+   13.4 CORTISOL SALIVAR 23H
+
+--------------------------------------------------------------------------------
+
+14. CORTISOL POS DEXA VR<1,8
+   Total: 14 biomarcadores
+
+   14.1 HEMOGRAMA
+   14.2 Hgb: (Hemoglobina)
+   14.3 HTC: (Hematócrito)
+   14.4 VCM: (Volume Corpuscular Médio)
+   14.5 HCM: (Hemoglobina Corpuscular Média)
+   14.6 CHCM: (Concentração da Hemoglobina Corpuscular Média)
+   14.7 RDW: (Red Cell Distribution Width)
+   14.8 GL: (Global Leucócitos)
+   14.9 NEUTRÓFILOS: (no absoluto)
+   14.10 LINFOCITOS: (no absoluto)
+   14.11 MONÓCITOS
+   14.12 EOSINÓFILOS
+   14.13 BASÓFILOS
+   14.14 PTL: (Plaquetas)
+
+--------------------------------------------------------------------------------
+
+15. BETA 2 MICROGLOBULINA:
+   Total: 3 biomarcadores
+
+   15.1 Reticulócitos
+   15.2 BETA 2 MICROGLOBULINA
+   15.3 PSOF: (Sangue Oculto nas Fezes)
+
+--------------------------------------------------------------------------------
+
+16. MARCADORES TUMORAIS E OUTROS
+   Total: 13 biomarcadores
+
+   16.1 G6PD
+   16.2 CEA (antígeno carcinoembrionário)
+   16.3 CA 15-3
+   16.4 CA 19-9
+   16.5 CA 125
+   16.6 CA 72-4
+   16.7 CA 27-29 (MAMA)
+   16.8 ALFAFETOPROTEINA
+   16.9 INTERLEUCINA IL - 12
+   16.10 PKM2 (Marcador do Efeito Walburg)
+   16.11 PROTEÍNA MMP2 (MAMA) (Indica risco de metástase)
+   16.12 SCC - AG EM CÂNCER DE CÉLULAS ESCAMOSAS CERVICAIS (COLO DE ÚTERO)
+   16.13 LDH (Desidrogenase Lática)
+
+--------------------------------------------------------------------------------
+
+17. KD ABC SCORE ALBUMINA
+   Total: 1 biomarcadores
+
+   17.1 KD ABC SCORE GLICOSE
+
+--------------------------------------------------------------------------------
+
+18. KD ABC SCORE PROT C REAT
+   Total: 4 biomarcadores
+
+   18.1 KD ABC SCORE
+   18.2 PIRUVATO KINASE ERITROCITARIA (PKE)
+   18.3 PIRUVATO mmol/l
+   18.4 LACTATO mmol/l
+
+--------------------------------------------------------------------------------
+
+19. METAIS PESADOS
+   Total: 4 biomarcadores
+
+   19.1 CHUMBO
+   19.2 MERCURIO
+   19.3 CÁDMIO
+   19.4 ALUMÍNIO
+
+--------------------------------------------------------------------------------
+
+20. ELETROFORESE DE PROTEINAS PLASMÁTICAS
+   Total: 25 biomarcadores
+
+   20.1 ANTI GLIADINA IGA
+   20.2 ANTI GLIADINA IGG
+   20.3 ANTI-TTG IGA
+   20.4 ANTI-TTG IGG
+   20.5 ANTI-ENDOMISIO IGA
+   20.6 ANTI-ENDOMISIO IGG
+   20.7 ANTI-GAD
+   20.8 ANTI-INSULINA
+   20.9 ANTI-IA2
+   20.10 ANTI-ILHOTA
+   20.11 ANTI-CCP (Anticorpos Anti-Peptídeo Citrulinado Cíclico)
+   20.12 FAN (Fator Antinúcleo)
+   20.13 FATOR REUMATOIDE
+   20.14 C-ANCA
+   20.15 P-ANCA
+   20.16 C3
+   20.17 C4
+   20.18 CH50
+   20.19 ANTI HIV
+   20.20 ANTI HAV
+   20.21 HBSAG
+   20.22 ANTI-HBS
+   20.23 ANTI-HBC
+   20.24 ANTI-HCV
+   20.25 ALFA 1 ANTI-TRIPSINA
+
+--------------------------------------------------------------------------------
+
+21. ANTICORPOS ANTI MITOCÔNDRIA
+   Total: 5 biomarcadores
+
+   21.1 ANTI LKM 1
+   21.2 ANTI MITOCÔNDRIA
+   21.3 ANTI MÚSCULO LISO
+   21.4 L-CARNITINA TOTAL
+   21.5 L-CARNITINA LIVRE
+
+--------------------------------------------------------------------------------
+
+22. DENSITOMETRIA ÓSSEA
+   Total: 7 biomarcadores
+
+   22.1 L1
+   22.2 L2
+   22.3 L3
+   22.4 L4
+   22.5 L1-L4
+   22.6 COLO
+   22.7 WARDS
+
+--------------------------------------------------------------------------------
+
+23. EXAMES DE IMAGEM
+   Total: 5 biomarcadores
+
+   23.1 DOPPLER CARÓTIDAS
+   23.2 ECOCARDIOGRAMA
+   23.3 TESTE ERGOMÉTRICO
+   23.4 ANGIO TC CORONARIAS
+   23.5 ESCORE DE CÁLCIO
+
+--------------------------------------------------------------------------------
+
+24. CINTILOGRAFIA MIOCARDICA
+   Total: 2 biomarcadores
+
+   24.1 CINTILOGRAFIA MIOCÁRDICA
+   24.2 ULTRASSOM ABDOME
+
+--------------------------------------------------------------------------------
+
+25. ULTRASSOM ENDOVAGINAL
+   Total: 5 biomarcadores
+
+   25.1 ULTRASSOM ENDOVAGINAL
+   25.2 ULTRASSOM MAMAS
+   25.3 ULTRASSOM AXILAS
+   25.4 MAMOGRAFIA
+   25.5 COLONOSCOPIA
+
+--------------------------------------------------------------------------------

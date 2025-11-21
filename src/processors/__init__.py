@@ -24,6 +24,7 @@ from .header_processor import (
 
 from .exam_parser import (
     parse_lab_report,
+    parse_lab_report_with_gemini,
     process_exam,
     validate_parsed_result,
     get_parsing_stats
@@ -53,6 +54,7 @@ __all__ = [
     
     # Exam parsing
     'parse_lab_report',
+    'parse_lab_report_with_gemini',
     'process_exam',
     'validate_parsed_result',
     'get_parsing_stats',

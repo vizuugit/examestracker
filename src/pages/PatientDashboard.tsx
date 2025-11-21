@@ -8,7 +8,7 @@ import Footer from '@/components/Footer';
 import { BiomarkerTrackingTable } from '@/components/BiomarkerTrackingTable';
 import { Skeleton } from '@/components/ui/skeleton';
 import { normalizeBiomarkerWithTable } from '@/utils/biomarkerNormalization';
-import { SIMPLIFIED_CATEGORIES, getCategoryOrder } from '@/utils/categoryMapping';
+// Ordenação agora vem do backend via category_order e biomarker_order
 import { isLeukocyteType } from '@/utils/leukocyteFormatter';
 import { getBiomarkerCategory, normalizeBiomarkerNameAsync } from '@/services/biomarkerCategoryService';
 
@@ -361,20 +361,21 @@ export default function PatientDashboard() {
 
       // Ordenar por categoria e depois por ordem específica ou nome
       biomarkers.sort((a, b) => {
-        // Primeiro, ordenar por categoria
+        // Primeiro, ordenar por categoria usando category_order do backend
         if (a.category !== b.category) {
-          const categoryOrderA = getCategoryOrder(a.category);
-          const categoryOrderB = getCategoryOrder(b.category);
-          if (categoryOrderA !== categoryOrderB) {
-            return categoryOrderA - categoryOrderB;
-          }
-          // Se não estão na ordem definida, usar alfabética
-          return a.category.localeCompare(b.category);
+          const categoryOrderA = a.category_order ?? 999;
+          const categoryOrderB = b.category_order ?? 999;
+          return categoryOrderA - categoryOrderB;
         }
-        
-        // Dentro da mesma categoria, usar ordem alfabética
-        return a.biomarker_name.localeCompare(b.biomarker_name);
-        
+
+        // Dentro da mesma categoria, usar biomarker_order do backend
+        const biomarkerOrderA = a.biomarker_order ?? 999;
+        const biomarkerOrderB = b.biomarker_order ?? 999;
+
+        if (biomarkerOrderA !== biomarkerOrderB) {
+          return biomarkerOrderA - biomarkerOrderB;
+        }
+
         // Se ambos não estão na ordem ou têm a mesma ordem, usar alfabética
         return a.biomarker_name.localeCompare(b.biomarker_name);
       });

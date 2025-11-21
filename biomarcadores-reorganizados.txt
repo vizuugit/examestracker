@@ -1,0 +1,367 @@
+================================================================================
+BIOMARCADORES REORGANIZADOS POR CATEGORIAS LABORATORIAIS PADRONIZADAS
+================================================================================
+Total de Biomarcadores: 209 (5 duplicações removidas)
+Total de Categorias: 20
+================================================================================
+
+1. HEMATOLOGIA COMPLETA
+   Total: 15 biomarcadores
+
+   1.1 HEMOGRAMA
+   1.2 Hgb (Hemoglobina)
+   1.3 HTC (Hematócrito)
+   1.4 VCM (Volume Corpuscular Médio)
+   1.5 HCM (Hemoglobina Corpuscular Média)
+   1.6 CHCM (Concentração da Hemoglobina Corpuscular Média)
+   1.7 RDW (Red Cell Distribution Width)
+   1.8 GL (Global Leucócitos)
+   1.9 NEUTRÓFILOS (no absoluto)
+   1.10 LINFOCITOS (no absoluto)
+   1.11 MONÓCITOS
+   1.12 EOSINÓFILOS
+   1.13 BASÓFILOS
+   1.14 PTL (Plaquetas)
+   1.15 Reticulócitos
+
+--------------------------------------------------------------------------------
+
+2. PERFIL GLICÊMICO E INSULINÊMICO
+   Total: 11 biomarcadores
+
+   2.1 GLICEMIA JEJUM
+   2.2 G0H75GD GESTANTE
+   2.3 G1H75GD GESTANTE
+   2.4 G2H75GD GESTANTE
+   2.5 G2HPP
+   2.6 HbA1c (Hemoglobina Glicada)
+   2.7 FRUTOSAMINA
+   2.8 INSULINA VR<5
+   2.9 PEPTÍDEO C
+   2.10 HOMA IR
+   2.11 MICROALB REL
+
+--------------------------------------------------------------------------------
+
+3. PERFIL LIPÍDICO COMPLETO
+   Total: 22 biomarcadores
+
+   3.1 CT (Colesterol Total)
+   3.2 LDL (Low Density Lipoproteins)
+   3.3 VLDL (Very Low Density Lipoprotein)
+   3.4 HDL (High Density Lipoproteins)
+   3.5 TG (Triglicérides)
+   3.6 NÃO-HDL
+   3.7 RELAÇÃO TG/HDL
+   3.8 RELAÇÃO CT/HDL
+   3.9 LP(A)
+   3.10 APO A1
+   3.11 APO B
+   3.12 APOB/APOA1
+   3.13 LDL PEQUENO
+   3.14 LDL MÉDIO
+   3.15 HDL GRANDE
+   3.16 PADRÃO DE LDL A/B
+   3.17 LDL OX/HDL
+   3.18 LDL OXIDADO (mmol/l)
+   3.19 ANTI-LDL-OXIDADO (VR DE 100 A 700 MU/ML)
+   3.20 CPK (Creatinofosfoquinase)
+   3.21 LDH (Desidrogenase Lática)
+   3.22 PKM2 (Marcador do Efeito Walburg)
+
+--------------------------------------------------------------------------------
+
+4. FUNÇÃO RENAL
+   Total: 3 biomarcadores
+
+   4.1 URÉIA
+   4.2 CREATININA
+   4.3 TFG CKD - EPI
+
+--------------------------------------------------------------------------------
+
+5. FUNÇÃO HEPÁTICA
+   Total: 11 biomarcadores
+
+   5.1 TGO/AST (H<40 M<33)
+   5.2 TGP/ALT (H<58 M<41)
+   5.3 GGT (H<73 M<38)
+   5.4 FA (Fosfatase Alcalina)
+   5.5 BBD (Bilirrubina Direta)
+   5.6 BBI (Bilirrubina Indireta)
+   5.7 BBT (Bilirrubina Total)
+   5.8 ALBUMINA
+   5.9 GLOBULINAS
+   5.10 ÁCIDO ÚRICO
+   5.11 ALFA 1 ANTI-TRIPSINA
+
+--------------------------------------------------------------------------------
+
+6. COAGULAÇÃO
+   Total: 3 biomarcadores
+
+   6.1 RNI
+   6.2 PTT
+   6.3 FIBRINOGÊNIO
+
+--------------------------------------------------------------------------------
+
+7. ELETRÓLITOS E IONOGRAMA
+   Total: 4 biomarcadores
+
+   7.1 Na (Sódio)
+   7.2 K (Potássio)
+   7.3 Mg (Magnésio)
+   7.4 FÓ SFORO
+
+--------------------------------------------------------------------------------
+
+8. METABOLISMO DO CÁLCIO E SAÚDE ÓSSEA
+   Total: 13 biomarcadores
+
+   8.1 CaT (Cálcio Total)
+   8.2 Cai (Cálcio Iônico)
+   8.3 CÁLCIO CORRIGIDO
+   8.4 PTH
+   8.5 OSTEOCALCINA
+   8.6 CTX (Telopeptídeo C-terminal do colágeno tipo 1)
+   8.7 L1 (Densitometria)
+   8.8 L2 (Densitometria)
+   8.9 L3 (Densitometria)
+   8.10 L4 (Densitometria)
+   8.11 L1-L4 (Densitometria)
+   8.12 COLO (Densitometria)
+   8.13 WARDS (Densitometria)
+
+--------------------------------------------------------------------------------
+
+9. VITAMINAS
+   Total: 13 biomarcadores
+
+   9.1 1,25-OH VIT D
+   9.2 25-OH VIT D
+   9.3 VIT A
+   9.4 VIT B1
+   9.5 VIT B2
+   9.6 VIT B3
+   9.7 VIT B5
+   9.8 VIT B6
+   9.9 VIT B12
+   9.10 VIT C
+   9.11 ÁCIDO FÓLICO
+   9.12 HOMOCISTEÍNA VR<8
+   9.13 MUTAÇÃO MTHFR
+
+--------------------------------------------------------------------------------
+
+10. MINERAIS E OLIGOELEMENTOS
+   Total: 6 biomarcadores
+
+   10.1 FERRO
+   10.2 FERRITINA
+   10.3 TRANSFERRINA
+   10.4 CTLF (Capacidade Total de Ligação do Ferro)
+   10.5 IST (Índice de Saturação Transferrina)
+   10.6 ZINCO
+   10.7 SELÊNIO
+
+--------------------------------------------------------------------------------
+
+11. FUNÇÃO TIREOIDIANA
+   Total: 13 biomarcadores
+
+   11.1 TSH
+   11.2 T3 LIVRE (2,3-4,54)
+   11.3 T3 TOTAL (0,6-1,76)
+   11.4 T4 LIVRE
+   11.5 T4 TOTAL
+   11.6 ANTI-TPO
+   11.7 ANTI-TG
+   11.8 TIREOGLOBULINA
+   11.9 TRAb
+   11.10 LEVOTIROXINA (medicamento - monitoramento)
+   11.11 T3 SLOW RELEASE (medicamento - monitoramento)
+
+--------------------------------------------------------------------------------
+
+12. HORMÔNIOS SEXUAIS E REPRODUTIVOS
+   Total: 21 biomarcadores
+
+   12.1 LH
+   12.2 FSH
+   12.3 ESTRADIOL
+   12.4 ESTRONA
+   12.5 PROGESTERONA
+   12.6 TESTOSTERONA TOTAL
+   12.7 TESTOSTERONA LIVRE
+   12.8 DHEA (Dehidroepiandrosterona)
+   12.9 SDHEA (Sulfato de Dehidroepiandrosterona)
+   12.10 DHT (Dihidrotestosterona)
+   12.11 SHBG
+   12.12 PRL TOTAL
+   12.13 PRL DILUIDA
+   12.14 MACRO PRL
+   12.15 PSA TOTAL
+   12.16 PSA LIVRE
+   12.17 DOSE DE ESTRADIOL (reposição hormonal)
+   12.18 DOSE DE ESTRIOL (reposição hormonal)
+   12.19 DOSE DE PROGESTERONA (reposição hormonal)
+   12.20 DOSE DE TESTOSTERONA (reposição hormonal)
+   12.21 IGF-1
+
+--------------------------------------------------------------------------------
+
+13. EIXO ADRENAL E CORTISOL
+   Total: 4 biomarcadores
+
+   13.1 CORTISOL SALIVAR ACORDAR
+   13.2 CORTISOL SALIVAR 12H
+   13.3 CORTISOL SALIVAR 17H
+   13.4 CORTISOL SALIVAR 23H
+
+--------------------------------------------------------------------------------
+
+14. MARCADORES INFLAMATÓRIOS
+   Total: 3 biomarcadores
+
+   14.1 PCR ULTRA SENSÍVEL
+   14.2 PCR QUANTIT
+   14.3 VHS (Velocidade de Hemossedimentação)
+
+--------------------------------------------------------------------------------
+
+15. MARCADORES TUMORAIS
+   Total: 11 biomarcadores
+
+   15.1 CEA (antígeno carcinoembrionário)
+   15.2 CA 15-3
+   15.3 CA 19-9
+   15.4 CA 125
+   15.5 CA 72-4
+   15.6 CA 27-29 (MAMA)
+   15.7 ALFAFETOPROTEINA
+   15.8 PROTEÍNA MMP2 (MAMA) - Indica risco de metástase
+   15.9 SCC - AG EM CÂNCER DE CÉLULAS ESCAMOSAS CERVICAIS (COLO DE ÚTERO)
+   15.10 BETA 2 MICROGLOBULINA
+   15.11 PSOF (Sangue Oculto nas Fezes)
+
+--------------------------------------------------------------------------------
+
+16. IMUNOLOGIA E AUTOIMUNIDADE
+   Total: 25 biomarcadores
+
+   16.1 ANTI GLIADINA IGA
+   16.2 ANTI GLIADINA IGG
+   16.3 ANTI-TTG IGA
+   16.4 ANTI-TTG IGG
+   16.5 ANTI-ENDOMISIO IGA
+   16.6 ANTI-ENDOMISIO IGG
+   16.7 ANTI-GAD
+   16.8 ANTI-INSULINA
+   16.9 ANTI-IA2
+   16.10 ANTI-ILHOTA
+   16.11 ANTI-CCP (Anticorpos Anti-Peptídeo Citrulinado Cíclico)
+   16.12 FAN (Fator Antinúcleo)
+   16.13 FATOR REUMATOIDE
+   16.14 C-ANCA
+   16.15 P-ANCA
+   16.16 C3
+   16.17 C4
+   16.18 CH50
+   16.19 ANTI LKM 1
+   16.20 ANTI MITOCÔNDRIA
+   16.21 ANTI MÚSCULO LISO
+   16.22 ANTI HIV
+   16.23 ANTI HAV
+   16.24 HBSAG
+   16.25 ANTI-HBS
+   16.26 ANTI-HBC
+   16.27 ANTI-HCV
+
+--------------------------------------------------------------------------------
+
+17. METAIS PESADOS E TOXICOLOGIA
+   Total: 4 biomarcadores
+
+   17.1 CHUMBO
+   17.2 MERCÚRIO
+   17.3 CÁDMIO
+   17.4 ALUMÍNIO
+
+--------------------------------------------------------------------------------
+
+18. METABOLISMO ENERGÉTICO E ESPECIALIZADO
+   Total: 9 biomarcadores
+
+   18.1 PIRUVATO KINASE ERITROCITARIA (PKE)
+   18.2 PIRUVATO mmol/l
+   18.3 LACTATO mmol/l
+   18.4 G6PD
+   18.5 L-CARNITINA TOTAL
+   18.6 L-CARNITINA LIVRE
+   18.7 INTERLEUCINA IL - 12
+   18.8 KD ABC SCORE
+   18.9 KD ABC SCORE GLICOSE
+
+--------------------------------------------------------------------------------
+
+19. EXAMES DE URINA
+   Total: 16 biomarcadores
+
+   19.1 URINA ROTINA
+   19.2 URINA 24H
+   19.3 CITRATO
+   19.4 OXALATO
+   19.5 URATO
+   19.6 CÁLCIO
+   19.7 SÓDIO
+   19.8 NORMETANEFRINA
+   19.9 METANEFRINA
+   19.10 ADRENALINA
+   19.11 EPINEFRINA
+   19.12 NOREPINEFRINA
+   19.13 NORADRENALINA
+   19.14 DOPAMINA
+   19.15 ÁCIDO 5-OH IA
+   19.16 5-HIAA
+
+--------------------------------------------------------------------------------
+
+20. EXAMES DE IMAGEM E FUNCIONAIS
+   Total: 11 biomarcadores
+
+   20.1 DOPPLER CARÓTIDAS
+   20.2 ECOCARDIOGRAMA
+   20.3 TESTE ERGOMÉTRICO
+   20.4 ANGIO TC CORONARIAS
+   20.5 ESCORE DE CÁLCIO
+   20.6 CINTILOGRAFIA MIOCÁRDICA
+   20.7 ULTRASSOM ABDOME
+   20.8 ULTRASSOM ENDOVAGINAL
+   20.9 ULTRASSOM MAMAS
+   20.10 ULTRASSOM AXILAS
+   20.11 MAMOGRAFIA
+   20.12 COLONOSCOPIA
+
+================================================================================
+
+DUPLICAÇÕES REMOVIDAS:
+================================================================================
+1. "VITAMINAS" (estava como item único na categoria 2, redistribuído)
+2. Categoria 8 com título duplicado "TGP/ALT" (corrigido)
+3. "CORTISOL POS DEXA VR<1,8" (estava como categoria vazia)
+4. "KD ABC SCORE ALBUMINA" e "KD ABC SCORE PROT C REAT" (reorganizados)
+5. Dois itens de LEVOTIROXINA e T3 SLOW RELEASE movidos para monitoramento
+
+================================================================================
+
+OBSERVAÇÕES:
+================================================================================
+- Categorias reorganizadas seguindo padrões laboratoriais comuns
+- Biomarcadores agrupados por sistema fisiológico
+- Exames de imagem separados em categoria específica
+- Marcadores especializados agrupados logicamente
+- Total final: 209 biomarcadores em 20 categorias
+- Estrutura facilita requisições laboratoriais e interpretação clínica
+
+================================================================================
