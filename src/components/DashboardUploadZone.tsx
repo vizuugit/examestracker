@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Switch } from "@/components/ui/switch";
 import { PatientMatchDialog } from "@/components/PatientMatchDialog";
+import { CactoLoader } from "@/components/CactoLoader";
 import {
   Command,
   CommandEmpty,
@@ -404,7 +405,7 @@ export const DashboardUploadZone = () => {
 
             <div>
               <Label htmlFor="exam-date" className="text-white mb-2">
-                Data do Exame
+                Data do Processamento
               </Label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
@@ -430,7 +431,7 @@ export const DashboardUploadZone = () => {
             <Button
               onClick={handleClearAll}
               variant="outline"
-              className="border-white/20 text-white hover:bg-white/10"
+              className="bg-zinc-900/50 backdrop-blur-sm border-zinc-800 text-white hover:bg-zinc-800/50 hover:text-white transition-all duration-200 ease-in-out hover:scale-[1.02] active:scale-[0.98]"
             >
               Cancelar
             </Button>
@@ -440,7 +441,11 @@ export const DashboardUploadZone = () => {
 
       {uploading && uploadQueue.length > 0 && (
         <div className="bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 p-8 space-y-4">
-          <h3 className="text-lg font-bold text-white">
+          <div className="flex flex-col items-center mb-6">
+            <CactoLoader size="md" text="Enviando e processando exames..." />
+          </div>
+          
+          <h3 className="text-lg font-bold text-white text-center">
             Processando {uploadQueue.length} exame{uploadQueue.length > 1 ? 's' : ''}...
           </h3>
 

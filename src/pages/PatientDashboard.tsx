@@ -7,10 +7,10 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { BiomarkerTrackingTable } from '@/components/BiomarkerTrackingTable';
 import { Skeleton } from '@/components/ui/skeleton';
-import { categorizeBiomarker } from '@/utils/biomarkerCategories';
 import { normalizeBiomarkerWithTable } from '@/utils/biomarkerNormalization';
 // Ordenação agora vem do backend via category_order e biomarker_order
 import { isLeukocyteType } from '@/utils/leukocyteFormatter';
+import { getBiomarkerCategory, normalizeBiomarkerNameAsync } from '@/services/biomarkerCategoryService';
 
 /**
  * Normaliza e simplifica nomes de biomarcadores
@@ -58,119 +58,6 @@ function calculateCompletenessScore(data: any): number {
   return score;
 }
 
-/**
- * Normaliza nome da categoria para unificar variações
- */
-function normalizeCategoryName(category: string | null): string {
-  if (!category) return 'outros';
-  
-  const normalized = category.toLowerCase().trim();
-  
-  const categoryMap: Record<string, string> = {
-    // Hematológico
-    'hemograma': 'hematologico',
-    'hematológico': 'hematologico',
-    'hematologia': 'hematologico',
-    'sangue': 'hematologico',
-    'serie vermelha': 'hematologico',
-    'série vermelha': 'hematologico',
-    'serie branca': 'hematologico',
-    'série branca': 'hematologico',
-    'eritrograma': 'hematologico',
-    'leucograma': 'hematologico',
-    'série plaquetária': 'hematologico',
-    'serie plaquetaria': 'hematologico',
-    
-    // Metabólico
-    'metabolismo': 'metabolico',
-    'metabólico': 'metabolico',
-    'lipídico': 'metabolico',
-    'lipidico': 'metabolico',
-    'perfil lipídico': 'metabolico',
-    'perfil lipidico': 'metabolico',
-    'glicemia': 'metabolico',
-    'bioquímica': 'metabolico',
-    'bioquimica': 'metabolico',
-    'risco cardiovascular': 'metabolico',
-    'fator cardiovascular': 'metabolico',
-    'cardiovascular': 'metabolico',
-    'glicemia e diabetes': 'metabolico',
-    'metabolismo da glicose': 'metabolico',
-    
-    // Hepático
-    'fígado': 'hepatico',
-    'figado': 'hepatico',
-    'hepático': 'hepatico',
-    'hepatico': 'hepatico',
-    'função hepática': 'hepatico',
-    'funcao hepatica': 'hepatico',
-    
-    // Renal
-    'rim': 'renal',
-    'rins': 'renal',
-    'função renal': 'renal',
-    'funcao renal': 'renal',
-    
-    // Íons
-    'eletrólitos': 'ions',
-    'eletrolitos': 'ions',
-    'íons': 'ions',
-    'ionograma': 'ions',
-    
-    // Hormonal
-    'hormônio': 'hormonal',
-    'hormonio': 'hormonal',
-    'hormônios': 'hormonal',
-    'hormonios': 'hormonal',
-    'tireoide': 'hormonal',
-    'tireóide': 'hormonal',
-    'hormônios sexuais': 'hormonal',
-    'hormonios sexuais': 'hormonal',
-    'hormônios tireoidianos': 'hormonal',
-    'hormonios tireoidianos': 'hormonal',
-    'função tireoideana': 'hormonal',
-    'funcao tireoideana': 'hormonal',
-    
-    // Vitaminas e Minerais
-    'vitamina': 'vitaminas_minerais',
-    'vitaminas': 'vitaminas_minerais',
-    'mineral': 'vitaminas_minerais',
-    'minerais': 'vitaminas_minerais',
-    'ferro': 'vitaminas_minerais',
-    'minerais e vitaminas': 'vitaminas_minerais',
-    'vitaminas e minerais': 'vitaminas_minerais',
-    'metabolismo do ferro': 'vitaminas_minerais',
-    'metais': 'vitaminas_minerais',
-    'metais pesados': 'vitaminas_minerais',
-    
-    // Marcadores Inflamatórios
-    'inflamação': 'marcadores_inflamatorios',
-    'inflamacao': 'marcadores_inflamatorios',
-    'inflamatório': 'marcadores_inflamatorios',
-    'inflamatorio': 'marcadores_inflamatorios',
-    'marcadores inflamatórios': 'marcadores_inflamatorios',
-    'marcadores inflamatorios': 'marcadores_inflamatorios',
-    'imunologia': 'marcadores_inflamatorios',
-    
-    // Marcadores Musculares
-    'músculo': 'marcadores_musculares',
-    'musculo': 'marcadores_musculares',
-    'músculos': 'marcadores_musculares',
-    'musculos': 'marcadores_musculares',
-    'muscular': 'marcadores_musculares',
-    'marcadores musculares': 'marcadores_musculares',
-    
-    // Marcadores Prostáticos
-    'próstata': 'marcadores_prostaticos',
-    'prostata': 'marcadores_prostaticos',
-    'prostático': 'marcadores_prostaticos',
-    'prostatico': 'marcadores_prostaticos',
-    'marcadores prostáticos': 'marcadores_prostaticos',
-    'marcadores prostaticos': 'marcadores_prostaticos'
-  };
-  
-  return categoryMap[normalized] || 'outros';
-}
 
 export default function PatientDashboard() {
   const { id } = useParams();
@@ -192,6 +79,7 @@ export default function PatientDashboard() {
   const { data: trackingTableData, isLoading: trackingLoading } = useQuery({
     queryKey: ['patient-tracking-table', id],
     queryFn: async () => {
+      console.log('🔄 [PatientDashboard] Fetching tracking data...');
       const { data, error } = await supabase
         .from('exam_results')
         .select(`
@@ -236,11 +124,20 @@ export default function PatientDashboard() {
           'serie vermelha'
         ];
 
-        data?.forEach((result: any) => {
+        // ✅ ETAPA 1: Buscar variações customizadas em paralelo
+        const customNormalizationPromises = data?.map(async (result: any) => {
+          const customMatch = await normalizeBiomarkerNameAsync(result.biomarker_name);
+          return { result, customMatch };
+        }) || [];
+
+        const resultsWithCustom = await Promise.all(customNormalizationPromises);
+
+        // ✅ ETAPA 2: Processar resultados com normalização aplicada
+        resultsWithCustom.forEach(({ result, customMatch }) => {
           const originalName = result.biomarker_name;
           
-          // Sempre usar tableMatch se existir (fonte única de verdade)
-          const tableMatch = normalizeBiomarkerWithTable(originalName);
+          // 🎯 Usar customMatch se existir, senão fallback para tableMatch
+          const tableMatch = customMatch || normalizeBiomarkerWithTable(originalName);
           
           let finalKey: string;
           let finalDisplayName: string;
@@ -268,14 +165,8 @@ export default function PatientDashboard() {
         
         examDatesSet.add(`${examId}|${examDate}|${isEstimatedDate ? 'estimated' : 'manual'}`);
 
-        // Normalizar categoria
-        let category: string;
-        if (tableMatch?.category) {
-          category = tableMatch.category;
-        } else {
-          const rawCategory = result.category || categorizeBiomarker(originalName);
-          category = normalizeCategoryName(rawCategory);
-        }
+        // Usar serviço centralizado para obter categoria
+        const category = getBiomarkerCategory(originalName, result.category);
 
         // Detectar se é leucócito para consolidar por data
         const isLeukocyte = isLeukocyteType(originalName);
@@ -318,6 +209,18 @@ export default function PatientDashboard() {
           // Biomarcador já existe, verificar se devemos atualizar metadados
           const existing = biomarkerMap.get(finalKey)!;
           const newScore = calculateCompletenessScore(result);
+          
+          // ⚠️ VALIDAÇÃO: Detectar consolidações suspeitas de biomarcadores diferentes
+          if (existing.unit && result.unit && existing.unit !== result.unit) {
+            console.warn('⚠️ [CONSOLIDAÇÃO SUSPEITA] Biomarcadores com unidades diferentes sendo consolidados:', {
+              biomarker: finalKey,
+              existingUnit: existing.unit,
+              newUnit: result.unit,
+              existingValue: Array.from(existing.values.values())[0],
+              newValue: result.value,
+              originalNames: { existing: existing.biomarker_name, new: originalName }
+            });
+          }
           
           if (tableMatch?.category && existing.category_source !== 'normalization_table') {
             existing.category = category;
@@ -472,7 +375,7 @@ export default function PatientDashboard() {
         if (biomarkerOrderA !== biomarkerOrderB) {
           return biomarkerOrderA - biomarkerOrderB;
         }
-        
+
         // Se ambos não estão na ordem ou têm a mesma ordem, usar alfabética
         return a.biomarker_name.localeCompare(b.biomarker_name);
       });

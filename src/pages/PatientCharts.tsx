@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { BiomarkerChart } from "@/components/BiomarkerChart";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { getBiomarkerCategory } from "@/services/biomarkerCategoryService";
 
 interface BiomarkerOption {
   biomarker_name: string;
@@ -87,7 +88,7 @@ const PatientCharts = () => {
             unit: item.unit,
             reference_min: item.reference_min,
             reference_max: item.reference_max,
-            category: item.category || "Outros",
+            category: getBiomarkerCategory(item.biomarker_name, item.category),
             total_measurements: 0,
             last_value: null,
             last_date: "",

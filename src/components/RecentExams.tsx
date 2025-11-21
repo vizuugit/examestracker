@@ -2,11 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Loader2, CheckCircle, AlertCircle, Eye } from "lucide-react";
+import { FileText, CheckCircle, AlertCircle, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
 import { ExamResultsDialog } from "@/components/ExamResultsDialog";
+import cactoGif from "@/assets/cacto-loading.gif";
 
 interface RecentExamsProps {
   exams?: Array<{
@@ -35,10 +36,14 @@ export const RecentExams = ({ exams = [] }: RecentExamsProps) => {
         );
       case "processing":
         return (
-          <Badge className="bg-rest-cyan/20 text-rest-cyan border-rest-cyan/30">
-            <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-            Processando
-          </Badge>
+          <div className="flex items-center gap-2 px-3 py-1 bg-rest-cyan/20 rounded-full border border-rest-cyan/30">
+            <img 
+              src={cactoGif} 
+              alt="Processando" 
+              className="w-5 h-5 object-contain"
+            />
+            <span className="text-sm text-rest-cyan">Processando</span>
+          </div>
         );
       case "failed":
         return (

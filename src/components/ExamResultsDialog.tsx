@@ -36,6 +36,7 @@ import { categorizeBiomarker } from "@/utils/biomarkerCategories";
 import { useExamAnalysis } from "@/hooks/useExamAnalysis";
 import { ExamInsightsPanel } from "@/components/ExamInsightsPanel";
 import type { ExamWithInsights } from "@/types/exam-insights";
+import { getBiomarkerCategory } from "@/services/biomarkerCategoryService";
 
 interface ExamResultsDialogProps {
   open: boolean;
@@ -107,7 +108,7 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
     return examData.results.filter((result) => {
       // Filtro de categoria
       if (categoryFilter !== "all") {
-        const resultCategory = categorizeBiomarker(result.biomarker_name);
+        const resultCategory = getBiomarkerCategory(result.biomarker_name, result.category);
         if (resultCategory !== categoryFilter) return false;
       }
 
@@ -130,7 +131,7 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
   // Agrupar resultados por categoria
   const groupedResults = useMemo(() => {
     const grouped = filteredResults.reduce((acc, result) => {
-      const category = categorizeBiomarker(result.biomarker_name);
+      const category = getBiomarkerCategory(result.biomarker_name, result.category);
       if (!acc[category]) acc[category] = [];
       acc[category].push(result);
       return acc;
@@ -185,7 +186,7 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
   // Extrair categorias únicas dos resultados
   const categories = useMemo(() => {
     if (!examData?.results) return [];
-    return Array.from(new Set(examData.results.map(r => categorizeBiomarker(r.biomarker_name))));
+    return Array.from(new Set(examData.results.map(r => getBiomarkerCategory(r.biomarker_name, r.category))));
   }, [examData]);
 
   return (
@@ -329,7 +330,7 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
                             </TableCell>
                           </TableRow>
                           
-                          {/* Biomarcadores da categoria (ordenados) */}
+                          {/* Biomarcadores da categoria (ordenados alfabeticamente) */}
                           {results
                             .sort((a, b) => {
                               const orderA = a.biomarker_order ?? 999;

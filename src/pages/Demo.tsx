@@ -6,11 +6,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BiomarkerChart } from "@/components/BiomarkerChart";
 import { Upload, Bot, FileText, Download, TrendingUp, TrendingDown, FileSpreadsheet, CheckCircle2, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import Footer from "@/components/Footer";
 
 const Demo = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [uploadProgress, setUploadProgress] = useState(0);
   const [processingStep, setProcessingStep] = useState(0);
   const [showResults, setShowResults] = useState(false);
@@ -55,6 +58,23 @@ const Demo = () => {
     });
   };
 
+  const handleCompleteOnboarding = async () => {
+    if (user) {
+      await supabase
+        .from('profiles')
+        .update({ first_login_completed: true })
+        .eq('id', user.id);
+      
+      toast({
+        title: "Bem-vindo ao Exames!",
+        description: "Sua conta está pronta. Vamos começar!",
+      });
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
+
   const mockBiomarkerData = [
     {
       biomarkerName: "Colesterol LDL",
@@ -89,7 +109,7 @@ const Demo = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-black via-zinc-900 to-black">
-      <PublicNavbar />
+      <PublicNavbar showOnlyBackButton={true} />
       
       <main className="flex-1">
         {/* Hero Section */}
@@ -363,10 +383,10 @@ const Demo = () => {
                 
                 <Button 
                   size="lg"
-                  onClick={() => navigate('/auth')}
+                  onClick={handleCompleteOnboarding}
                   className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white font-semibold px-12 py-6 text-xl hover-scale group"
                 >
-                  Criar Conta Gratuitamente
+                  {user ? 'Começar' : 'Criar Conta Gratuitamente'}
                   <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </div>

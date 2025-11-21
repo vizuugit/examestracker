@@ -14,6 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_notifications: {
+        Row: {
+          admin_id: string | null
+          created_at: string | null
+          id: string
+          message: string
+          read: boolean | null
+          related_invitation_id: string | null
+          title: string
+          type: string
+        }
+        Insert: {
+          admin_id?: string | null
+          created_at?: string | null
+          id?: string
+          message: string
+          read?: boolean | null
+          related_invitation_id?: string | null
+          title: string
+          type: string
+        }
+        Update: {
+          admin_id?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          related_invitation_id?: string | null
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_notifications_related_invitation_id_fkey"
+            columns: ["related_invitation_id"]
+            isOneToOne: false
+            referencedRelation: "invitations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      biomarker_category_overrides: {
+        Row: {
+          biomarker_name: string
+          category: string
+          created_at: string | null
+          created_by: string | null
+          display_order: number | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          biomarker_name: string
+          category: string
+          created_at?: string | null
+          created_by?: string | null
+          display_order?: number | null
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          biomarker_name?: string
+          category?: string
+          created_at?: string | null
+          created_by?: string | null
+          display_order?: number | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       biomarker_duplicates: {
         Row: {
           biomarker_name: string
@@ -54,6 +125,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      biomarker_variations: {
+        Row: {
+          active: boolean | null
+          biomarker_normalized_name: string
+          category: string | null
+          created_at: string | null
+          created_by: string | null
+          id: string
+          unit: string | null
+          updated_at: string | null
+          variation: string
+        }
+        Insert: {
+          active?: boolean | null
+          biomarker_normalized_name: string
+          category?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          unit?: string | null
+          updated_at?: string | null
+          variation: string
+        }
+        Update: {
+          active?: boolean | null
+          biomarker_normalized_name?: string
+          category?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          unit?: string | null
+          updated_at?: string | null
+          variation?: string
+        }
+        Relationships: []
+      }
+      category_display_order: {
+        Row: {
+          category_key: string
+          created_at: string | null
+          created_by: string | null
+          display_order: number
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          category_key: string
+          created_at?: string | null
+          created_by?: string | null
+          display_order: number
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          category_key?: string
+          created_at?: string | null
+          created_by?: string | null
+          display_order?: number
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       corrections: {
         Row: {
@@ -287,6 +421,57 @@ export type Database = {
           },
         ]
       }
+      invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          full_name: string | null
+          id: string
+          invited_by: string | null
+          invited_role: Database["public"]["Enums"]["app_role"]
+          last_resent_at: string | null
+          metadata: Json | null
+          resent_count: number | null
+          specialty: string | null
+          status: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          full_name?: string | null
+          id?: string
+          invited_by?: string | null
+          invited_role?: Database["public"]["Enums"]["app_role"]
+          last_resent_at?: string | null
+          metadata?: Json | null
+          resent_count?: number | null
+          specialty?: string | null
+          status?: string
+          token?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          full_name?: string | null
+          id?: string
+          invited_by?: string | null
+          invited_role?: Database["public"]["Enums"]["app_role"]
+          last_resent_at?: string | null
+          metadata?: Json | null
+          resent_count?: number | null
+          specialty?: string | null
+          status?: string
+          token?: string
+        }
+        Relationships: []
+      }
       patients: {
         Row: {
           birth_date: string | null
@@ -341,6 +526,7 @@ export type Database = {
         Row: {
           created_at: string | null
           crm: string | null
+          first_login_completed: boolean | null
           full_name: string
           id: string
           specialty: string | null
@@ -349,6 +535,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           crm?: string | null
+          first_login_completed?: boolean | null
           full_name: string
           id: string
           specialty?: string | null
@@ -357,6 +544,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           crm?: string | null
+          first_login_completed?: boolean | null
           full_name?: string
           id?: string
           specialty?: string | null

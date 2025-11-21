@@ -14,6 +14,7 @@ import { ExamResultsDialog } from "@/components/ExamResultsDialog";
 import { ExamCorrectionDialog } from "@/components/ExamCorrectionDialog";
 import { toast } from "sonner";
 import { BackButton } from "@/components/BackButton";
+import cactoGif from "@/assets/cacto-loading.gif";
 
 const PatientProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -269,21 +270,28 @@ const PatientProfile = () => {
                           </Badge>
                         )}
 
-                         <span
-                          className={`px-3 py-1 rounded-full text-sm ${
-                            exam.processing_status === "completed"
-                              ? "bg-green-500/20 text-green-400"
-                              : exam.processing_status === "processing"
-                              ? "bg-yellow-500/20 text-yellow-400"
-                              : "bg-blue-500/20 text-blue-400"
-                          }`}
-                        >
-                          {exam.processing_status === "completed"
-                            ? "Processado"
-                            : exam.processing_status === "processing"
-                            ? "Processando..."
-                            : "Aguardando"}
-                        </span>
+                        {exam.processing_status === "processing" ? (
+                          <div className="flex items-center gap-2 px-3 py-1 bg-yellow-500/20 rounded-full">
+                            <img 
+                              src={cactoGif} 
+                              alt="Processando" 
+                              className="w-4 h-4 object-contain"
+                            />
+                            <span className="text-sm text-yellow-400">Processando...</span>
+                          </div>
+                        ) : (
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm ${
+                              exam.processing_status === "completed"
+                                ? "bg-green-500/20 text-green-400"
+                                : "bg-blue-500/20 text-blue-400"
+                            }`}
+                          >
+                            {exam.processing_status === "completed"
+                              ? "Processado"
+                              : "Aguardando"}
+                          </span>
+                        )}
                         {exam.total_biomarkers && (
                           <span className="text-sm text-white/60 whitespace-nowrap">{exam.total_biomarkers} biomarcadores</span>
                         )}
