@@ -489,7 +489,7 @@ def process_exam(exam: Dict[str, Any], normalization_service=None) -> Dict[str, 
             category = match.category
             category_order = match.category_order
             biomarker_order = match.biomarker_order
-            print(f'✅ Normalizado: {exam_name} → {normalized_name} ({match.match_type})')
+            print(f'✅ Normalizado: {exam_name} → {normalized_name} | Categoria: {category} | Orders: cat={category_order}, bio={biomarker_order}')
         elif rejection:
             print(f'⚠️ Não normalizado: {exam_name} ({rejection.reason})')
 
