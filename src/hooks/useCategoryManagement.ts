@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { clearCategorizationCache } from '@/services/biomarkerCategoryService';
-import { SIMPLIFIED_CATEGORIES, CATEGORY_DISPLAY_NAMES, mapJsonCategoryToSimplified, SimplifiedCategory } from '@/utils/categoryMapping';
-import biomarkerSpec from '@/data/biomarker-specification.json';
+import { SIMPLIFIED_CATEGORIES, CATEGORY_DISPLAY_NAMES, SimplifiedCategory } from '@/utils/categoryMapping';
 import { toast } from 'sonner';
 
 export interface BiomarkerData {
@@ -74,23 +73,9 @@ export function useCategoryManagement() {
         categoryOrderMap.set(order.category_key, order.display_order);
       });
 
-      // 🔥 MUDANÇA PRINCIPAL: Agrupar biomarcadores do JSON por categoria simplificada
-      const biomarkersByCategory: Record<string, string[]> = {};
-      
-      // Inicializar todas as categorias vazias
-      SIMPLIFIED_CATEGORIES.forEach(cat => {
-        biomarkersByCategory[cat] = [];
-      });
-
-      // Agrupar biomarcadores do JSON
-      biomarkerSpec.biomarcadores.forEach((bio: any) => {
-        const simplifiedCategory = mapJsonCategoryToSimplified(bio.categoria);
-        biomarkersByCategory[simplifiedCategory].push(bio.nome_padrao);
-      });
-
-      // Criar estrutura de categorias
+      // Criar estrutura de categorias a partir dos overrides
       let categoriesData: CategoryData[] = SIMPLIFIED_CATEGORIES.map((categoryKey, index) => {
-        const biomarkersInCategory = biomarkersByCategory[categoryKey] || [];
+        const biomarkersInCategory: string[] = [];
         
         const biomarkers: BiomarkerData[] = biomarkersInCategory.map((biomarkerName, bioIndex) => {
           const override = overridesMap.get(biomarkerName);

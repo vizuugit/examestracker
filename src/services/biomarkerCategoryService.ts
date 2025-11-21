@@ -1,7 +1,5 @@
-import { normalizeBiomarkerWithTable } from '@/utils/biomarkerNormalization';
 import { supabase } from '@/integrations/supabase/client';
 import { mapJsonCategoryToSimplified } from '@/utils/categoryMapping';
-import biomarkerSpec from '@/data/biomarker-specification.json';
 
 /**
  * Cache LRU (Least Recently Used) para categorização de biomarcadores
@@ -178,14 +176,13 @@ export function normalizeCategoryName(category: string | null): string {
  * Normaliza nome do biomarcador consultando variações customizadas
  * Ordem de prioridade:
  * 1. Variações Customizadas (biomarker_variations)
- * 2. Tabela de Normalização (normalizeBiomarkerWithTable)
  */
 export async function normalizeBiomarkerNameAsync(originalName: string): Promise<{
   normalizedName: string;
   category?: string;
   unit?: string;
 } | null> {
-  // 1️⃣ Verificar variações customizadas do admin
+  // Verificar variações customizadas do admin
   try {
     const { data: customVariation } = await supabase
       .from('biomarker_variations')
@@ -205,8 +202,7 @@ export async function normalizeBiomarkerNameAsync(originalName: string): Promise
     console.warn('Error fetching custom variation:', error);
   }
   
-  // 2️⃣ Fallback para tabela hardcoded
-  return normalizeBiomarkerWithTable(originalName);
+  return null;
 }
 
 /**
@@ -247,49 +243,17 @@ export async function getBiomarkerCategoryAsync(biomarkerName: string, dbCategor
     console.warn('Error fetching category override:', error);
   }
   
-  // 2️⃣ Tentar tabela de normalização
-  const tableMatch = normalizeBiomarkerWithTable(biomarkerName);
-  if (tableMatch?.category) {
-    const result = normalizeCategoryName(tableMatch.category);
-    categoryCache.set(cacheKey, result);
-    return result;
-  }
-  
-  // 3️⃣ Usar categoria do banco de dados
+  // 2️⃣ Usar categoria do banco de dados
   if (dbCategory) {
     const result = normalizeCategoryName(dbCategory);
     categoryCache.set(cacheKey, result);
     return result;
   }
   
-  // 4️⃣ Última alternativa: procurar no JSON
-  const result = categorizeBiomarkerFromJson(biomarkerName);
+  // 3️⃣ Fallback: outros
+  const result = 'outros';
   categoryCache.set(cacheKey, result);
   return result;
-}
-
-/**
- * Categoriza um biomarcador usando o biomarker-specification.json
- * Procura pelo nome padrão ou sinônimos e mapeia para categoria simplificada
- */
-function categorizeBiomarkerFromJson(biomarkerName: string): string {
-  const normalizedName = biomarkerName.toLowerCase().trim();
-  
-  // Procurar no JSON por nome padrão ou sinônimos
-  const biomarker = biomarkerSpec.biomarcadores.find((b: any) => {
-    const normalizedStandard = b.nome_padrao.toLowerCase().trim();
-    if (normalizedStandard === normalizedName) return true;
-    
-    return b.sinonimos.some((syn: string) => 
-      syn.toLowerCase().trim() === normalizedName
-    );
-  });
-  
-  if (biomarker) {
-    return mapJsonCategoryToSimplified(biomarker.categoria);
-  }
-  
-  return 'outros';
 }
 
 /**
@@ -312,23 +276,15 @@ export function getBiomarkerCategory(biomarkerName: string, dbCategory?: string 
   
   cacheMisses++;
   
-  // 1️⃣ Tentar tabela de normalização
-  const tableMatch = normalizeBiomarkerWithTable(biomarkerName);
-  if (tableMatch?.category) {
-    const result = normalizeCategoryName(tableMatch.category);
-    categoryCache.set(cacheKey, result);
-    return result;
-  }
-  
-  // 2️⃣ Usar categoria do banco de dados
+  // 1️⃣ Usar categoria do banco de dados
   if (dbCategory) {
     const result = normalizeCategoryName(dbCategory);
     categoryCache.set(cacheKey, result);
     return result;
   }
   
-  // 3️⃣ Última alternativa: procurar no JSON
-  const result = categorizeBiomarkerFromJson(biomarkerName);
+  // 2️⃣ Fallback: outros
+  const result = 'outros';
   categoryCache.set(cacheKey, result);
   return result;
 }
@@ -354,16 +310,6 @@ export function getBiomarkerCategoryWithSource(biomarkerName: string, dbCategory
   
   cacheMisses++;
   
-  const tableMatch = normalizeBiomarkerWithTable(biomarkerName);
-  if (tableMatch?.category) {
-    const result = {
-      category: normalizeCategoryName(tableMatch.category),
-      source: 'normalization_table' as const
-    };
-    categoryWithSourceCache.set(cacheKey, result);
-    return result;
-  }
-  
   if (dbCategory) {
     const result = {
       category: normalizeCategoryName(dbCategory),
@@ -373,9 +319,8 @@ export function getBiomarkerCategoryWithSource(biomarkerName: string, dbCategory
     return result;
   }
   
-  const jsonCategory = categorizeBiomarkerFromJson(biomarkerName);
   const result = {
-    category: jsonCategory,
+    category: 'outros',
     source: 'heuristic' as const
   };
   categoryWithSourceCache.set(cacheKey, result);

@@ -7,7 +7,6 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { BiomarkerTrackingTable } from '@/components/BiomarkerTrackingTable';
 import { Skeleton } from '@/components/ui/skeleton';
-import { normalizeBiomarkerWithTable } from '@/utils/biomarkerNormalization';
 // Ordenação agora vem do backend via category_order e biomarker_order
 import { isLeukocyteType } from '@/utils/leukocyteFormatter';
 import { getBiomarkerCategory, normalizeBiomarkerNameAsync } from '@/services/biomarkerCategoryService';
@@ -136,8 +135,8 @@ export default function PatientDashboard() {
         resultsWithCustom.forEach(({ result, customMatch }) => {
           const originalName = result.biomarker_name;
           
-          // 🎯 Usar customMatch se existir, senão fallback para tableMatch
-          const tableMatch = customMatch || normalizeBiomarkerWithTable(originalName);
+          // 🎯 Usar apenas customMatch do backend
+          const tableMatch = customMatch;
           
           let finalKey: string;
           let finalDisplayName: string;
