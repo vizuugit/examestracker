@@ -557,9 +557,13 @@ def process_exam(exam: Dict[str, Any], normalization_service=None) -> Dict[str, 
     qualitativos = ['reagente', 'não reagente', 'nao reagente', 'positivo', 'negativo',
                     'indetectável', 'indetectavel', 'detectável', 'detectavel']
     if value_normalized and value_normalized.lower() in qualitativos:
-        processed['qualitative_result'] = value_normalized
-    
-    return processed
+    processed['qualitative_result'] = value_normalized
+
+# Log para debug de ordenação
+if 'category_order' in processed or 'biomarker_order' in processed:
+    print(f"📦 Retornando com orders: {exam_name} | cat_order={processed.get('category_order')}, bio_order={processed.get('biomarker_order')}")
+
+return processed
 
 
 # ========================================
