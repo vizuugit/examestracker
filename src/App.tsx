@@ -18,13 +18,19 @@ import PatientCharts from "./pages/PatientCharts";
 import Profile from "./pages/Profile";
 import AdminInvites from "./pages/AdminInvites";
 import AcceptInvite from "./pages/AcceptInvite";
+import Shop from "./pages/Shop";
+import Licensee from "./pages/Licensee";
+import Owners from "./pages/Owners";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import LicenseDisclosure from "./pages/LicenseDisclosure";
 import Accessibility from "./pages/Accessibility";
 import CookiePolicy from "./pages/CookiePolicy";
+import ReturnsPolicy from "./pages/ReturnsPolicy";
 import Redirect from "./pages/Redirect";
 import Demo from "./pages/Demo";
+import About from "./pages/About";
 
 const queryClient = new QueryClient();
 
@@ -38,9 +44,13 @@ const App = () => (
           {/* Rotas públicas */}
           <Route path="/" element={<Index />} />
           <Route path="/demo" element={<Demo />} />
+          <Route path="/about" element={<About />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/auth/reset-password" element={<ResetPassword />} />
           <Route path="/accept-invite" element={<AcceptInvite />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/licensee" element={<Licensee />} />
+          <Route path="/owners" element={<Owners />} />
           <Route path="/redirect" element={<Redirect />} />
           
           {/* Rotas protegidas */}
@@ -58,8 +68,10 @@ const App = () => (
           {/* Políticas e outras */}
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/license-disclosure" element={<LicenseDisclosure />} />
           <Route path="/accessibility" element={<Accessibility />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
+          <Route path="/returns-policy" element={<ReturnsPolicy />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

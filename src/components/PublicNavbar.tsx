@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import cactoLogo from "@/assets/cacto-logo.png";
+import exLogo from "@/assets/ex-logo.png";
 
 interface PublicNavbarProps {
   showOnlyBackButton?: boolean;
@@ -31,11 +31,11 @@ export const PublicNavbar = ({ showOnlyBackButton = false }: PublicNavbarProps) 
       <div className="container mx-auto flex items-center justify-between h-20 px-4">
         <Link to="/" className="flex items-center space-x-3 group">
           <img 
-            src={cactoLogo} 
-            alt="CACTO Logo" 
+            src={exLogo} 
+            alt="Exames Logo" 
             className="w-16 h-16 object-contain group-hover:scale-110 transition-transform" 
           />
-          <span className="text-2xl font-bold text-white tracking-tight">CACTO</span>
+          <span className="text-2xl font-bold text-white tracking-tight">Exames</span>
         </Link>
         
         {showOnlyBackButton ? (

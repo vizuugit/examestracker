@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import cactoLogo from "@/assets/cacto-logo.png";
+import exLogoFull from "@/assets/ex-logo-full.png";
 import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
@@ -52,8 +52,8 @@ const Index = () => {
       {/* Content */}
       <div className="relative z-10 text-center space-y-12 p-8">
         <img 
-          src={cactoLogo} 
-          alt="CACTO Logo" 
+          src={exLogoFull} 
+          alt="Exames Logo" 
           className="h-40 mx-auto drop-shadow-2xl animate-in fade-in duration-1000"
         />
         
