@@ -93,12 +93,18 @@ export const RecentExams = ({ exams = [] }: RecentExamsProps) => {
                 className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors gap-4"
               >
                 <div className="flex-1 space-y-1">
+                {exam.patient_id ? (
                   <button
                     onClick={() => navigate(`/patients/${exam.patient_id}`)}
                     className="font-medium text-white hover:text-rest-cyan transition-colors text-left"
                   >
                     {exam.patient_name}
                   </button>
+                ) : (
+                  <span className="font-medium text-white/60">
+                    {exam.patient_name}
+                  </span>
+                )}
                   <p className="text-sm text-white/60">{exam.file_name}</p>
                   <p className="text-xs text-white/40">
                     {exam.exam_date
