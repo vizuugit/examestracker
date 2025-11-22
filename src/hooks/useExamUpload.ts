@@ -258,6 +258,7 @@ export function useExamUpload() {
     let attempts = 0;
     let currentIntervalId: NodeJS.Timeout | null = null;
     let realtimeChannel: any = null;
+    let lastStatusMessage = ''; // ✅ Controle de estado anterior
 
     return new Promise<void>((resolve, reject) => {
       // 🔄 Função para limpar recursos
@@ -297,9 +298,18 @@ export function useExamUpload() {
           statusMsg = `Finalizando processamento... (${mins}min ${secs}s)`;
         }
 
+        // ✅ Só atualizar se a FASE mudou (ignora tempo entre parênteses)
+        const statusMsgBase = statusMsg.split('(')[0].trim();
+        const lastMsgBase = lastStatusMessage.split('(')[0].trim();
+        
+        if (statusMsgBase !== lastMsgBase) {
+          setStatus(statusMsg);
+          onStatusUpdate?.(statusMsg, Math.min(currentProgress, 98), 'processing');
+          lastStatusMessage = statusMsg;
+        }
+        
+        // Sempre atualizar o progresso numérico
         setProgress(Math.min(currentProgress, 98));
-        setStatus(statusMsg);
-        onStatusUpdate?.(statusMsg, Math.min(currentProgress, 98), 'processing');
       };
 
       // 🚀 OTIMIZAÇÃO: Usar Supabase Realtime em vez de polling constante

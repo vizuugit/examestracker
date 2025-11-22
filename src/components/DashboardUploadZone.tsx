@@ -449,7 +449,7 @@ export const DashboardUploadZone = () => {
             Processando {uploadQueue.length} exame{uploadQueue.length > 1 ? 's' : ''}...
           </h3>
 
-          {uploadQueue.map((item) => (
+          {uploadQueue.map((item, index) => (
             <div key={item.id} className="p-4 bg-white/5 rounded-lg border border-white/10">
               <div className="flex items-center gap-3 mb-2">
                 {item.status === 'pending' && (
@@ -475,7 +475,10 @@ export const DashboardUploadZone = () => {
                 )}
                 
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-white">{item.file.name}</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-white/40">#{index + 1}</span>
+                    <p className="text-sm font-medium text-white">{item.file.name}</p>
+                  </div>
                   <p className="text-xs text-white/60">{item.statusMessage}</p>
                   {item.error && <p className="text-xs text-red-400 mt-1">{item.error}</p>}
                 </div>
