@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import exLogo from "@/assets/ex-logo.png";
+import cactoLogo from "@/assets/cacto-logo.png";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -105,7 +105,7 @@ const Auth = () => {
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <img src={exLogo} alt="Logo" className="h-16 mx-auto mb-4" />
+          <img src={cactoLogo} alt="CACTO Logo" className="h-16 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-white">Acesso Profissional</h1>
           <p className="text-zinc-400 mt-2">Entre com suas credenciais</p>
         </div>
