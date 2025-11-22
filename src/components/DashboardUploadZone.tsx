@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Switch } from "@/components/ui/switch";
 import { PatientMatchDialog } from "@/components/PatientMatchDialog";
-import { CactoLoader } from "@/components/CactoLoader";
+import cactoProcessingGif from "@/assets/cacto-processing.gif";
 import {
   Command,
   CommandEmpty,
@@ -440,51 +440,65 @@ export const DashboardUploadZone = () => {
       )}
 
       {uploading && uploadQueue.length > 0 && (
-        <div className="bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 p-8 space-y-4">
-          <h3 className="text-lg font-bold text-white text-center">
-            Processando {uploadQueue.length} exame{uploadQueue.length > 1 ? 's' : ''}...
-          </h3>
+        <div className="bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_200px] gap-6 items-start">
+            {/* Coluna Esquerda: Conteúdo */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold text-white text-center lg:text-left">
+                Processando {uploadQueue.length} exame{uploadQueue.length > 1 ? 's' : ''}...
+              </h3>
 
-          {uploadQueue.map((item, index) => (
-            <div key={item.id} className="p-4 bg-white/5 rounded-lg border border-white/10">
-              <div className="flex items-center gap-3 mb-2">
-                {item.status === 'pending' && (
-                  <div className="w-5 h-5 rounded-full border-2 border-white/40" />
-                )}
-                {item.status === 'uploading' && (
-                  <Loader2 className="w-5 h-5 animate-spin text-rest-cyan" />
-                )}
-                {item.status === 'processing' && (
-                  <Loader2 className="w-5 h-5 animate-spin text-rest-lightblue" />
-                )}
-                {item.status === 'completed' && (
-                  <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
+              {uploadQueue.map((item, index) => (
+                <div key={item.id} className="p-4 bg-white/5 rounded-lg border border-white/10">
+                  <div className="flex items-center gap-3 mb-2">
+                    {item.status === 'pending' && (
+                      <div className="w-5 h-5 rounded-full border-2 border-white/40" />
+                    )}
+                    {item.status === 'uploading' && (
+                      <Loader2 className="w-5 h-5 animate-spin text-rest-cyan" />
+                    )}
+                    {item.status === 'processing' && (
+                      <Loader2 className="w-5 h-5 animate-spin text-rest-lightblue" />
+                    )}
+                    {item.status === 'completed' && (
+                      <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                    {item.status === 'error' && (
+                      <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
+                        <X className="w-3 h-3 text-white" />
+                      </div>
+                    )}
+                    
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono text-white/40">#{index + 1}</span>
+                        <p className="text-sm font-medium text-white">{item.file.name}</p>
+                      </div>
+                      <p className="text-xs text-white/60">{item.statusMessage}</p>
+                      {item.error && <p className="text-xs text-red-400 mt-1">{item.error}</p>}
+                    </div>
                   </div>
-                )}
-                {item.status === 'error' && (
-                  <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
-                    <X className="w-3 h-3 text-white" />
-                  </div>
-                )}
-                
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-white/40">#{index + 1}</span>
-                    <p className="text-sm font-medium text-white">{item.file.name}</p>
-                  </div>
-                  <p className="text-xs text-white/60">{item.statusMessage}</p>
-                  {item.error && <p className="text-xs text-red-400 mt-1">{item.error}</p>}
+
+                  {(item.status === 'uploading' || item.status === 'processing') && (
+                    <Progress value={item.progress} className="h-1" />
+                  )}
                 </div>
-              </div>
-
-              {(item.status === 'uploading' || item.status === 'processing') && (
-                <Progress value={item.progress} className="h-1" />
-              )}
+              ))}
             </div>
-          ))}
+
+            {/* Coluna Direita: GIF Animado */}
+            <div className="hidden lg:flex justify-center items-center">
+              <img 
+                src={cactoProcessingGif} 
+                alt="Processando" 
+                className="w-full max-w-[180px] opacity-80 animate-fade-in"
+              />
+            </div>
+          </div>
         </div>
       )}
 
