@@ -79,60 +79,138 @@ export default function PatientDashboard() {
     queryKey: ['patient-tracking-table', id],
     queryFn: async () => {
       console.log('🔄 [PatientDashboard] Fetching tracking data...');
-      const { data, error } = await supabase
-        .from('exam_results')
-        .select(`
-          id,
-          biomarker_name,
-          value,
-          value_numeric,
-          unit,
-          reference_min,
-          reference_max,
-          status,
-          category,
-          manually_corrected,
-          exams!inner (
-            id,
-            exam_date,
-            laboratory,
-            patient_id,
-            created_at
-          )
-        `)
-        .eq('exams.patient_id', id)
-        .order('exam_date', { ascending: true, foreignTable: 'exams' })
-        .order('created_at', { ascending: false, foreignTable: 'exams' });
       
-      if (error) throw error;
+      // ✅ FASE 1: Buscar exames com raw_aws_response
+      const { data: examsData, error: examsError } = await supabase
+        .from('exams')
+        .select('id, exam_date, laboratory, raw_aws_response, created_at')
+        .eq('patient_id', id)
+        .order('exam_date', { ascending: true });
 
-      // Estruturar dados por biomarcador com deduplicação e consolidação de leucócitos
+      if (examsError) throw examsError;
+
+      // Separar exames por estrutura (com/sem categorias)
+      const examsWithCategories: any[] = [];
+      const examsWithoutCategories: any[] = [];
+
+      examsData?.forEach(exam => {
+        const rawResponse = exam.raw_aws_response as any;
+        if (rawResponse?.categorias && Array.isArray(rawResponse.categorias) && rawResponse.categorias.length > 0) {
+          examsWithCategories.push(exam);
+        } else {
+          examsWithoutCategories.push(exam);
+        }
+      });
+
+      console.log('📊 [PatientDashboard] Exames com categorias:', examsWithCategories.length);
+      console.log('📊 [PatientDashboard] Exames sem categorias (fallback):', examsWithoutCategories.length);
+
+      // ✅ FASE 2: Processar exames com estrutura categorias[]
       const biomarkerMap = new Map<string, any>();
       const examDatesSet = new Set<string>();
-      
-      // Mapa temporário para consolidar valores por data (para leucócitos)
       const leukocytesByDate = new Map<string, Map<string, { absolute: any, percent: any }>>();
 
-        // Lista de biomarcadores a serem excluídos (títulos/cabeçalhos do laudo)
-        const EXCLUDED_BIOMARKERS = [
-          'hemograma',
-          'leucograma',
-          'plaquetograma',
-          'eritrograma',
-          'série vermelha',
-          'serie vermelha'
-        ];
+      // Lista de biomarcadores excluídos (cabeçalhos)
+      const EXCLUDED_BIOMARKERS = [
+        'hemograma', 'leucograma', 'plaquetograma', 'eritrograma',
+        'série vermelha', 'serie vermelha'
+      ];
 
-        // ✅ ETAPA 1: Buscar variações customizadas em paralelo
-        const customNormalizationPromises = data?.map(async (result: any) => {
-          const customMatch = await normalizeBiomarkerNameAsync(result.biomarker_name);
-          return { result, customMatch };
-        }) || [];
+      // Processar exames novos (com categorias ordenadas do backend)
+      examsWithCategories.forEach(exam => {
+        const categorias = exam.raw_aws_response.categorias || [];
+        const examId = exam.id;
+        const examDate = exam.exam_date || exam.created_at;
+        const isEstimatedDate = !exam.exam_date;
 
-        const resultsWithCustom = await Promise.all(customNormalizationPromises);
+        examDatesSet.add(`${examId}|${examDate}|${isEstimatedDate ? 'estimated' : 'manual'}`);
 
-        // ✅ ETAPA 2: Processar resultados com normalização aplicada
-        resultsWithCustom.forEach(({ result, customMatch }) => {
+        categorias.forEach((categoria: any) => {
+          const categoryName = categoria.nome;
+          const categoryOrder = categoria.ordem ?? 999;
+
+          categoria.biomarcadores?.forEach((bio: any) => {
+            const biomarkerName = bio.nome;
+            const biomarkerOrder = bio.ordem ?? 999;
+            const key = biomarkerName.toLowerCase().trim();
+
+            // Pular cabeçalhos
+            if (EXCLUDED_BIOMARKERS.includes(key)) return;
+
+            // Criar entrada se não existir
+            if (!biomarkerMap.has(key)) {
+              biomarkerMap.set(key, {
+                biomarker_name: biomarkerName,
+                unit: bio.unidade,
+                reference_min: bio.valor_referencia_min,
+                reference_max: bio.valor_referencia_max,
+                category: categoryName,
+                category_order: categoryOrder,
+                biomarker_order: biomarkerOrder,
+                values: new Map(),
+                data_source: 'categorias'
+              });
+            }
+
+            // Adicionar valor do exame
+            const biomarkerData = biomarkerMap.get(key)!;
+            biomarkerData.values.set(examId, {
+              exam_id: examId,
+              exam_date: examDate,
+              value: bio.resultado,
+              value_numeric: bio.valor_numerico,
+              status: bio.status,
+              percentValue: bio.percentValue || null,
+              manually_corrected: false
+            });
+          });
+        });
+      });
+
+      console.log('✅ [PatientDashboard] Biomarcadores processados (categorias):', biomarkerMap.size);
+
+      // ✅ FASE 4: Fallback para exames antigos (sem categorias)
+      if (examsWithoutCategories.length > 0) {
+        const examIds = examsWithoutCategories.map(e => e.id);
+        
+        const { data, error } = await supabase
+          .from('exam_results')
+          .select(`
+            id,
+            biomarker_name,
+            value,
+            value_numeric,
+            unit,
+            reference_min,
+            reference_max,
+            status,
+            category,
+            manually_corrected,
+            exams!inner (
+              id,
+              exam_date,
+              laboratory,
+              created_at
+            )
+          `)
+          .in('exams.id', examIds)
+          .order('created_at', { ascending: false, foreignTable: 'exams' });
+
+        if (error) {
+          console.error('❌ [Fallback] Erro ao buscar exam_results:', error);
+        } else {
+          console.log('📦 [Fallback] Processando', data?.length, 'resultados antigos');
+
+          // Normalização para exames antigos
+          const customNormalizationPromises = data?.map(async (result: any) => {
+            const customMatch = await normalizeBiomarkerNameAsync(result.biomarker_name);
+            return { result, customMatch };
+          }) || [];
+
+          const resultsWithCustom = await Promise.all(customNormalizationPromises);
+
+          // Processar resultados antigos (mantém lógica atual)
+          resultsWithCustom.forEach(({ result, customMatch }) => {
           const originalName = result.biomarker_name;
           
           // 🎯 Usar apenas customMatch do backend
@@ -252,6 +330,8 @@ export default function PatientDashboard() {
           }
         }
       });
+        }
+      }
       
       // Segunda passagem: consolidar leucócitos por data E calcular valores absolutos faltantes
       leukocytesByDate.forEach((dateMap, dateKey) => {
@@ -352,35 +432,61 @@ export default function PatientDashboard() {
         });
       });
 
-      // Converter Map para array e agrupar por categoria
-      const biomarkers = Array.from(biomarkerMap.values()).map(b => ({
+      // ✅ FASE 5: Converter Map para array e separar organizados de "Outros"
+      const allBiomarkers = Array.from(biomarkerMap.values()).map(b => ({
         ...b,
         values: Array.from(b.values.values())
       }));
 
-      // Ordenar por categoria e depois por ordem específica ou nome
-      biomarkers.sort((a, b) => {
-        // Primeiro, ordenar por categoria usando category_order do backend
-        if (a.category !== b.category) {
-          const categoryOrderA = a.category_order ?? 999;
-          const categoryOrderB = b.category_order ?? 999;
+      const biomarcadoresOrganizados: any[] = [];
+      const biomarcadoresSemCategoria: any[] = [];
+
+      allBiomarkers.forEach(bio => {
+        const category = bio.category?.toLowerCase().trim();
+        
+        if (!category || category === 'outros' || category === 'other') {
+          biomarcadoresSemCategoria.push(bio);
+        } else {
+          biomarcadoresOrganizados.push(bio);
+        }
+      });
+
+      console.log('📊 [PatientDashboard] Organizados:', biomarcadoresOrganizados.length);
+      console.log('📋 [PatientDashboard] Não categorizados:', biomarcadoresSemCategoria.length);
+
+      // Ordenar usando ordem do backend
+      biomarcadoresOrganizados.sort((a, b) => {
+        // Priorizar data_source 'categorias' (backend)
+        if (a.data_source !== b.data_source) {
+          return a.data_source === 'categorias' ? -1 : 1;
+        }
+        
+        // Ordenar por categoria
+        const categoryOrderA = a.category_order ?? 999;
+        const categoryOrderB = b.category_order ?? 999;
+        if (categoryOrderA !== categoryOrderB) {
           return categoryOrderA - categoryOrderB;
         }
 
-        // Dentro da mesma categoria, usar biomarker_order do backend
+        // Ordenar por biomarcador
         const biomarkerOrderA = a.biomarker_order ?? 999;
         const biomarkerOrderB = b.biomarker_order ?? 999;
-
         if (biomarkerOrderA !== biomarkerOrderB) {
           return biomarkerOrderA - biomarkerOrderB;
         }
 
-        // Se ambos não estão na ordem ou têm a mesma ordem, usar alfabética
+        // Fallback alfabético
         return a.biomarker_name.localeCompare(b.biomarker_name);
       });
 
+      // Ordenar "Outros" alfabeticamente
+      biomarcadoresSemCategoria.sort((a, b) => 
+        a.biomarker_name.localeCompare(b.biomarker_name)
+      );
+
       return {
-        biomarkers,
+        biomarcadoresOrganizados,
+        biomarcadoresSemCategoria,
         examDates: Array.from(examDatesSet).sort()
       };
     }
@@ -407,18 +513,49 @@ export default function PatientDashboard() {
       
       <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        {/* Tabela de Acompanhamento */}
-        {trackingTableData && trackingTableData.biomarkers.length > 0 && (
+        {/* Tabela Principal - Biomarcadores Organizados */}
+        {trackingTableData && trackingTableData.biomarcadoresOrganizados.length > 0 && (
           <BiomarkerTrackingTable
             patientId={id!}
-            data={trackingTableData.biomarkers}
+            data={trackingTableData.biomarcadoresOrganizados}
             examDates={trackingTableData.examDates}
             patientName={patient?.full_name || ''}
           />
         )}
 
+        {/* Seção "Outros" - Biomarcadores Não Categorizados */}
+        {trackingTableData && trackingTableData.biomarcadoresSemCategoria.length > 0 && (
+          <div className="mt-6">
+            <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-2xl p-6 shadow-sm">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                  <Activity className="w-6 h-6 text-orange-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-orange-900 mb-2">
+                    📋 Outros Exames (Não Categorizados)
+                  </h3>
+                  <p className="text-orange-700 text-sm">
+                    Biomarcadores que não foram automaticamente classificados pelo sistema. 
+                    Eles podem ser exames especializados ou variações não mapeadas.
+                  </p>
+                </div>
+              </div>
+              
+              <BiomarkerTrackingTable
+                patientId={id!}
+                data={trackingTableData.biomarcadoresSemCategoria}
+                examDates={trackingTableData.examDates}
+                patientName={patient?.full_name || ''}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Estado Vazio */}
-        {trackingTableData && trackingTableData.biomarkers.length === 0 && (
+        {trackingTableData && 
+         trackingTableData.biomarcadoresOrganizados.length === 0 && 
+         trackingTableData.biomarcadoresSemCategoria.length === 0 && (
           <div className="text-center py-20 bg-white rounded-2xl shadow-lg border border-gray-200">
             <div className="p-6 rounded-2xl bg-gray-50 w-24 h-24 mx-auto mb-6 flex items-center justify-center">
               <Activity className="w-12 h-12 text-gray-400" />
