@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { BackButton } from "@/components/BackButton";
-import exLogo from "@/assets/ex-logo.png";
+import cactoLogo from "@/assets/cacto-logo.png";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -104,11 +104,11 @@ export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '
           )}
           <Link to="/dashboard" className="flex items-center space-x-3 group">
             <img 
-              src={exLogo} 
-              alt="Exames Logo" 
+              src={cactoLogo} 
+              alt="CACTO Logo" 
               className="w-16 h-16 object-contain group-hover:scale-110 transition-transform" 
             />
-            <span className="text-2xl font-bold text-white tracking-tight">Exames</span>
+            <span className="text-2xl font-bold text-white tracking-tight">CACTO</span>
           </Link>
         </div>
         
