@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useExamUpload } from "@/hooks/useExamUpload";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Switch } from "@/components/ui/switch";
@@ -30,6 +30,7 @@ import { Progress } from "@/components/ui/progress";
 export const DashboardUploadZone = () => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const { uploadMultipleExams, uploading } = useExamUpload();
   const [files, setFiles] = useState<File[]>([]);
   const [uploadQueue, setUploadQueue] = useState<any[]>([]);
@@ -180,6 +181,9 @@ export const DashboardUploadZone = () => {
           setMatchDialogOpen(true);
         },
         onComplete: () => {
+          queryClient.invalidateQueries({ queryKey: ["recent-exams", user?.id] });
+          queryClient.invalidateQueries({ queryKey: ["dashboard-stats", user?.id] });
+          
           toast({
             title: "Upload concluído!",
             description: `${files.length} exame(s) processado(s) com sucesso`,
