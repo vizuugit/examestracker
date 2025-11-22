@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import exLogo from "@/assets/ex-logo.png";
+import cactoLogo from "@/assets/cacto-logo.png";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 
 const acceptInviteSchema = z.object({
@@ -170,7 +170,7 @@ const AcceptInvite = () => {
 
       <div className="relative z-10 w-full max-w-md">
         <div className="text-center mb-8">
-          <img src={exLogo} alt="Logo" className="h-16 mx-auto mb-4" />
+          <img src={cactoLogo} alt="CACTO Logo" className="h-16 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-white">Aceitar Convite</h1>
         </div>
 
