@@ -71,7 +71,8 @@ const Dashboard = () => {
           exam_date,
           processing_status,
           created_at,
-          patients!inner(
+          patient_name_extracted,
+          patients(
             id,
             full_name
           )
@@ -86,8 +87,8 @@ const Dashboard = () => {
       return (
         data?.map((exam) => ({
           id: exam.id,
-          patient_name: exam.patients.full_name,
-          patient_id: exam.patients.id,
+          patient_name: exam.patients?.full_name || exam.patient_name_extracted || 'Processando...',
+          patient_id: exam.patients?.id || '',
           file_name: exam.aws_file_name,
           exam_date: exam.exam_date,
           processing_status: exam.processing_status,
