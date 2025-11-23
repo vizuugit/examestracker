@@ -328,7 +328,7 @@ export default function AdminInvites() {
               <div className="md:col-span-2">
                 <Button 
                   type="submit" 
-                  className="w-full bg-rest-blue hover:bg-rest-cyan"
+                  className="w-full bg-rest-blue"
                   disabled={isSending}
                 >
                   {isSending ? (
@@ -408,7 +408,7 @@ export default function AdminInvites() {
                               variant="outline"
                               onClick={() => handleResend(invite.id)}
                               disabled={resendInviteMutation.isPending}
-                              className="border-white/10 text-white hover:bg-white/10"
+                              className="border-white/10 text-white"
                             >
                               🔄 Reenviar
                             </Button>
