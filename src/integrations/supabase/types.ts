@@ -474,6 +474,9 @@ export type Database = {
       }
       patients: {
         Row: {
+          archived: boolean
+          archived_at: string | null
+          archived_by: string | null
           birth_date: string | null
           cpf: string | null
           created_at: string | null
@@ -487,6 +490,9 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          archived?: boolean
+          archived_at?: string | null
+          archived_by?: string | null
           birth_date?: string | null
           cpf?: string | null
           created_at?: string | null
@@ -500,6 +506,9 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          archived?: boolean
+          archived_at?: string | null
+          archived_by?: string | null
           birth_date?: string | null
           cpf?: string | null
           created_at?: string | null

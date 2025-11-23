@@ -27,6 +27,8 @@ import { BackButton } from "@/components/BackButton";
 import cactoGif from "@/assets/cacto-loading.gif";
 import { useDeleteExam } from "@/hooks/useDeleteExam";
 import { useDeletePatient } from "@/hooks/useDeletePatient";
+import { useArchivePatient } from "@/hooks/useArchivePatient";
+import { Archive } from "lucide-react";
 
 const PatientProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -38,9 +40,11 @@ const PatientProfile = () => {
   const [examToCorrect, setExamToCorrect] = useState<any>(null);
   const [examToDelete, setExamToDelete] = useState<string | null>(null);
   const [showDeletePatientDialog, setShowDeletePatientDialog] = useState(false);
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const queryClient = useQueryClient();
   const { deleteExam, isDeleting } = useDeleteExam();
   const { deletePatient, isDeleting: isDeletingPatient } = useDeletePatient();
+  const { archivePatient, isArchiving } = useArchivePatient();
 
   const { data: patient, isLoading } = useQuery({
     queryKey: ["patient", id],
@@ -197,12 +201,20 @@ const PatientProfile = () => {
                   </Button>
                 </div>
 
-                {/* Grupo 2: Ação Destrutiva - Separado visualmente */}
-                <div className="flex pt-2 sm:pt-0 sm:pl-3 sm:border-l sm:border-white/10">
+                {/* Grupo 2: Ações Destrutivas - Separado visualmente */}
+                <div className="flex gap-2 pt-2 sm:pt-0 sm:pl-3 sm:border-l sm:border-white/10">
+                  <Button
+                    onClick={() => setShowArchiveDialog(true)}
+                    variant="outline"
+                    className="flex-1 sm:flex-initial border-yellow-500/50 bg-yellow-500/10 text-yellow-300 hover:bg-yellow-500/20"
+                  >
+                    <Archive className="w-4 h-4 mr-2" />
+                    Arquivar
+                  </Button>
                   <Button
                     onClick={() => setShowDeletePatientDialog(true)}
                     variant="outline"
-                    className="w-full sm:w-auto border-red-500/50 bg-red-500/10 text-red-300 hover:bg-red-500/20"
+                    className="flex-1 sm:flex-initial border-red-500/50 bg-red-500/10 text-red-300 hover:bg-red-500/20"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Excluir
@@ -478,6 +490,51 @@ const PatientProfile = () => {
               className="bg-red-500 hover:bg-red-600 text-white"
             >
               {isDeletingPatient ? "Excluindo..." : "Sim, Excluir Tudo"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Diálogo de Arquivamento */}
+      <AlertDialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog}>
+        <AlertDialogContent className="bg-zinc-900 border-white/10">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white flex items-center gap-2">
+              <Archive className="w-5 h-5 text-yellow-400" />
+              Arquivar Paciente?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-white/70">
+              O arquivamento é uma ação <strong className="text-yellow-400">reversível</strong> e mantém todos os dados do paciente seguros.
+              <br /><br />
+              Ao arquivar este paciente:
+              <ul className="list-disc list-inside mt-2 space-y-1 text-white/60">
+                <li>Ele será removido da lista principal de pacientes</li>
+                <li>Todos os {exams?.length || 0} exames serão preservados</li>
+                <li>Você poderá restaurá-lo a qualquer momento</li>
+              </ul>
+              <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                <p className="text-sm text-yellow-300">
+                  💡 <strong>Dica:</strong> Use o arquivamento para pacientes inativos que você pode precisar consultar futuramente.
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isArchiving} className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (patient) {
+                  archivePatient(patient.id);
+                  setShowArchiveDialog(false);
+                  navigate('/patients');
+                }
+              }}
+              disabled={isArchiving}
+              className="bg-yellow-500 hover:bg-yellow-600 text-white"
+            >
+              {isArchiving ? "Arquivando..." : "Sim, Arquivar"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
