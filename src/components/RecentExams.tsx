@@ -2,12 +2,15 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, CheckCircle, AlertCircle, Eye } from "lucide-react";
+import { FileText, CheckCircle, AlertCircle, Eye, X } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
 import { ExamResultsDialog } from "@/components/ExamResultsDialog";
 import cactoGif from "@/assets/cacto-loading.gif";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface RecentExamsProps {
   exams?: Array<{
@@ -23,7 +26,43 @@ interface RecentExamsProps {
 
 export const RecentExams = ({ exams = [] }: RecentExamsProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [selectedExamId, setSelectedExamId] = useState<string | null>(null);
+  const [cancellingExam, setCancellingExam] = useState<string | null>(null);
+
+  const handleCancelProcessing = async (examId: string) => {
+    setCancellingExam(examId);
+    try {
+      const { error } = await supabase
+        .from("exams")
+        .update({ 
+          processing_status: "error",
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", examId)
+        .eq("processing_status", "processing");
+
+      if (error) throw error;
+
+      toast({
+        title: "Processamento cancelado",
+        description: "O exame foi marcado como erro",
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["recent-exams"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+    } catch (error) {
+      console.error("Erro ao cancelar:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao cancelar",
+        description: "Não foi possível cancelar o processamento",
+      });
+    } finally {
+      setCancellingExam(null);
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -119,6 +158,18 @@ export const RecentExams = ({ exams = [] }: RecentExamsProps) => {
 
                 <div className="flex items-center gap-3">
                   {getStatusBadge(exam.processing_status)}
+                  {exam.processing_status === "processing" && (
+                    <Button
+                      onClick={() => handleCancelProcessing(exam.id)}
+                      disabled={cancellingExam === exam.id}
+                      size="sm"
+                      variant="destructive"
+                      className="bg-red-500/20 text-red-500 border border-red-500/30 hover:bg-red-500/30"
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      {cancellingExam === exam.id ? "Cancelando..." : "Cancelar"}
+                    </Button>
+                  )}
                   {exam.processing_status === "completed" && (
                     <Button
                       onClick={() => setSelectedExamId(exam.id)}
