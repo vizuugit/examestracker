@@ -172,9 +172,9 @@ export default function AdminInvites() {
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      pending: { label: "⏳ Pendente", className: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
-      accepted: { label: "✅ Aceito", className: "bg-green-500/20 text-green-400 border-green-500/30" },
-      expired: { label: "❌ Expirado", className: "bg-red-500/20 text-red-400 border-red-500/30" },
+      pending: { label: "⏳ Pendente", className: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/20" },
+      accepted: { label: "✅ Aceito", className: "bg-green-500/20 text-green-400 border-green-500/30 hover:bg-green-500/20" },
+      expired: { label: "❌ Expirado", className: "bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/20" },
     };
     
     const variant = variants[status as keyof typeof variants] || variants.pending;
