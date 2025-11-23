@@ -145,19 +145,22 @@ const PatientProfile = () => {
 
           {/* Patient Info */}
           <div className="bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 p-8 mb-8">
-            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+            <div className="flex flex-col gap-6">
+              
+              {/* Header: Avatar + Nome */}
               <div className="flex items-center gap-6">
-                <div className="w-24 h-24 bg-gradient-to-br from-rest-blue to-rest-cyan rounded-full flex items-center justify-center text-white text-3xl font-bold">
+                <div className="flex-shrink-0 w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-rest-blue to-rest-cyan rounded-full flex items-center justify-center text-white text-2xl md:text-3xl font-bold">
                   {patient.full_name.charAt(0)}
                 </div>
-                <div>
-                  <h1 className="text-3xl font-bold text-white mb-2">
+                <div className="flex-1 min-w-0">
+                  {/* Nome com truncate para não quebrar */}
+                  <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 truncate" title={patient.full_name}>
                     {patient.full_name}
                   </h1>
-                  <div className="flex gap-4 text-white/70">
+                  <div className="flex flex-wrap gap-3 md:gap-4 text-sm md:text-base text-white/70">
                     {patient.date_of_birth && (
-                      <span>
-                        <Calendar className="w-4 h-4 inline mr-1" />
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
                         {new Date(patient.date_of_birth).toLocaleDateString("pt-BR")}
                       </span>
                     )}
@@ -165,37 +168,48 @@ const PatientProfile = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-                <Button
-                  onClick={() => navigate(`/patients/${id}/dashboard`)}
-                  className="w-full md:w-auto bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white"
-                >
-                  <Activity className="w-4 h-4 mr-2" />
-                  Ver Dashboard
-                </Button>
-                <Button
-                  onClick={() => navigate(`/patients/${id}/charts`)}
-                  className="w-full md:w-auto bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white"
-                >
-                  <Activity className="w-4 h-4 mr-2" />
-                  Gráficos
-                </Button>
-                <Button
-                  onClick={() => setUploadDialogOpen(true)}
-                  className="w-full md:w-auto bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white"
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  Upload de Exame
-                </Button>
-                <Button
-                  onClick={() => setShowDeletePatientDialog(true)}
-                  variant="outline"
-                  className="w-full md:w-auto border-red-500/50 hover:bg-red-500/10 text-red-400 hover:text-red-300"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Excluir Paciente
-                </Button>
+
+              {/* Botões de Ação - Reorganizados */}
+              <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between pt-4 border-t border-white/10">
+                
+                {/* Grupo 1: Ações Principais */}
+                <div className="flex flex-col sm:flex-row gap-2 flex-1">
+                  <Button
+                    onClick={() => navigate(`/patients/${id}/dashboard`)}
+                    className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white"
+                  >
+                    <Activity className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </Button>
+                  <Button
+                    onClick={() => navigate(`/patients/${id}/charts`)}
+                    className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white"
+                  >
+                    <Activity className="w-4 h-4 mr-2" />
+                    Gráficos
+                  </Button>
+                  <Button
+                    onClick={() => setUploadDialogOpen(true)}
+                    className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload
+                  </Button>
+                </div>
+
+                {/* Grupo 2: Ação Destrutiva - Separado visualmente */}
+                <div className="flex pt-2 sm:pt-0 sm:pl-3 sm:border-l sm:border-white/10">
+                  <Button
+                    onClick={() => setShowDeletePatientDialog(true)}
+                    variant="outline"
+                    className="w-full sm:w-auto border-red-500/50 hover:bg-red-500/10 text-red-400 hover:text-red-300"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Excluir
+                  </Button>
+                </div>
               </div>
+
             </div>
 
             {patient.medical_conditions && patient.medical_conditions.length > 0 && (
