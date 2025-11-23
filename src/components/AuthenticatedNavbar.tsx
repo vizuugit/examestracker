@@ -250,17 +250,26 @@ export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '
               </DropdownMenuItem>
               
               {/* Apenas para admins */}
-              {isAdmin && (
-                <>
-                  <DropdownMenuSeparator className="bg-white/10" />
-                  <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10">
-                    <Link to="/admin/invites" className="flex items-center">
-                      <Shield className="mr-2 h-4 w-4" />
-                      Administração
-                    </Link>
-                  </DropdownMenuItem>
-                </>
-              )}
+          {isAdmin && (
+            <>
+              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10">
+                <Link to="/admin/invites" className="flex items-center">
+                  <Shield className="mr-2 h-4 w-4" />
+                  Administração
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10">
+                <Link to="/admin/feedback" className="flex items-center">
+                  <Bell className="mr-2 h-4 w-4" />
+                  Feedback dos Usuários
+                  {unreadCount > 0 && (
+                    <Badge className="ml-auto bg-red-500 text-xs">{unreadCount}</Badge>
+                  )}
+                </Link>
+              </DropdownMenuItem>
+            </>
+          )}
               
               <DropdownMenuSeparator className="bg-white/10" />
               
@@ -318,6 +327,12 @@ export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '
                   <Link to="/admin/invites" className="flex items-center">
                     <Shield className="mr-2 h-4 w-4" />
                     Administração
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10">
+                  <Link to="/admin/feedback" className="flex items-center">
+                    <Bell className="mr-2 h-4 w-4" />
+                    Feedback dos Usuários
                     {unreadCount > 0 && (
                       <Badge className="ml-auto bg-red-500">{unreadCount}</Badge>
                     )}
