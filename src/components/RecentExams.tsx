@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, CheckCircle, AlertCircle, Eye, X } from "lucide-react";
+import { FileText, CheckCircle, AlertCircle, Eye, X, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
@@ -11,6 +11,7 @@ import cactoGif from "@/assets/cacto-loading.gif";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useDeleteExam } from "@/hooks/useDeleteExam";
 
 interface RecentExamsProps {
   exams?: Array<{
@@ -30,6 +31,7 @@ export const RecentExams = ({ exams = [] }: RecentExamsProps) => {
   const queryClient = useQueryClient();
   const [selectedExamId, setSelectedExamId] = useState<string | null>(null);
   const [cancellingExam, setCancellingExam] = useState<string | null>(null);
+  const { deleteExam, isDeleting } = useDeleteExam();
 
   const handleCancelProcessing = async (examId: string) => {
     setCancellingExam(examId);
@@ -168,6 +170,18 @@ export const RecentExams = ({ exams = [] }: RecentExamsProps) => {
                     >
                       <X className="w-4 h-4 mr-2" />
                       {cancellingExam === exam.id ? "Cancelando..." : "Cancelar"}
+                    </Button>
+                  )}
+                  {(exam.processing_status === "error" || exam.processing_status === "failed") && (
+                    <Button
+                      onClick={() => deleteExam(exam.id)}
+                      disabled={isDeleting}
+                      size="sm"
+                      variant="destructive"
+                      className="bg-red-500/20 text-red-500 border border-red-500/30 hover:bg-red-500/30"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      {isDeleting ? "Deletando..." : "Deletar"}
                     </Button>
                   )}
                   {exam.processing_status === "completed" && (
