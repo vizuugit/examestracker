@@ -150,7 +150,20 @@ const AcceptInvite = () => {
         console.error("Erro ao notificar admin:", err);
       }
 
-      toast.success("Conta criada com sucesso!");
+      // Enviar email de boas-vindas ao profissional
+      try {
+        await supabase.functions.invoke("send-welcome-email", {
+          body: {
+            professionalName: formData.fullName,
+            professionalEmail: invitation.email,
+            specialty: formData.specialty,
+          },
+        });
+      } catch (err) {
+        console.error("Erro ao enviar email de boas-vindas:", err);
+      }
+
+      toast.success("Conta criada com sucesso! Verifique seu email.");
       navigate("/dashboard");
 
     } catch (err: any) {
