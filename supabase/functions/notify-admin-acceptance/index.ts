@@ -155,7 +155,7 @@ serve(async (req: Request): Promise<Response> => {
         "Authorization": `Bearer ${resendApiKey}`,
       },
       body: JSON.stringify({
-        from: "Sistema Exames <onboarding@resend.dev>",
+        from: "HealthTrack Notificações <notificacoes@exames.co>",
         to: [adminAuth.user.email],
         subject: emailContent.subject,
         html: emailContent.html,
