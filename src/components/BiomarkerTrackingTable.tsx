@@ -35,6 +35,7 @@ interface BiomarkerRow {
   unit: string | null;
   reference_min: number | null;
   reference_max: number | null;
+  reference_text?: string | null;
   category: string;
   category_order?: number;
   biomarker_order?: number;
@@ -603,9 +604,17 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                           
                           
                           <TableCell className="text-gray-600 text-sm font-medium text-center">
-                            {row.reference_min !== null && row.reference_max !== null
-                              ? `${formatBiomarkerValue(row.reference_min, row.biomarker_name, row.unit)}-${formatBiomarkerValue(row.reference_max, row.biomarker_name, row.unit)}`
-                              : <span className="text-gray-400 italic">N/A</span>}
+                            {row.reference_text ? (
+                              <span className="text-gray-600 text-sm font-mono">
+                                {row.reference_text}
+                              </span>
+                            ) : row.reference_min != null && row.reference_max != null ? (
+                              <span className="text-gray-600 text-sm font-mono">
+                                {formatBiomarkerValue(row.reference_min, row.biomarker_name, row.unit)}-{formatBiomarkerValue(row.reference_max, row.biomarker_name, row.unit)}
+                              </span>
+                            ) : (
+                              <span className="text-gray-400 italic text-sm">N/A</span>
+                            )}
                           </TableCell>
                           
                           <TableCell className="text-center">

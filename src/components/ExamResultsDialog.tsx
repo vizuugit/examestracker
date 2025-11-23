@@ -635,11 +635,23 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
                           {/* Biomarcadores da categoria */}
                           {results.map((bio: any) => {
                             // Detectar se é estrutura nova ou antiga
+                            const isNewStructure = !!examData?.categorias;
                             const biomarkerName = bio.nome || bio.biomarker_name;
                             const bioValue = bio.resultado || bio.value;
                             const bioUnit = bio.unidade || bio.unit;
-                            const bioRefMin = bio.referencia_min ?? bio.reference_min;
-                            const bioRefMax = bio.referencia_max ?? bio.reference_max;
+                            
+                            const bioRefText = isNewStructure
+                              ? (bio.valor_referencia_texto ?? null)
+                              : null;
+                            
+                            const bioRefMin = isNewStructure
+                              ? (bio.valor_referencia_min ?? null)
+                              : (bio.reference_min ?? null);
+                            
+                            const bioRefMax = isNewStructure
+                              ? (bio.valor_referencia_max ?? null)
+                              : (bio.reference_max ?? null);
+                            
                             const bioStatus = bio.status;
                             const bioId = bio.id || `${category}-${biomarkerName}`;
                             
@@ -664,13 +676,15 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
                                 </TableCell>
                                 <TableCell className="text-right py-4 px-6">
                                   <span className={`font-mono text-sm ${
-                                    bioRefMin !== null && bioRefMax !== null
+                                    bioRefText || (bioRefMin != null && bioRefMax != null)
                                       ? 'text-gray-600'
                                       : 'text-gray-400 italic'
                                   }`}>
-                                    {bioRefMin !== null && bioRefMax !== null
-                                      ? `${bioRefMin} - ${bioRefMax}`
-                                      : "N/A"}
+                                    {bioRefText
+                                      ? bioRefText
+                                      : bioRefMin != null && bioRefMax != null
+                                        ? `${bioRefMin} - ${bioRefMax}`
+                                        : "N/A"}
                                   </span>
                                 </TableCell>
                                 <TableCell className="text-center py-4 px-6">
