@@ -37,7 +37,7 @@ export default function AdminImportSpec() {
 
       setProgress(30);
       const { data, error } = await supabase.functions.invoke('import-biomarker-spec', {
-        body: {},
+        body: { spec },
       });
 
       setProgress(90);

@@ -39,10 +39,12 @@ Deno.serve(async (req) => {
 
     console.log('[import-biomarker-spec] Iniciando importação...');
 
-    // Carregar o arquivo JSON
-    const specPath = new URL('../../src/data/biomarker-specification-v2.json', import.meta.url);
-    const specText = await Deno.readTextFile(specPath);
-    const spec: BiomarkerSpec = JSON.parse(specText);
+    // Receber o JSON do request body
+    const { spec } = await req.json();
+    
+    if (!spec) {
+      throw new Error('Especificação de biomarcadores não fornecida no request');
+    }
 
     console.log(`[import-biomarker-spec] Arquivo carregado: ${spec.versao} (${spec.data_atualizacao})`);
     console.log(`[import-biomarker-spec] Categorias: ${spec.total_categorias}, Biomarcadores: ${spec.total_biomarcadores}`);
@@ -75,7 +77,7 @@ Deno.serve(async (req) => {
 
     // Importar category_display_order
     console.log('[import-biomarker-spec] Importando ordem de categorias...');
-    const categoryOrders = spec.categorias.map(cat => ({
+    const categoryOrders = spec.categorias.map((cat: any) => ({
       category_key: cat.nome,
       display_order: cat.ordem,
     }));
@@ -89,7 +91,7 @@ Deno.serve(async (req) => {
 
     // Importar biomarker_category_overrides
     console.log('[import-biomarker-spec] Importando overrides de biomarcadores...');
-    const overrides = spec.biomarcadores.map(bio => ({
+    const overrides = spec.biomarcadores.map((bio: any) => ({
       biomarker_name: bio.nome_padrao,
       category: bio.categoria,
       display_order: bio.biomarker_order,
