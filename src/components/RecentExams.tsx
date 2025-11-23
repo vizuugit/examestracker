@@ -81,7 +81,7 @@ export const RecentExams = ({ exams = [] }: RecentExamsProps) => {
             <img 
               src={cactoGif} 
               alt="Processando" 
-              className="w-5 h-5 object-contain"
+              className="w-6 h-6 object-contain"
             />
             <span className="text-sm text-rest-cyan">Processando</span>
           </div>
