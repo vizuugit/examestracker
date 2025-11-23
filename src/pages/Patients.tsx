@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, Users, MoreVertical, Trash2, Eye } from "lucide-react";
+import { Plus, Search, Users, MoreVertical, Trash2, Eye, Archive, ArchiveRestore } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BackButton } from "@/components/BackButton";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,21 +28,25 @@ import {
   AlertDialogTitle 
 } from "@/components/ui/alert-dialog";
 import { useDeletePatient } from "@/hooks/useDeletePatient";
+import { useArchivePatient } from "@/hooks/useArchivePatient";
 
 const Patients = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [showArchived, setShowArchived] = useState(false);
   const [patientToDelete, setPatientToDelete] = useState<any>(null);
   const { deletePatient, isDeleting } = useDeletePatient();
+  const { archivePatient, unarchivePatient, isArchiving, isUnarchiving } = useArchivePatient();
 
   const { data: patients, isLoading } = useQuery({
-    queryKey: ["patients", user?.id],
+    queryKey: ["patients", user?.id, showArchived],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("patients")
         .select("*")
         .eq("professional_id", user?.id)
+        .eq("archived", showArchived)
         .order("full_name");
 
       if (error) throw error;
@@ -64,19 +69,43 @@ const Patients = () => {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
             <div className="flex flex-col">
               <h1 className="text-4xl md:text-5xl font-bold text-white">
-                Meus Pacientes
+                {showArchived ? 'Pacientes Arquivados' : 'Meus Pacientes'}
               </h1>
               <p className="text-white/70 mt-2">
-                Gerencie seus pacientes e seus exames
+                {showArchived 
+                  ? 'Visualize e restaure pacientes arquivados' 
+                  : 'Gerencie seus pacientes e seus exames'
+                }
               </p>
             </div>
-            <Button
-              onClick={() => navigate("/patients/new")}
-              className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white shrink-0"
-            >
-              <Plus className="w-5 h-5 mr-2" />
-              Adicionar Paciente
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowArchived(!showArchived)}
+                className="border-white/20 hover:bg-white/10 text-white shrink-0"
+              >
+                {showArchived ? (
+                  <>
+                    <Users className="w-5 h-5 mr-2" />
+                    Ver Ativos
+                  </>
+                ) : (
+                  <>
+                    <Archive className="w-5 h-5 mr-2" />
+                    Ver Arquivados
+                  </>
+                )}
+              </Button>
+              {!showArchived && (
+                <Button
+                  onClick={() => navigate("/patients/new")}
+                  className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white shrink-0"
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Adicionar Paciente
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* Search */}
@@ -121,12 +150,31 @@ const Patients = () => {
                         <Eye className="w-4 h-4 mr-2" />
                         Ver Detalhes
                       </DropdownMenuItem>
+                      {showArchived ? (
+                        <DropdownMenuItem 
+                          onClick={() => unarchivePatient(patient.id)}
+                          disabled={isUnarchiving}
+                          className="text-green-400 focus:text-green-300 focus:bg-green-500/10 cursor-pointer"
+                        >
+                          <ArchiveRestore className="w-4 h-4 mr-2" />
+                          Restaurar
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem 
+                          onClick={() => archivePatient(patient.id)}
+                          disabled={isArchiving}
+                          className="text-yellow-400 focus:text-yellow-300 focus:bg-yellow-500/10 cursor-pointer"
+                        >
+                          <Archive className="w-4 h-4 mr-2" />
+                          Arquivar
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem 
                         onClick={() => setPatientToDelete(patient)}
                         className="text-red-400 focus:text-red-300 focus:bg-red-500/10 cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4 mr-2" />
-                        Excluir
+                        Excluir Permanente
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -135,6 +183,12 @@ const Patients = () => {
                     onClick={() => navigate(`/patients/${patient.id}`)}
                     className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-6 hover:border-rest-blue/50 transition-all cursor-pointer hover-scale"
                   >
+                    {showArchived && (
+                      <Badge className="mb-3 bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+                        <Archive className="w-3 h-3 mr-1" />
+                        Arquivado
+                      </Badge>
+                    )}
                     <div className="flex items-center gap-4 mb-4">
                       <div className="w-16 h-16 bg-gradient-to-br from-rest-blue to-rest-cyan rounded-full flex items-center justify-center text-white text-xl font-bold">
                         {patient.full_name.charAt(0)}
