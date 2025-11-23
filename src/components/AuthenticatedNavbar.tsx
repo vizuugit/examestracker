@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Menu, LogOut, User, Home, Users, Shield, Bell, Mail, Copy, Info } from "lucide-react";
+import { Menu, LogOut, User, Home, Users, Shield, Bell, Mail, Copy, Info, Search } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { GlobalSearch } from "@/components/GlobalSearch";
 
 interface AuthenticatedNavbarProps {
   showBackButton?: boolean;
@@ -35,6 +36,7 @@ export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '
   const location = useLocation();
   const queryClient = useQueryClient();
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
@@ -95,6 +97,18 @@ export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '
     },
   });
 
+  // Atalho de teclado para busca global (⌘K ou Ctrl+K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 bg-black border-b border-white/10 backdrop-blur-md">
       <div className="container mx-auto flex items-center justify-between h-20 px-4">
@@ -133,6 +147,20 @@ export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-4">
+          {/* Busca Global */}
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => setSearchOpen(true)}
+            className="gap-2 text-white/80 hover:text-white hover:bg-white/10"
+          >
+            <Search className="h-4 w-4" />
+            <span className="hidden lg:inline">Buscar</span>
+            <kbd className="hidden lg:inline pointer-events-none h-5 select-none items-center gap-1 rounded border border-white/20 bg-white/5 px-1.5 font-mono text-[10px] font-medium opacity-100 ml-2">
+              <span className="text-xs">⌘</span>K
+            </kbd>
+          </Button>
+
           {/* Notificações para Admins */}
           {isAdmin && (
             <Popover>
@@ -330,6 +358,8 @@ export const AuthenticatedNavbar = ({ showBackButton = false, backButtonPath = '
           </div>
         </DialogContent>
       </Dialog>
+
+      <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </header>
   );
 };
