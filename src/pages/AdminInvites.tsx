@@ -374,7 +374,7 @@ export default function AdminInvites() {
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-white/10">
+                    <TableRow className="border-white/10 hover:bg-transparent">
                       <TableHead className="text-white/80">Email</TableHead>
                       <TableHead className="text-white/80">Nome</TableHead>
                       <TableHead className="text-white/80">Role</TableHead>
