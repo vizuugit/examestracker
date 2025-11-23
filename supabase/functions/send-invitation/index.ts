@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { Resend } from "npm:resend@4.0.0";
 import { generateInvitationEmail } from "./_shared/email-templates.ts";
 
 const corsHeaders = {
@@ -27,7 +26,6 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const resend = new Resend(resendApiKey);
 
     const { invitationId }: InvitationRequest = await req.json();
 
@@ -66,21 +64,31 @@ serve(async (req: Request): Promise<Response> => {
       expiresAt: invitation.expires_at,
     });
 
-    // Enviar email via Resend
+    // Enviar email via Resend API
     console.log(`📧 Enviando email para ${invitation.email}...`);
     
-    const { data: emailData, error: emailError } = await resend.emails.send({
-      from: "Sistema Exames <onboarding@resend.dev>",
-      to: [invitation.email],
-      subject: emailContent.subject,
-      html: emailContent.html,
-      text: emailContent.text,
+    const emailResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${resendApiKey}`,
+      },
+      body: JSON.stringify({
+        from: "Sistema Exames <onboarding@resend.dev>",
+        to: [invitation.email],
+        subject: emailContent.subject,
+        html: emailContent.html,
+        text: emailContent.text,
+      }),
     });
 
-    if (emailError) {
-      console.error("❌ Erro ao enviar email:", emailError);
-      throw new Error(`Falha no envio: ${emailError.message}`);
+    if (!emailResponse.ok) {
+      const errorData = await emailResponse.json();
+      console.error("❌ Erro ao enviar email:", errorData);
+      throw new Error(`Falha no envio: ${JSON.stringify(errorData)}`);
     }
+
+    const emailData = await emailResponse.json();
 
     console.log("✅ Email enviado com sucesso:", emailData);
 

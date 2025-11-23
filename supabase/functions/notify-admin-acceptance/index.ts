@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { Resend } from "npm:resend@4.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -108,7 +107,6 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const resend = new Resend(resendApiKey);
 
     const { invitationId } = await req.json();
 
@@ -149,18 +147,28 @@ serve(async (req: Request): Promise<Response> => {
       professionalEmail: invitation.email,
     });
 
-    // Enviar email
-    const { data: emailData, error: emailError } = await resend.emails.send({
-      from: "Sistema Exames <onboarding@resend.dev>",
-      to: [adminAuth.user.email],
-      subject: emailContent.subject,
-      html: emailContent.html,
-      text: emailContent.text,
+    // Enviar email via Resend API
+    const emailResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${resendApiKey}`,
+      },
+      body: JSON.stringify({
+        from: "Sistema Exames <onboarding@resend.dev>",
+        to: [adminAuth.user.email],
+        subject: emailContent.subject,
+        html: emailContent.html,
+        text: emailContent.text,
+      }),
     });
 
-    if (emailError) {
-      throw emailError;
+    if (!emailResponse.ok) {
+      const errorData = await emailResponse.json();
+      throw new Error(`Resend API error: ${JSON.stringify(errorData)}`);
     }
+
+    const emailData = await emailResponse.json();
 
     console.log("✅ Notificação de aceite enviada ao admin");
 
