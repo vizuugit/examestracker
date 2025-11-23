@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Upload, Calendar, Activity, Heart, Edit } from "lucide-react";
+import { Upload, Calendar, Activity, Heart, Edit, Trash2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,9 +12,21 @@ import { Badge } from "@/components/ui/badge";
 import { ExamUploadDialog } from "@/components/ExamUploadDialog";
 import { ExamResultsDialog } from "@/components/ExamResultsDialog";
 import { ExamCorrectionDialog } from "@/components/ExamCorrectionDialog";
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle 
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { BackButton } from "@/components/BackButton";
 import cactoGif from "@/assets/cacto-loading.gif";
+import { useDeleteExam } from "@/hooks/useDeleteExam";
+import { useDeletePatient } from "@/hooks/useDeletePatient";
 
 const PatientProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -24,7 +36,11 @@ const PatientProfile = () => {
   const [selectedExamId, setSelectedExamId] = useState<string | null>(null);
   const [correctionDialogOpen, setCorrectionDialogOpen] = useState(false);
   const [examToCorrect, setExamToCorrect] = useState<any>(null);
+  const [examToDelete, setExamToDelete] = useState<string | null>(null);
+  const [showDeletePatientDialog, setShowDeletePatientDialog] = useState(false);
   const queryClient = useQueryClient();
+  const { deleteExam, isDeleting } = useDeleteExam();
+  const { deletePatient, isDeleting: isDeletingPatient } = useDeletePatient();
 
   const { data: patient, isLoading } = useQuery({
     queryKey: ["patient", id],
@@ -171,6 +187,14 @@ const PatientProfile = () => {
                   <Upload className="w-4 h-4 mr-2" />
                   Upload de Exame
                 </Button>
+                <Button
+                  onClick={() => setShowDeletePatientDialog(true)}
+                  variant="outline"
+                  className="w-full md:w-auto border-red-500/50 hover:bg-red-500/10 text-red-400 hover:text-red-300"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Excluir Paciente
+                </Button>
               </div>
             </div>
 
@@ -296,24 +320,38 @@ const PatientProfile = () => {
                           <span className="text-sm text-white/60 whitespace-nowrap">{exam.total_biomarkers} biomarcadores</span>
                         )}
                         {exam.processing_status === 'completed' && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setExamToCorrect({
-                                id: exam.id,
-                                paciente: exam.patient_name_extracted,
-                                laboratorio: exam.laboratory,
-                                data_exame: exam.exam_date,
-                              });
-                              setCorrectionDialogOpen(true);
-                            }}
-                            className="border-white/20 hover:bg-white/10"
-                          >
-                            <Edit className="h-3 w-3 mr-1" />
-                            Corrigir
-                          </Button>
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setExamToCorrect({
+                                  id: exam.id,
+                                  paciente: exam.patient_name_extracted,
+                                  laboratorio: exam.laboratory,
+                                  data_exame: exam.exam_date,
+                                });
+                                setCorrectionDialogOpen(true);
+                              }}
+                              className="border-white/20 hover:bg-white/10"
+                            >
+                              <Edit className="h-3 w-3 mr-1" />
+                              Corrigir
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setExamToDelete(exam.id);
+                              }}
+                              className="border-red-500/50 hover:bg-red-500/10 text-red-400 hover:text-red-300"
+                            >
+                              <Trash2 className="h-3 w-3 mr-1" />
+                              Excluir
+                            </Button>
+                          </>
                         )}
                       </div>
                     </div>
@@ -367,6 +405,69 @@ const PatientProfile = () => {
         onOpenChange={(open) => !open && setSelectedExamId(null)}
         examId={selectedExamId}
       />
+
+      <AlertDialog open={!!examToDelete} onOpenChange={(open) => !open && setExamToDelete(null)}>
+        <AlertDialogContent className="bg-zinc-900 border-white/10">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">Excluir Exame?</AlertDialogTitle>
+            <AlertDialogDescription className="text-white/70">
+              Esta ação não pode ser desfeita. Todos os resultados e análises deste exame serão permanentemente removidos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting} className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (examToDelete) {
+                  deleteExam(examToDelete);
+                  setExamToDelete(null);
+                }
+              }}
+              disabled={isDeleting}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
+              {isDeleting ? "Excluindo..." : "Excluir"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showDeletePatientDialog} onOpenChange={setShowDeletePatientDialog}>
+        <AlertDialogContent className="bg-zinc-900 border-white/10">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">Excluir Paciente?</AlertDialogTitle>
+            <AlertDialogDescription className="text-white/70">
+              <span className="text-red-400 font-semibold">⚠️ ATENÇÃO: Esta ação é irreversível!</span>
+              <br /><br />
+              Ao excluir este paciente:
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Todos os {exams?.length || 0} exames serão removidos</li>
+                <li>Todos os resultados e análises serão perdidos</li>
+                <li>O histórico completo será apagado</li>
+              </ul>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeletingPatient} className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (patient) {
+                  deletePatient(patient.id);
+                  setShowDeletePatientDialog(false);
+                }
+              }}
+              disabled={isDeletingPatient}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
+              {isDeletingPatient ? "Excluindo..." : "Sim, Excluir Tudo"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

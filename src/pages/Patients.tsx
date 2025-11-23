@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, Users } from "lucide-react";
+import { Plus, Search, Users, MoreVertical, Trash2, Eye } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,11 +10,30 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BackButton } from "@/components/BackButton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle 
+} from "@/components/ui/alert-dialog";
+import { useDeletePatient } from "@/hooks/useDeletePatient";
 
 const Patients = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [patientToDelete, setPatientToDelete] = useState<any>(null);
+  const { deletePatient, isDeleting } = useDeletePatient();
 
   const { data: patients, isLoading } = useQuery({
     queryKey: ["patients", user?.id],
@@ -83,31 +102,60 @@ const Patients = () => {
           ) : filteredPatients && filteredPatients.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredPatients.map((patient) => (
-                <div
-                  key={patient.id}
-                  onClick={() => navigate(`/patients/${patient.id}`)}
-                  className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-6 hover:border-rest-blue/50 transition-all cursor-pointer group hover-scale"
-                >
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-rest-blue to-rest-cyan rounded-full flex items-center justify-center text-white text-xl font-bold">
-                      {patient.full_name.charAt(0)}
+                <div key={patient.id} className="relative group">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-10 text-white hover:bg-white/10"
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-zinc-900 border-white/10">
+                      <DropdownMenuItem 
+                        onClick={() => navigate(`/patients/${patient.id}`)}
+                        className="text-white hover:bg-white/10 cursor-pointer"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Ver Detalhes
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => setPatientToDelete(patient)}
+                        className="text-red-400 focus:text-red-300 focus:bg-red-500/10 cursor-pointer"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Excluir
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  <div
+                    onClick={() => navigate(`/patients/${patient.id}`)}
+                    className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-6 hover:border-rest-blue/50 transition-all cursor-pointer hover-scale"
+                  >
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-rest-blue to-rest-cyan rounded-full flex items-center justify-center text-white text-xl font-bold">
+                        {patient.full_name.charAt(0)}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-white group-hover:text-rest-lightblue transition-colors">
+                          {patient.full_name}
+                        </h3>
+                        {patient.cpf && (
+                          <p className="text-sm text-white/60">CPF: {patient.cpf}</p>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-white group-hover:text-rest-lightblue transition-colors">
-                        {patient.full_name}
-                      </h3>
-                      {patient.cpf && (
-                        <p className="text-sm text-white/60">CPF: {patient.cpf}</p>
+                    <div className="space-y-2 text-sm text-white/70">
+                      {patient.email && (
+                        <p>📧 {patient.email}</p>
+                      )}
+                      {patient.phone && (
+                        <p>📱 {patient.phone}</p>
                       )}
                     </div>
-                  </div>
-                  <div className="space-y-2 text-sm text-white/70">
-                    {patient.email && (
-                      <p>📧 {patient.email}</p>
-                    )}
-                    {patient.phone && (
-                      <p>📱 {patient.phone}</p>
-                    )}
                   </div>
                 </div>
               ))}
@@ -139,6 +187,34 @@ const Patients = () => {
         </div>
       </main>
       <Footer />
+
+      <AlertDialog open={!!patientToDelete} onOpenChange={(open) => !open && setPatientToDelete(null)}>
+        <AlertDialogContent className="bg-zinc-900 border-white/10">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">Excluir {patientToDelete?.full_name}?</AlertDialogTitle>
+            <AlertDialogDescription className="text-white/70">
+              Esta ação não pode ser desfeita. Todos os exames e dados deste paciente serão permanentemente removidos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting} className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (patientToDelete) {
+                  deletePatient(patientToDelete.id);
+                  setPatientToDelete(null);
+                }
+              }}
+              disabled={isDeleting}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
+              {isDeleting ? "Excluindo..." : "Excluir"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
