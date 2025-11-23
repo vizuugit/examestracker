@@ -114,11 +114,14 @@ Deno.serve(async (req) => {
 
     for (const bio of spec.biomarcadores) {
       for (const sinonimo of bio.sinonimos) {
-        // Evitar duplicatas (sinônimo = nome padrão)
-        if (sinonimo.trim() !== bio.nome_padrao.trim()) {
+        const trimmed = sinonimo.trim();
+        const trimmedNomePadrao = bio.nome_padrao.trim();
+        // Evitar duplicatas (sinônimo = nome padrão, ignorando espaços)
+        if (trimmed !== trimmedNomePadrao) {
           variations.push({
             biomarker_normalized_name: bio.nome_padrao,
-            variation: sinonimo.trim(),
+            // Constraint exige variação em minúsculas
+            variation: trimmed.toLowerCase(),
             category: bio.categoria,
           });
         }
@@ -158,7 +161,24 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('[import-biomarker-spec] Erro durante importação:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+
+    let errorMessage = 'Erro desconhecido';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === 'object' && error !== null) {
+      if ('message' in error) {
+        errorMessage = String((error as any).message);
+      } else if ('code' in error) {
+        errorMessage = `Erro de banco de dados: ${(error as any).code}`;
+      } else {
+        try {
+          errorMessage = JSON.stringify(error);
+        } catch {
+          errorMessage = 'Erro ao serializar erro';
+        }
+      }
+    }
+
     return new Response(
       JSON.stringify({ 
         success: false, 
