@@ -40,7 +40,7 @@ export function useExamCorrection() {
         correctionType = 'data_nascimento_errada';
       }
 
-      const { error } = await supabase.from('corrections').insert({
+      const { data: correctionData, error } = await supabase.from('corrections').insert({
         user_id: user.id,
         exam_id: data.examId,
         field_name: data.fieldName,
@@ -48,7 +48,7 @@ export function useExamCorrection() {
         user_value: data.userValue,
         correction_type: correctionType,
         text_sample: data.textSample?.substring(0, 5000),
-      });
+      }).select().single();
 
       if (error) throw error;
 
@@ -69,6 +69,27 @@ export function useExamCorrection() {
           .from('exams')
           .update(updateData)
           .eq('id', data.examId);
+      }
+
+      // Notificar admin sobre a correção
+      const { error: notifyError } = await supabase.functions.invoke('notify-admin-correction', {
+        body: {
+          type: 'user_correction',
+          userId: user.id,
+          examId: data.examId,
+          relatedId: correctionData.id,
+          fieldChanged: data.fieldName,
+          oldValue: data.aiValue,
+          newValue: data.userValue,
+          metadata: {
+            correction_type: correctionType,
+          },
+        },
+      });
+
+      if (notifyError) {
+        console.warn('Failed to notify admin:', notifyError);
+        // Não falha a operação se notificação falhar
       }
 
       toast.success("Obrigado! Sua correção vai ajudar a IA a melhorar 🚀");

@@ -20,8 +20,12 @@ export type Database = {
           created_at: string | null
           id: string
           message: string
+          metadata: Json | null
           read: boolean | null
+          related_correction_id: string | null
           related_invitation_id: string | null
+          related_missing_biomarker_id: string | null
+          related_rejected_biomarker_id: string | null
           title: string
           type: string
         }
@@ -30,8 +34,12 @@ export type Database = {
           created_at?: string | null
           id?: string
           message: string
+          metadata?: Json | null
           read?: boolean | null
+          related_correction_id?: string | null
           related_invitation_id?: string | null
+          related_missing_biomarker_id?: string | null
+          related_rejected_biomarker_id?: string | null
           title: string
           type: string
         }
@@ -40,17 +48,42 @@ export type Database = {
           created_at?: string | null
           id?: string
           message?: string
+          metadata?: Json | null
           read?: boolean | null
+          related_correction_id?: string | null
           related_invitation_id?: string | null
+          related_missing_biomarker_id?: string | null
+          related_rejected_biomarker_id?: string | null
           title?: string
           type?: string
         }
         Relationships: [
           {
+            foreignKeyName: "admin_notifications_related_correction_id_fkey"
+            columns: ["related_correction_id"]
+            isOneToOne: false
+            referencedRelation: "corrections"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "admin_notifications_related_invitation_id_fkey"
             columns: ["related_invitation_id"]
             isOneToOne: false
             referencedRelation: "invitations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_notifications_related_missing_biomarker_id_fkey"
+            columns: ["related_missing_biomarker_id"]
+            isOneToOne: false
+            referencedRelation: "missing_biomarkers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_notifications_related_rejected_biomarker_id_fkey"
+            columns: ["related_rejected_biomarker_id"]
+            isOneToOne: false
+            referencedRelation: "rejected_biomarkers"
             referencedColumns: ["id"]
           },
         ]
@@ -191,6 +224,7 @@ export type Database = {
       }
       corrections: {
         Row: {
+          admin_notes: string | null
           ai_value: string | null
           correction_type: string | null
           created_at: string | null
@@ -204,6 +238,7 @@ export type Database = {
           user_value: string
         }
         Insert: {
+          admin_notes?: string | null
           ai_value?: string | null
           correction_type?: string | null
           created_at?: string | null
@@ -217,6 +252,7 @@ export type Database = {
           user_value: string
         }
         Update: {
+          admin_notes?: string | null
           ai_value?: string | null
           correction_type?: string | null
           created_at?: string | null
@@ -472,6 +508,71 @@ export type Database = {
         }
         Relationships: []
       }
+      missing_biomarkers: {
+        Row: {
+          admin_notes: string | null
+          biomarker_name: string
+          created_at: string | null
+          exam_id: string
+          id: string
+          observation: string | null
+          reference_max: number | null
+          reference_min: number | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          suggested_category: string | null
+          unit: string | null
+          user_id: string
+          value: string
+          value_numeric: number | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          biomarker_name: string
+          created_at?: string | null
+          exam_id: string
+          id?: string
+          observation?: string | null
+          reference_max?: number | null
+          reference_min?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          suggested_category?: string | null
+          unit?: string | null
+          user_id: string
+          value: string
+          value_numeric?: number | null
+        }
+        Update: {
+          admin_notes?: string | null
+          biomarker_name?: string
+          created_at?: string | null
+          exam_id?: string
+          id?: string
+          observation?: string | null
+          reference_max?: number | null
+          reference_min?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          suggested_category?: string | null
+          unit?: string | null
+          user_id?: string
+          value?: string
+          value_numeric?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "missing_biomarkers_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       patients: {
         Row: {
           archived: boolean
@@ -563,33 +664,45 @@ export type Database = {
       }
       rejected_biomarkers: {
         Row: {
+          admin_notes: string | null
           created_at: string | null
           exam_id: string | null
           id: string
           original_name: string
           original_value: string | null
           rejection_reason: string
+          reviewed_at: string | null
+          reviewed_by: string | null
           similarity_score: number | null
+          status: string | null
           suggestions: string[] | null
         }
         Insert: {
+          admin_notes?: string | null
           created_at?: string | null
           exam_id?: string | null
           id?: string
           original_name: string
           original_value?: string | null
           rejection_reason: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           similarity_score?: number | null
+          status?: string | null
           suggestions?: string[] | null
         }
         Update: {
+          admin_notes?: string | null
           created_at?: string | null
           exam_id?: string | null
           id?: string
           original_name?: string
           original_value?: string | null
           rejection_reason?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           similarity_score?: number | null
+          status?: string | null
           suggestions?: string[] | null
         }
         Relationships: [

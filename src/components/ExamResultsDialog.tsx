@@ -30,7 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, TrendingUp, TrendingDown, CheckCircle, Brain, FileDown, FileSpreadsheet } from "lucide-react";
+import { Search, TrendingUp, TrendingDown, CheckCircle, Brain, FileDown, FileSpreadsheet, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import jsPDF from "jspdf";
@@ -42,6 +42,7 @@ import { ExamInsightsPanel } from "@/components/ExamInsightsPanel";
 import type { ExamWithInsights } from "@/types/exam-insights";
 import { getBiomarkerCategory } from "@/services/biomarkerCategoryService";
 import { toast } from "sonner";
+import { AddMissingBiomarkerDialog } from "@/components/AddMissingBiomarkerDialog";
 
 interface ExamResultsDialogProps {
   open: boolean;
@@ -53,6 +54,7 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [addBiomarkerOpen, setAddBiomarkerOpen] = useState(false);
   const queryClient = useQueryClient();
   const { analyzeExam, analyzing } = useExamAnalysis();
 
@@ -545,6 +547,16 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
               </Button>
 
               <Button
+                onClick={() => setAddBiomarkerOpen(true)}
+                disabled={!examId}
+                variant="outline"
+                className="h-12 border-2 border-gray-200 hover:border-orange-500 hover:bg-orange-50 rounded-xl font-semibold transition-all"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Adicionar Biomarcador
+              </Button>
+
+              <Button
                 onClick={handleGenerateInsights}
                 disabled={analyzing || isLoading}
                 className="h-12 bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-blue/90 hover:to-rest-cyan/90 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
@@ -711,6 +723,15 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
           </TabsContent>
         </Tabs>
       </DialogContent>
+
+      {/* Dialog para adicionar biomarcador ausente */}
+      {examId && (
+        <AddMissingBiomarkerDialog
+          open={addBiomarkerOpen}
+          onOpenChange={setAddBiomarkerOpen}
+          examId={examId}
+        />
+      )}
     </Dialog>
   );
 }

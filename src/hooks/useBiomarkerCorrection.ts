@@ -62,13 +62,33 @@ export const useBiomarkerCorrection = () => {
 
       console.log('✅ Correções salvas:', data);
 
+      // Notificar admin sobre as correções
+      for (const correction of corrections) {
+        const { error: notifyError } = await supabase.functions.invoke('notify-admin-correction', {
+          body: {
+            type: 'user_correction',
+            userId: user.id,
+            examId: examId,
+            relatedId: correction.biomarkerId,
+            biomarkerName: correction.biomarkerId,
+            fieldChanged: correction.fieldName,
+            oldValue: correction.aiValue,
+            newValue: correction.userValue,
+          },
+        });
+
+        if (notifyError) {
+          console.warn('⚠️ Erro ao notificar admin:', notifyError);
+        }
+      }
+
       // Invalidar cache para recarregar dados
       queryClient.invalidateQueries({ queryKey: ['patient-tracking-table', patientId] });
       queryClient.invalidateQueries({ queryKey: ['patient-biomarkers', patientId] });
 
       toast({
         title: '✓ Correções salvas!',
-        description: `${corrections.length} campo(s) corrigido(s) com sucesso.`,
+        description: `${corrections.length} campo(s) corrigido(s). O administrador foi notificado.`,
       });
 
       return data;
