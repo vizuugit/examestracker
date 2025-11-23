@@ -202,7 +202,7 @@ const PatientProfile = () => {
                   <Button
                     onClick={() => setShowDeletePatientDialog(true)}
                     variant="outline"
-                    className="w-full sm:w-auto border-red-500/50 hover:bg-red-500/10 text-red-400 hover:text-red-300"
+                    className="w-full sm:w-auto border-red-500/50 bg-red-500/10 text-red-300 hover:bg-red-500/20"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Excluir
