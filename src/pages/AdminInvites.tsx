@@ -351,21 +351,10 @@ export default function AdminInvites() {
         {/* Tabela de Convites */}
         <Card className="bg-zinc-900/50 border-white/10">
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-white">Convites Enviados</CardTitle>
-                <CardDescription className="text-white/60">
-                  Visualize e gerencie todos os convites
-                </CardDescription>
-              </div>
-              <Button
-                variant="outline"
-                onClick={() => window.location.href = '/admin/import-spec'}
-                className="bg-primary/10 border-primary/30 text-primary hover:bg-primary/20"
-              >
-                📥 Importar Especificação
-              </Button>
-            </div>
+            <CardTitle className="text-white">Convites Enviados</CardTitle>
+            <CardDescription className="text-white/60">
+              Visualize e gerencie todos os convites
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs value={statusFilter} onValueChange={setStatusFilter} className="mb-4">

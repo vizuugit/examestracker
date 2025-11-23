@@ -69,10 +69,36 @@ export default function AdminFeedbackReview() {
           <div>
             <h1 className="text-3xl font-bold">Feedback dos Usuários</h1>
             <p className="text-muted-foreground">
-              Revise correções e sugestões para melhorar o sistema
+              Analise correções, biomarcadores ausentes e rejeitados para melhorar o sistema
             </p>
           </div>
         </div>
+
+        {/* Card Informativo sobre o Fluxo */}
+        <Card className="bg-primary/5 border-primary/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-primary">
+              💡 Como usar este sistema
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            <p>
+              <strong>1. Revise o feedback:</strong> Analise as correções, biomarcadores ausentes e rejeitados reportados pelos usuários nesta página.
+            </p>
+            <p>
+              <strong>2. Identifique padrões:</strong> Observe quais biomarcadores aparecem com frequência para priorizar as atualizações.
+            </p>
+            <p>
+              <strong>3. Atualize as Variações:</strong> Vá na aba "Variações" (Admin → Convites → Variações) para adicionar novos sinônimos de biomarcadores.
+            </p>
+            <p>
+              <strong>4. Reorganize Categorias:</strong> Use a aba "Categorias" (Admin → Convites → Categorias) para ajustar a estrutura de classificação.
+            </p>
+            <p className="text-primary font-medium">
+              <strong>💡 Dica:</strong> Após fazer alterações nas Variações ou Categorias, atualize manualmente o arquivo JSON na Lambda AWS para sincronizar o sistema.
+            </p>
+          </CardContent>
+        </Card>
 
         {/* Estatísticas */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
