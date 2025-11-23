@@ -141,8 +141,8 @@ export default function PatientDashboard() {
               biomarkerMap.set(key, {
                 biomarker_name: biomarkerName,
                 unit: bio.unidade,
-                reference_min: bio.valor_referencia_min,
-                reference_max: bio.valor_referencia_max,
+                reference_min: bio.valor_referencia_min ?? null,
+                reference_max: bio.valor_referencia_max ?? null,
                 category: categoryName,
                 category_order: categoryOrder,
                 biomarker_order: biomarkerOrder,
@@ -249,8 +249,8 @@ export default function PatientDashboard() {
           biomarkerMap.set(finalKey, {
             biomarker_name: finalDisplayName,
             unit: tableMatch?.unit || result.unit,
-            reference_min: result.reference_min,
-            reference_max: result.reference_max,
+            reference_min: result.reference_min ?? null,
+            reference_max: result.reference_max ?? null,
             category,
             values: new Map(),
             completeness_score: calculateCompletenessScore(result),
