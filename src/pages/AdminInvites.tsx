@@ -386,7 +386,7 @@ export default function AdminInvites() {
                   </TableHeader>
                   <TableBody>
                     {invitations.map(invite => (
-                      <TableRow key={invite.id} className="border-white/10">
+                      <TableRow key={invite.id} className="border-white/10 hover:bg-transparent">
                         <TableCell className="text-white">{invite.email}</TableCell>
                         <TableCell className="text-white">{invite.full_name || "-"}</TableCell>
                         <TableCell>
