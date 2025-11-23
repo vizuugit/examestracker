@@ -408,7 +408,7 @@ export default function AdminInvites() {
                               variant="outline"
                               onClick={() => handleResend(invite.id)}
                               disabled={resendInviteMutation.isPending}
-                              className="border-white/10 text-white"
+                              className="border-white/10 text-black"
                             >
                               🔄 Reenviar
                             </Button>
