@@ -17,6 +17,7 @@ import PatientDashboard from "./pages/PatientDashboard";
 import PatientCharts from "./pages/PatientCharts";
 import Profile from "./pages/Profile";
 import AdminInvites from "./pages/AdminInvites";
+import AdminImportSpec from "./pages/AdminImportSpec";
 import AcceptInvite from "./pages/AcceptInvite";
 import Shop from "./pages/Shop";
 import Licensee from "./pages/Licensee";
@@ -64,6 +65,7 @@ const App = () => (
           
           {/* Rotas de administrador */}
           <Route path="/admin/invites" element={<AdminRoute><AdminInvites /></AdminRoute>} />
+          <Route path="/admin/import-spec" element={<AdminRoute><AdminImportSpec /></AdminRoute>} />
           
           {/* Políticas e outras */}
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
