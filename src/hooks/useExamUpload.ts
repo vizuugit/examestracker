@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { deduplicateExams } from "@/utils/examDeduplication";
-import { normalizeHematologicalValue, calculateAbsoluteReference } from "@/utils/valueNormalizer";
 
 const EDGE_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/aws-proxy`;
 
@@ -53,6 +51,9 @@ interface AWSExamData {
       observacao: string | null;
       explicacao_leiga: string;
       possiveis_causas_alteracao: string[] | null;
+      nome_original?: string;
+      confianca_normalizacao?: number;
+      tipo_normalizacao?: string;
     }>;
     
     metadata?: {
@@ -436,27 +437,17 @@ export function useExamUpload() {
   };
 
   const syncExamToSupabase = async (examId: string, awsResponse: AWSExamData) => {
-    // 🔒 Proteção contra múltiplas sincronizações simultâneas
     const syncKey = `sync_${examId}`;
-    if (sessionStorage.getItem(syncKey)) {
-      console.log('[syncExamToSupabase] ⚠️ Sincronização já em andamento, ignorando...');
-      return;
-    }
+    if (sessionStorage.getItem(syncKey)) return;
     sessionStorage.setItem(syncKey, 'true');
     
     try {
-      console.log('[Sync] 1. Estrutura completa:', JSON.stringify(awsResponse, null, 2).substring(0, 500));
-      
       const awsData = awsResponse.data;
-      console.log('[Sync] 2. awsData existe?', !!awsData);
-      
-      // VALIDAÇÃO CRÍTICA
       if (!awsData) {
         sessionStorage.removeItem(syncKey);
-        throw new Error('❌ awsResponse.data está undefined');
+        throw new Error('awsResponse.data está undefined');
       }
       
-      // ✅ ADAPTAR PARA FORMATO ANTIGO E NOVO
       const dadosBasicos = awsData.dados_basicos || {
         laboratorio: awsData.laboratorio || '',
         paciente: awsData.paciente || '',
@@ -464,22 +455,10 @@ export function useExamUpload() {
         medico_solicitante: awsData.medico_solicitante || null,
       };
       
-      console.log('[Sync] 3. Formato detectado:', awsData.dados_basicos ? 'NOVO' : 'ANTIGO');
-      console.log('[Sync] 4. laboratorio:', dadosBasicos.laboratorio);
-      console.log('[Sync] 5. paciente:', dadosBasicos.paciente);
+      // Deletar resultados antigos
+      await supabase.from('exam_results').delete().eq('exam_id', examId);
       
-      // 🗑️ PASSO 1: Deletar resultados antigos para evitar duplicação
-      console.log('[syncExamToSupabase] 🗑️ Deletando resultados antigos...');
-      const { error: deleteError } = await supabase
-        .from('exam_results')
-        .delete()
-        .eq('exam_id', examId);
-      
-      if (deleteError) {
-        console.error('[syncExamToSupabase] ❌ Erro ao deletar resultados antigos:', deleteError);
-      }
-      
-      // Update exam with AWS data (only basic extraction data, no insights)
+      // Update exam
       const { error: updateError } = await supabase
         .from("exams")
         .update({
@@ -497,121 +476,32 @@ export function useExamUpload() {
         throw updateError;
       }
 
-      // 🔍 PASSO 2: Processar e inserir biomarcadores (já normalizados pelo Lambda)
-      if (awsData.exames && awsData.exames.length > 0) {
-        const originalCount = awsData.exames.length;
-
-        // ✅ USAR DEDUPLICAÇÃO AVANÇADA
-        const dedupedExams = deduplicateExams(awsData.exames);
-        const removedCount = originalCount - dedupedExams.length;
-
-        console.log(`[syncExamToSupabase] 📊 Biomarcadores: ${originalCount} → ${dedupedExams.length} (${removedCount} duplicata${removedCount !== 1 ? 's' : ''} removida${removedCount !== 1 ? 's' : ''})`);
-        console.log('[syncExamToSupabase] ✅ Usando dados já normalizados pelo Lambda (sem re-normalização)');
-
-        // Find total leukocytes for absolute value calculations
-        const leucocitosOriginal = dedupedExams.find((b) =>
-          b.nome && (
-            b.nome.toLowerCase().includes('leucócito') ||
-            b.nome.toLowerCase().includes('leucocito') ||
-            b.nome.toLowerCase() === 'wbc'
-          ) && b.unidade !== '%'
-        );
-        const leucocitosTotal = leucocitosOriginal ? parseFloat(leucocitosOriginal.resultado) : null;
-        console.log('[syncExamToSupabase] Total leukocytes found:', leucocitosTotal);
-
-        // Map biomarkers using data already normalized by Lambda
-        const biomarkers = dedupedExams.map((exam) => {
-          // Parse original value once
-          const originalValue = typeof exam.resultado === 'string'
+      // Inserir biomarcadores DIRETO (sem processamento)
+      if (awsData.exames?.length > 0) {
+        const biomarkers = awsData.exames.map((exam) => {
+          const valueNumeric = typeof exam.resultado === 'string'
             ? parseFloat(exam.resultado.replace(',', '.'))
             : exam.resultado;
 
-          // Normalize large values (like hemácias)
-          const { normalizedValue, normalizedUnit } = normalizeHematologicalValue(
-            exam.resultado,
-            exam.nome, // Lambda already normalized the name
-            exam.unidade
-          );
-
-          let valueNumeric: number | null = normalizedValue;
-          let finalUnit = normalizedUnit || exam.unidade;
-
-          // If normalization didn't work, use the parsed original
-          if (valueNumeric === originalValue || (typeof valueNumeric === 'number' && isNaN(valueNumeric))) {
-            valueNumeric = isNaN(originalValue) ? null : originalValue;
-          }
-
-          // Normalize reference values if the main value was normalized
-          let normalizedRefMin = exam.referencia_min;
-          let normalizedRefMax = exam.referencia_max;
-
-          // If the value was normalized (changed), normalize references too
-          if (valueNumeric !== null && !isNaN(originalValue) && valueNumeric !== originalValue && originalValue > 0) {
-            const normalizationFactor = valueNumeric / originalValue;
-            normalizedRefMin = exam.referencia_min ? exam.referencia_min * normalizationFactor : null;
-            normalizedRefMax = exam.referencia_max ? exam.referencia_max * normalizationFactor : null;
-          }
-
           return {
             exam_id: examId,
-            biomarker_name: exam.nome, // Already normalized by Lambda
-            category: exam.categoria, // Already normalized by Lambda
+            biomarker_name: exam.nome,
+            category: exam.categoria,
             value: String(exam.resultado),
-            value_numeric: valueNumeric,
-            unit: finalUnit,
-            reference_min: normalizedRefMin,
-            reference_max: normalizedRefMax,
+            value_numeric: isNaN(valueNumeric) ? null : valueNumeric,
+            unit: exam.unidade,
+            reference_min: exam.referencia_min,
+            reference_max: exam.referencia_max,
             status: exam.status as "normal" | "alto" | "baixo" | "alterado",
             observation: exam.observacao || null,
             deviation_percentage: exam.desvio_percentual,
             layman_explanation: exam.explicacao_leiga,
             possible_causes: exam.possiveis_causas_alteracao,
-            // Audit fields (from Lambda normalization)
             original_name: exam.nome_original || exam.nome,
             normalization_confidence: exam.confianca_normalizacao || null,
             normalization_type: exam.tipo_normalizacao || null,
           };
         });
-        
-        // Calculate absolute values for leukogram cells (neutrophils, lymphocytes, etc.)
-        if (leucocitosTotal) {
-          const cellTypes = ['segmentado', 'bastonete', 'linfócito', 'linfocito', 'monócito', 'monocito', 'eosinófilo', 'eosinofilo', 'basófilo', 'basofilo'];
-
-          for (const biomarker of dedupedExams) {
-            const isLeukogramCell = cellTypes.some(type =>
-              biomarker.nome && biomarker.nome.toLowerCase().includes(type)
-            );
-
-            if (isLeukogramCell && biomarker.unidade === '%' && biomarker.resultado) {
-              const percentValue = parseFloat(biomarker.resultado);
-              if (!isNaN(percentValue)) {
-                const absoluteValue = (percentValue / 100) * leucocitosTotal;
-
-                biomarkers.push({
-                  exam_id: examId,
-                  biomarker_name: `${biomarker.nome} (Absoluto)`,
-                  category: biomarker.categoria || 'hematologico',
-                  value: Math.round(absoluteValue).toString(),
-                  value_numeric: Math.round(absoluteValue),
-                  unit: '/mm³',
-                  reference_min: calculateAbsoluteReference(biomarker.referencia_min, leucocitosTotal),
-                  reference_max: calculateAbsoluteReference(biomarker.referencia_max, leucocitosTotal),
-                  status: biomarker.status as "normal" | "alto" | "baixo" | "alterado",
-                  observation: biomarker.observacao || null,
-                  deviation_percentage: biomarker.desvio_percentual,
-                  layman_explanation: biomarker.explicacao_leiga,
-                  possible_causes: biomarker.possiveis_causas_alteracao,
-                  // Audit fields
-                  original_name: `${biomarker.nome} (Absoluto)`,
-                  normalization_confidence: biomarker.confianca_normalizacao || null,
-                  normalization_type: 'calculated',
-                });
-              }
-            }
-          }
-        }
-        
-        console.log(`[syncExamToSupabase] 📊 Total biomarkers to insert (including calculated absolutes): ${biomarkers.length}`);
 
         const { error: biomarkersError } = await supabase
           .from("exam_results")
@@ -621,41 +511,26 @@ export function useExamUpload() {
           sessionStorage.removeItem(syncKey);
           throw biomarkersError;
         }
-        
-        console.log(`[syncExamToSupabase] ✅ ${biomarkers.length} biomarcadores salvos com sucesso`);
+      }
 
-        // SALVAR BIOMARCADORES REJEITADOS (se o Lambda enviou algum)
-        if (awsData.biomarcadores_rejeitados && awsData.biomarcadores_rejeitados.length > 0) {
-          console.log(`[syncExamToSupabase] ⚠️ Salvando ${awsData.biomarcadores_rejeitados.length} biomarcadores rejeitados pelo Lambda...`);
+      // Biomarcadores rejeitados
+      if (awsData.biomarcadores_rejeitados?.length > 0) {
+        const rejectedRecords = awsData.biomarcadores_rejeitados.map(rejected => ({
+          exam_id: examId,
+          original_name: rejected.nome_original,
+          original_value: rejected.valor_original || null,
+          rejection_reason: rejected.motivo_rejeicao || rejected.motivo,
+          suggestions: rejected.sugestoes || [],
+          similarity_score: rejected.similaridade || null,
+        }));
 
-          const rejectedRecords = awsData.biomarcadores_rejeitados.map(rejected => ({
-            exam_id: examId,
-            original_name: rejected.nome_original,
-            original_value: rejected.valor_original || null,
-            rejection_reason: rejected.motivo_rejeicao || rejected.motivo,
-            suggestions: rejected.sugestoes || [],
-            similarity_score: rejected.similaridade || null,
-          }));
-
-          const { error: rejectedError } = await supabase
-            .from('rejected_biomarkers')
-            .insert(rejectedRecords);
-
-          if (rejectedError) {
-            console.error('[syncExamToSupabase] ❌ Erro ao salvar biomarcadores rejeitados:', rejectedError);
-          } else {
-            console.log(`[syncExamToSupabase] ✅ ${rejectedRecords.length} biomarcadores rejeitados registrados`);
-          }
-        }
+        await supabase.from('rejected_biomarkers').insert(rejectedRecords);
       }
       
-      // ✅ Liberar flag de sincronização
       sessionStorage.removeItem(syncKey);
       
     } catch (error) {
-      // 🚨 Liberar flag em caso de erro
       sessionStorage.removeItem(syncKey);
-      console.error('[syncExamToSupabase] ❌ Erro geral:', error);
       throw error;
     }
   };
