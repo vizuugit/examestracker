@@ -1,10 +1,10 @@
 import cactoGif from "@/assets/cacto-loading.gif";
 
 interface CactoLoaderProps {
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   text?: string;
   className?: string;
-  variant?: "default" | "blue" | "cyan";
+  variant?: "default" | "blue" | "cyan" | "white";
 }
 
 export const CactoLoader = ({ 
@@ -16,7 +16,8 @@ export const CactoLoader = ({
   const sizes = {
     sm: "w-8 h-8",
     md: "w-16 h-16", 
-    lg: "w-24 h-24"
+    lg: "w-24 h-24",
+    xl: "w-32 h-32"
   };
 
   const filterStyles: Record<string, React.CSSProperties> = {
@@ -28,6 +29,9 @@ export const CactoLoader = ({
     cyan: {
       filter: "saturate(0) brightness(0) invert(1) sepia(1) saturate(10000%) hue-rotate(160deg) brightness(1) contrast(1.3) drop-shadow(0 0 12px rgba(0, 240, 255, 0.9))",
       mixBlendMode: "multiply",
+    },
+    white: {
+      filter: "brightness(0) invert(1) drop-shadow(0 0 15px rgba(255, 255, 255, 0.8))",
     }
   };
 

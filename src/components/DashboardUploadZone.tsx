@@ -487,7 +487,7 @@ export const DashboardUploadZone = () => {
 
                 {(item.status === 'uploading' || item.status === 'processing') && (
                   <div className="flex items-center gap-3 mt-2">
-                    <CactoLoader size="sm" text="" variant="cyan" className="flex-shrink-0" />
+                    <CactoLoader size="xl" text="" variant="white" className="flex-shrink-0" />
                     <Progress value={item.progress} className="h-2 flex-1" />
                   </div>
                 )}
