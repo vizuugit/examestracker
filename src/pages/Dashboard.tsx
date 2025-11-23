@@ -2,6 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { DashboardUploadZone } from "@/components/DashboardUploadZone";
@@ -9,10 +10,14 @@ import { QuickActions } from "@/components/QuickActions";
 import { DashboardStats } from "@/components/DashboardStats";
 import { RecentExams } from "@/components/RecentExams";
 import { AIAccuracyStats } from "@/components/AIAccuracyStats";
+import { Card, CardContent } from "@/components/ui/card";
+import { GraduationCap } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
   const { user } = useAuth();
   const { roles } = useUserRole();
+  const navigate = useNavigate();
   const isAdmin = user?.email === 'andreytorax@gmail.com' || roles?.includes("admin");
 
   // Query: Estatísticas gerais
@@ -120,6 +125,32 @@ const Dashboard = () => {
           {/* Sidebar (1/3) */}
           <div className="space-y-6">
             <QuickActions />
+            
+            {/* Revisitar Tour */}
+            <Card className="bg-gradient-to-br from-rest-blue/10 to-rest-cyan/5 border-rest-blue/20 hover:border-rest-blue/40 transition-all cursor-pointer group">
+              <CardContent className="p-6">
+                <Button
+                  onClick={() => navigate('/demo')}
+                  variant="ghost"
+                  className="w-full justify-start p-0 h-auto hover:bg-transparent group"
+                >
+                  <div className="flex items-start gap-4 w-full">
+                    <div className="p-3 rounded-lg bg-rest-blue/20 group-hover:bg-rest-blue/30 transition-colors">
+                      <GraduationCap className="w-6 h-6 text-rest-lightblue" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <h3 className="text-white font-semibold mb-1 group-hover:text-rest-lightblue transition-colors">
+                        Revisitar Tutorial
+                      </h3>
+                      <p className="text-white/60 text-sm">
+                        Veja novamente como usar todas as funcionalidades da plataforma
+                      </p>
+                    </div>
+                  </div>
+                </Button>
+              </CardContent>
+            </Card>
+            
             {isAdmin && <AIAccuracyStats />}
           </div>
         </div>

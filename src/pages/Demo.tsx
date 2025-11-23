@@ -1,64 +1,75 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { PublicNavbar } from "@/components/PublicNavbar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { BiomarkerChart } from "@/components/BiomarkerChart";
-import { Upload, Bot, FileText, Download, TrendingUp, TrendingDown, FileSpreadsheet, CheckCircle2, ArrowRight } from "lucide-react";
+import { Upload, Bot, FileText, Download, TrendingDown, FileSpreadsheet, CheckCircle2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import Footer from "@/components/Footer";
+import { TourProgress } from "@/components/tour/TourProgress";
+import { TourNavigation } from "@/components/tour/TourNavigation";
+import { TourTooltip } from "@/components/tour/TourTooltip";
+import { SkipTourButton } from "@/components/tour/SkipTourButton";
 
 const Demo = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [processingStep, setProcessingStep] = useState(0);
-  const [showResults, setShowResults] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
+
+  const totalSteps = 5;
 
   useEffect(() => {
-    // Scroll to top on page load
     window.scrollTo(0, 0);
-
-    // Simular upload automático
-    const uploadTimer = setTimeout(() => {
-      const interval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setTimeout(() => startProcessing(), 500);
-            return 100;
-          }
-          return prev + 10;
-        });
-      }, 100);
-    }, 1000);
-
-    return () => clearTimeout(uploadTimer);
   }, []);
 
-  const startProcessing = () => {
-    const steps = [0, 1, 2, 3];
-    steps.forEach((step, index) => {
-      setTimeout(() => {
-        setProcessingStep(step + 1);
-        if (step === 3) {
-          setTimeout(() => setShowResults(true), 500);
-        }
-      }, index * 800);
-    });
+  useEffect(() => {
+    // Scroll suave para a seção ativa
+    if (sectionRefs.current[currentStep]) {
+      sectionRefs.current[currentStep]?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    // Keyboard navigation
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight" && currentStep < totalSteps - 1) {
+        handleNext();
+      } else if (e.key === "ArrowLeft" && currentStep > 0) {
+        handlePrevious();
+      } else if (e.key === "Escape") {
+        handleSkip();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentStep]);
+
+  const handleNext = () => {
+    if (currentStep < totalSteps - 1) {
+      setCurrentStep(currentStep + 1);
+    }
   };
 
-  const handleExportClick = () => {
-    toast({
-      title: "Demonstração",
-      description: "Crie sua conta para exportar relatórios reais!",
-    });
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
   };
 
-  const handleCompleteOnboarding = async () => {
+  const handleStepClick = (step: number) => {
+    setCurrentStep(step);
+  };
+
+  const handleComplete = async () => {
     if (user) {
       await supabase
         .from('profiles')
@@ -66,13 +77,30 @@ const Demo = () => {
         .eq('id', user.id);
       
       toast({
-        title: "Bem-vindo ao Exames!",
-        description: "Sua conta está pronta. Vamos começar!",
+        title: "🎉 Parabéns!",
+        description: "Você está pronto para começar. Agora sabe como fazer upload, visualizar gráficos e exportar relatórios!",
       });
       navigate('/dashboard');
     } else {
       navigate('/auth');
     }
+  };
+
+  const handleSkip = async () => {
+    if (user) {
+      await supabase
+        .from('profiles')
+        .update({ first_login_completed: true })
+        .eq('id', user.id);
+    }
+    navigate(user ? '/dashboard' : '/auth');
+  };
+
+  const handleExportClick = () => {
+    toast({
+      title: "Demonstração",
+      description: "Crie sua conta para exportar relatórios reais!",
+    });
   };
 
   const mockBiomarkerData = [
@@ -107,11 +135,47 @@ const Demo = () => {
     { label: "Triglicerídeos", value: "160 mg/dL", status: "alto" },
   ];
 
+  const stepTooltips = [
+    {
+      title: "💡 Dica Pro",
+      description: "Comece fazendo upload de um laudo em PDF. Aceitamos documentos de qualquer laboratório.",
+      example: "Exemplo: Arraste um PDF de exame de sangue e veja a mágica acontecer."
+    },
+    {
+      title: "💡 Dica Pro",
+      description: "Nossa IA extrai e organiza automaticamente todos os biomarcadores, economizando horas do seu tempo.",
+      example: "Exemplo: Em segundos, extraímos todos os valores de colesterol, glicemia, hemograma completo e muito mais."
+    },
+    {
+      title: "💡 Dica Pro",
+      description: "Visualize o histórico completo com tendências automáticas. Perfeito para consultas rápidas.",
+      example: "Exemplo: Acompanhe a evolução do colesterol de um paciente diabético ao longo de 6 meses."
+    },
+    {
+      title: "💡 Dica Pro",
+      description: "Acompanhe a evolução visual ao longo do tempo. Ideal para compartilhar com pacientes.",
+      example: "Exemplo: Mostre ao paciente como sua glicemia melhorou após mudanças na dieta."
+    },
+    {
+      title: "💡 Dica Pro",
+      description: "Gere relatórios profissionais em PDF ou Excel para compartilhar com pacientes e colegas.",
+      example: "Exemplo: Exporte um relatório completo para enviar ao endocrinologista do seu paciente."
+    },
+  ];
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-black via-zinc-900 to-black">
       <PublicNavbar showOnlyBackButton={true} />
       
-      <main className="flex-1">
+      <TourProgress
+        currentStep={currentStep}
+        totalSteps={totalSteps}
+        onStepClick={handleStepClick}
+      />
+      
+      <SkipTourButton onSkip={handleSkip} />
+      
+      <main className="flex-1 pb-24">
         {/* Hero Section */}
         <section className="py-20 relative overflow-hidden">
           <div className="absolute inset-0">
@@ -122,7 +186,8 @@ const Demo = () => {
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center max-w-4xl mx-auto">
               <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-rest-blue/20 to-rest-cyan/10 rounded-full border border-rest-blue/30 backdrop-blur-sm mb-8">
-                <span className="text-sm font-medium text-white">Demonstração Interativa</span>
+                <Sparkles className="w-4 h-4 text-rest-lightblue mr-2" />
+                <span className="text-sm font-medium text-white">Tour Interativo • 2 minutos</span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
                 Veja Como Funciona
@@ -134,53 +199,71 @@ const Demo = () => {
                 Acompanhe passo a passo como transformamos laudos médicos em PDF em dados estruturados, gráficos e relatórios profissionais.
               </p>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/10 border border-yellow-500/30 rounded-full">
-                <span className="text-sm text-yellow-200">💡 Todos os dados mostrados são fictícios para demonstração</span>
+                <span className="text-sm text-yellow-200">💡 Use as setas do teclado ou botões para navegar</span>
               </div>
             </div>
           </div>
         </section>
 
         {/* Section 1: Upload */}
-        <section className="py-12 relative">
+        <section
+          ref={(el) => (sectionRefs.current[0] = el)}
+          className={`py-12 relative transition-all duration-500 ${
+            currentStep === 0 ? "opacity-100 scale-100" : "opacity-40 scale-95 pointer-events-none"
+          }`}
+        >
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-white mb-4">1. Upload de Exame</h2>
-                <p className="text-white/70">Arraste seu PDF ou clique para selecionar</p>
-              </div>
-              
-              <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
-                <CardContent className="p-12">
-                  <div className="border-2 border-dashed border-rest-blue/30 rounded-2xl p-12 text-center hover:border-rest-blue/50 transition-colors bg-rest-blue/5">
-                    <Upload className="w-16 h-16 text-rest-lightblue mx-auto mb-4" />
-                    <p className="text-white font-semibold text-lg mb-2">Arraste seu PDF aqui</p>
-                    <p className="text-white/60 text-sm mb-4">ou clique para selecionar</p>
-                    
-                    {uploadProgress > 0 && (
-                      <div className="mt-6">
-                        <div className="w-full bg-white/10 rounded-full h-3 overflow-hidden">
-                          <div 
-                            className="bg-gradient-to-r from-rest-blue to-rest-cyan h-full transition-all duration-300 rounded-full"
-                            style={{ width: `${uploadProgress}%` }}
-                          />
+              {currentStep === 0 && (
+                <div className="absolute -inset-4 bg-gradient-to-r from-rest-blue/20 to-rest-cyan/20 rounded-3xl blur-2xl animate-pulse" />
+              )}
+              <div className="relative">
+                {currentStep === 0 && <TourTooltip {...stepTooltips[0]} />}
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold text-white mb-4">1. Upload de Exame</h2>
+                  <p className="text-white/70">Arraste seu PDF ou clique para selecionar</p>
+                </div>
+                
+                <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
+                  <CardContent className="p-12">
+                    <div className="border-2 border-dashed border-rest-blue/30 rounded-2xl p-12 text-center hover:border-rest-blue/50 transition-colors bg-rest-blue/5">
+                      <Upload className="w-16 h-16 text-rest-lightblue mx-auto mb-4" />
+                      <p className="text-white font-semibold text-lg mb-2">Arraste seu PDF aqui</p>
+                      <p className="text-white/60 text-sm mb-4">ou clique para selecionar</p>
+                      
+                      {currentStep >= 0 && (
+                        <div className="mt-6">
+                          <div className="w-full bg-white/10 rounded-full h-3 overflow-hidden">
+                            <div 
+                              className="bg-gradient-to-r from-rest-blue to-rest-cyan h-full transition-all duration-300 rounded-full"
+                              style={{ width: "100%" }}
+                            />
+                          </div>
+                          <p className="text-rest-lightblue text-sm mt-2">✓ Upload concluído!</p>
                         </div>
-                        <p className="text-rest-lightblue text-sm mt-2">
-                          {uploadProgress === 100 ? "✓ Upload concluído!" : `Enviando... ${uploadProgress}%`}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Section 2: Processing */}
-        {uploadProgress === 100 && (
-          <section className="py-12 relative animate-fade-in">
-            <div className="container mx-auto px-4">
-              <div className="max-w-4xl mx-auto">
+        <section
+          ref={(el) => (sectionRefs.current[1] = el)}
+          className={`py-12 relative transition-all duration-500 ${
+            currentStep === 1 ? "opacity-100 scale-100" : "opacity-40 scale-95 pointer-events-none"
+          }`}
+        >
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              {currentStep === 1 && (
+                <div className="absolute -inset-4 bg-gradient-to-r from-rest-blue/20 to-rest-cyan/20 rounded-3xl blur-2xl animate-pulse" />
+              )}
+              <div className="relative">
+                {currentStep === 1 && <TourTooltip {...stepTooltips[1]} />}
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-bold text-white mb-4">2. Processamento com IA</h2>
                   <p className="text-white/70">Extração inteligente de dados</p>
@@ -196,15 +279,9 @@ const Demo = () => {
                       {extractedData.map((item, index) => (
                         <div 
                           key={index}
-                          className={`flex items-center gap-4 p-4 bg-white/5 rounded-lg border border-white/10 transition-all duration-500 ${
-                            processingStep > index ? 'opacity-100' : 'opacity-30'
-                          }`}
+                          className="flex items-center gap-4 p-4 bg-white/5 rounded-lg border border-white/10 opacity-100"
                         >
-                          {processingStep > index ? (
-                            <CheckCircle2 className="w-6 h-6 text-green-400 flex-shrink-0" />
-                          ) : (
-                            <div className="w-6 h-6 border-2 border-white/30 rounded-full flex-shrink-0 animate-pulse" />
-                          )}
+                          <CheckCircle2 className="w-6 h-6 text-green-400 flex-shrink-0" />
                           <div className="flex-1">
                             <span className="text-white font-medium">{item.label}:</span>
                             <span className={`ml-2 ${
@@ -220,14 +297,23 @@ const Demo = () => {
                 </Card>
               </div>
             </div>
-          </section>
-        )}
+          </div>
+        </section>
 
         {/* Section 3: Table */}
-        {showResults && (
-          <section className="py-12 relative animate-fade-in">
-            <div className="container mx-auto px-4">
-              <div className="max-w-6xl mx-auto">
+        <section
+          ref={(el) => (sectionRefs.current[2] = el)}
+          className={`py-12 relative transition-all duration-500 ${
+            currentStep === 2 ? "opacity-100 scale-100" : "opacity-40 scale-95 pointer-events-none"
+          }`}
+        >
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto">
+              {currentStep === 2 && (
+                <div className="absolute -inset-4 bg-gradient-to-r from-rest-blue/20 to-rest-cyan/20 rounded-3xl blur-2xl animate-pulse" />
+              )}
+              <div className="relative">
+                {currentStep === 2 && <TourTooltip {...stepTooltips[2]} />}
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-bold text-white mb-4">3. Tabela de Acompanhamento</h2>
                   <p className="text-white/70">Histórico completo com tendências automáticas</p>
@@ -278,14 +364,23 @@ const Demo = () => {
                 </Card>
               </div>
             </div>
-          </section>
-        )}
+          </div>
+        </section>
 
         {/* Section 4: Charts */}
-        {showResults && (
-          <section className="py-12 relative animate-fade-in">
-            <div className="container mx-auto px-4">
-              <div className="max-w-6xl mx-auto">
+        <section
+          ref={(el) => (sectionRefs.current[3] = el)}
+          className={`py-12 relative transition-all duration-500 ${
+            currentStep === 3 ? "opacity-100 scale-100" : "opacity-40 scale-95 pointer-events-none"
+          }`}
+        >
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto">
+              {currentStep === 3 && (
+                <div className="absolute -inset-4 bg-gradient-to-r from-rest-blue/20 to-rest-cyan/20 rounded-3xl blur-2xl animate-pulse" />
+              )}
+              <div className="relative">
+                {currentStep === 3 && <TourTooltip {...stepTooltips[3]} />}
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-bold text-white mb-4">4. Gráficos de Evolução</h2>
                   <p className="text-white/70">Visualize tendências ao longo do tempo</p>
@@ -293,7 +388,7 @@ const Demo = () => {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {mockBiomarkerData.map((biomarker, index) => (
-                    <div key={index} className="animate-fade-in" style={{ animationDelay: `${index * 0.2}s` }}>
+                    <div key={index}>
                       <BiomarkerChart
                         biomarkerName={biomarker.biomarkerName}
                         data={biomarker.data}
@@ -306,14 +401,23 @@ const Demo = () => {
                 </div>
               </div>
             </div>
-          </section>
-        )}
+          </div>
+        </section>
 
         {/* Section 5: Export */}
-        {showResults && (
-          <section className="py-12 relative animate-fade-in">
-            <div className="container mx-auto px-4">
-              <div className="max-w-4xl mx-auto">
+        <section
+          ref={(el) => (sectionRefs.current[4] = el)}
+          className={`py-12 relative transition-all duration-500 ${
+            currentStep === 4 ? "opacity-100 scale-100" : "opacity-40 scale-95 pointer-events-none"
+          }`}
+        >
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              {currentStep === 4 && (
+                <div className="absolute -inset-4 bg-gradient-to-r from-rest-blue/20 to-rest-cyan/20 rounded-3xl blur-2xl animate-pulse" />
+              )}
+              <div className="relative">
+                {currentStep === 4 && <TourTooltip {...stepTooltips[4]} />}
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-bold text-white mb-4">5. Exportação de Relatórios</h2>
                   <p className="text-white/70">Compartilhe com pacientes e colegas</p>
@@ -342,59 +446,40 @@ const Demo = () => {
                     </div>
                   </CardContent>
                 </Card>
-              </div>
-            </div>
-          </section>
-        )}
 
-        {/* Final CTA */}
-        {showResults && (
-          <section className="py-20 relative animate-fade-in">
-            <div className="absolute inset-0">
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-[800px] h-[800px] bg-gradient-to-r from-rest-blue/10 to-rest-cyan/5 rounded-full blur-3xl" />
-            </div>
-            
-            <div className="container mx-auto px-4 relative z-10">
-              <div className="max-w-4xl mx-auto text-center">
-                <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                  Pronto para Começar?
-                </h2>
-                <p className="text-xl text-white/70 mb-8">
-                  Transforme o acompanhamento dos seus pacientes com inteligência artificial
-                </p>
-                
-                <div className="grid md:grid-cols-3 gap-6 mb-12">
-                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-                    <CheckCircle2 className="w-8 h-8 text-rest-lightblue mx-auto mb-3" />
-                    <p className="text-white font-semibold">Upload Ilimitado</p>
-                    <p className="text-white/60 text-sm mt-2">Todos os exames dos seus pacientes</p>
+                {currentStep === 4 && (
+                  <div className="mt-12 text-center animate-fade-in">
+                    <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-full border border-green-500/30 backdrop-blur-sm mb-6">
+                      <CheckCircle2 className="w-5 h-5 text-green-400 mr-2" />
+                      <span className="text-white font-medium">Agora você sabe como:</span>
+                    </div>
+                    <div className="flex flex-wrap justify-center gap-4 mb-8">
+                      <div className="px-4 py-2 bg-white/5 rounded-full border border-white/10">
+                        <span className="text-white/80 text-sm">✓ Fazer upload de laudos</span>
+                      </div>
+                      <div className="px-4 py-2 bg-white/5 rounded-full border border-white/10">
+                        <span className="text-white/80 text-sm">✓ Visualizar gráficos de evolução</span>
+                      </div>
+                      <div className="px-4 py-2 bg-white/5 rounded-full border border-white/10">
+                        <span className="text-white/80 text-sm">✓ Exportar relatórios profissionais</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-                    <CheckCircle2 className="w-8 h-8 text-rest-lightblue mx-auto mb-3" />
-                    <p className="text-white font-semibold">IA Avançada</p>
-                    <p className="text-white/60 text-sm mt-2">Análise automática de laudos</p>
-                  </div>
-                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-                    <CheckCircle2 className="w-8 h-8 text-rest-lightblue mx-auto mb-3" />
-                    <p className="text-white font-semibold">Relatórios Profissionais</p>
-                    <p className="text-white/60 text-sm mt-2">Exportação em PDF e Excel</p>
-                  </div>
-                </div>
-                
-                <Button 
-                  size="lg"
-                  onClick={handleCompleteOnboarding}
-                  className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-cyan hover:to-rest-lightblue text-white font-semibold px-12 py-6 text-xl hover-scale group"
-                >
-                  {user ? 'Começar' : 'Criar Conta Gratuitamente'}
-                  <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                </Button>
+                )}
               </div>
             </div>
-          </section>
-        )}
+          </div>
+        </section>
       </main>
 
+      <TourNavigation
+        currentStep={currentStep}
+        totalSteps={totalSteps}
+        onNext={handleNext}
+        onPrevious={handlePrevious}
+        onComplete={handleComplete}
+      />
+      
       <Footer />
     </div>
   );
