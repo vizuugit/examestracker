@@ -469,9 +469,6 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                     </TableHead>
                   );
                 })}
-                <TableHead className="text-center text-gray-900 font-bold text-sm uppercase tracking-wide min-w-[150px]">
-                  Referência
-                </TableHead>
                 <TableHead className="text-center text-gray-900 font-bold text-sm uppercase tracking-wide min-w-[100px]">
                   Tendência
                 </TableHead>
@@ -505,7 +502,7 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                       className="bg-gradient-to-r from-rest-blue to-rest-cyan hover:from-rest-blue/90 hover:to-rest-cyan/90 relative"
                     >
                       <TableCell 
-                        colSpan={examDates.length + 3}
+                        colSpan={examDates.length + 2}
                         className="sticky left-0 z-10 font-bold text-white uppercase tracking-wide text-sm py-3 px-6 border-y-2 border-transparent"
                       >
                         <div className="flex items-center gap-2">
@@ -601,21 +598,6 @@ export function BiomarkerTrackingTable({ patientId, data, examDates, patientName
                               </TableCell>
                             );
                           })}
-                          
-                          
-                          <TableCell className="text-gray-600 text-sm font-medium text-center">
-                            {row.reference_text ? (
-                              <span className="text-gray-600 text-sm font-mono">
-                                {row.reference_text}
-                              </span>
-                            ) : row.reference_min != null && row.reference_max != null ? (
-                              <span className="text-gray-600 text-sm font-mono">
-                                {formatBiomarkerValue(row.reference_min, row.biomarker_name, row.unit)}-{formatBiomarkerValue(row.reference_max, row.biomarker_name, row.unit)}
-                              </span>
-                            ) : (
-                              <span className="text-gray-400 italic text-sm">N/A</span>
-                            )}
-                          </TableCell>
                           
                           <TableCell className="text-center">
                             {trend ? (
