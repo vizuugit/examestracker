@@ -325,7 +325,7 @@ const PatientProfile = () => {
                             <img 
                               src={cactoGif} 
                               alt="Processando" 
-                              className="w-4 h-4 object-contain"
+                              className="w-6 h-6 object-contain"
                             />
                             <span className="text-sm text-yellow-400">Processando...</span>
                           </div>
