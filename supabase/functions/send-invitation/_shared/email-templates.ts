@@ -19,7 +19,7 @@ export const generateInvitationEmail = (params: {
   });
 
   return {
-    subject: "Você foi convidado para o sistema Exames",
+    subject: "Você foi convidado para o Exames.co",
     
     html: `
 <!DOCTYPE html>
@@ -51,8 +51,8 @@ export const generateInvitationEmail = (params: {
               <p style="font-size: 16px; line-height: 1.6; margin: 0 0 16px;">Olá,</p>
               
               <p style="font-size: 16px; line-height: 1.6; margin: 0 0 24px;">
-                <strong style="color: white;">${adminName}</strong> convidou você para fazer parte do 
-                <strong style="color: #0099FF;">sistema Exames</strong> - a plataforma profissional de 
+                <strong style="color: white;">A equipe do Ex (exames.co)</strong> convida você para fazer parte do 
+                <strong style="color: #0099FF;">Exames.co</strong> - a plataforma profissional de 
                 acompanhamento de exames médicos.
               </p>
               
@@ -103,7 +103,7 @@ export const generateInvitationEmail = (params: {
                 Se você não solicitou este convite, pode ignorar este email.
               </p>
               <p style="margin: 0; font-size: 12px; color: #444;">
-                © ${new Date().getFullYear()} Sistema Exames - Acompanhamento de Exames Médicos
+                © ${new Date().getFullYear()} Exames.co - Acompanhamento de Exames Médicos
               </p>
             </td>
           </tr>
@@ -119,11 +119,11 @@ export const generateInvitationEmail = (params: {
     `,
     
     text: `
-Você foi convidado para o sistema Exames!
+Você foi convidado para o Exames.co!
 
 Olá,
 
-${adminName} convidou você para fazer parte do sistema Exames - a plataforma profissional de acompanhamento de exames médicos.
+A equipe do Ex (exames.co) convida você para fazer parte do Exames.co - a plataforma profissional de acompanhamento de exames médicos.
 
 Email do convite: ${recipientEmail}
 
@@ -135,7 +135,7 @@ IMPORTANTE: Este convite expira em ${expiresDate}
 Se você não solicitou este convite, pode ignorar este email.
 
 ---
-Sistema Exames - Acompanhamento de Exames Médicos
+Exames.co - Acompanhamento de Exames Médicos
     `.trim()
   };
 };
@@ -149,7 +149,7 @@ export const generateAcceptanceNotificationEmail = (params: {
   const { adminName, professionalName, professionalEmail } = params;
   
   return {
-    subject: `${professionalName} aceitou seu convite no sistema Exames`,
+    subject: `${professionalName} aceitou seu convite no Exames.co`,
     
     html: `
 <!DOCTYPE html>
@@ -180,7 +180,7 @@ export const generateAcceptanceNotificationEmail = (params: {
               </p>
               
               <p style="font-size: 16px; line-height: 1.6; margin: 0 0 24px;">
-                Boas notícias! O profissional que você convidou aceitou e criou sua conta no sistema Exames.
+                Boas notícias! O profissional que você convidou aceitou e criou sua conta no Exames.co.
               </p>
               
               <div style="background-color: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 24px 0; border-radius: 4px;">
@@ -202,7 +202,7 @@ export const generateAcceptanceNotificationEmail = (params: {
           <tr>
             <td style="background-color: #0a0a0a; padding: 32px; text-align: center; border-top: 1px solid #333;">
               <p style="margin: 0; font-size: 12px; color: #444;">
-                © ${new Date().getFullYear()} Sistema Exames
+                © ${new Date().getFullYear()} Exames.co
               </p>
             </td>
           </tr>
@@ -222,7 +222,7 @@ Convite Aceito!
 
 Olá ${adminName},
 
-Boas notícias! O profissional que você convidou aceitou e criou sua conta no sistema Exames.
+Boas notícias! O profissional que você convidou aceitou e criou sua conta no Exames.co.
 
 Informações:
 - Nome: ${professionalName}
@@ -231,7 +231,7 @@ Informações:
 O novo usuário já pode acessar o sistema e começar a utilizar todas as funcionalidades.
 
 ---
-Sistema Exames
+Exames.co
     `.trim()
   };
 };

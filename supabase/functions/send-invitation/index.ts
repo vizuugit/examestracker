@@ -74,7 +74,7 @@ serve(async (req: Request): Promise<Response> => {
         "Authorization": `Bearer ${resendApiKey}`,
       },
       body: JSON.stringify({
-        from: "HealthTrack Convites <convites@exames.co>",
+        from: "Exames.co Convites <convites@exames.co>",
         to: [invitation.email],
         subject: emailContent.subject,
         html: emailContent.html,

@@ -15,7 +15,7 @@ const generateAcceptanceNotificationEmail = (params: {
   const { adminName, professionalName, professionalEmail } = params;
   
   return {
-    subject: `${professionalName} aceitou seu convite no sistema Exames`,
+    subject: `${professionalName} aceitou seu convite no Exames.co`,
     html: `
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -40,7 +40,7 @@ const generateAcceptanceNotificationEmail = (params: {
                 Olá <strong style="color: white;">${adminName}</strong>,
               </p>
               <p style="font-size: 16px; line-height: 1.6; margin: 0 0 24px;">
-                Boas notícias! O profissional que você convidou aceitou e criou sua conta no sistema Exames.
+                Boas notícias! O profissional que você convidou aceitou e criou sua conta no Exames.co.
               </p>
               <div style="background-color: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 24px 0; border-radius: 4px;">
                 <p style="margin: 0 0 8px; font-size: 16px; color: white;">
@@ -58,7 +58,7 @@ const generateAcceptanceNotificationEmail = (params: {
           <tr>
             <td style="background-color: #0a0a0a; padding: 32px; text-align: center; border-top: 1px solid #333;">
               <p style="margin: 0; font-size: 12px; color: #444;">
-                © ${new Date().getFullYear()} Sistema Exames
+                © ${new Date().getFullYear()} Exames.co
               </p>
             </td>
           </tr>
@@ -74,7 +74,7 @@ Convite Aceito!
 
 Olá ${adminName},
 
-Boas notícias! O profissional que você convidou aceitou e criou sua conta no sistema Exames.
+Boas notícias! O profissional que você convidou aceitou e criou sua conta no Exames.co.
 
 Informações:
 - Nome: ${professionalName}
@@ -83,7 +83,7 @@ Informações:
 O novo usuário já pode acessar o sistema e começar a utilizar todas as funcionalidades.
 
 ---
-Sistema Exames
+Exames.co
     `.trim()
   };
 };
@@ -155,7 +155,7 @@ serve(async (req: Request): Promise<Response> => {
         "Authorization": `Bearer ${resendApiKey}`,
       },
       body: JSON.stringify({
-        from: "HealthTrack Notificações <notificacoes@exames.co>",
+        from: "Exames.co Notificações <notificacoes@exames.co>",
         to: [adminAuth.user.email],
         subject: emailContent.subject,
         html: emailContent.html,
