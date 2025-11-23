@@ -494,12 +494,12 @@ export const DashboardUploadZone = () => {
               ))}
             </div>
 
-            {/* Coluna Direita: GIF Animado */}
-            <div className="hidden lg:flex justify-center items-center">
+            {/* Coluna Direita: GIF Animado - Visível em todas as telas */}
+            <div className="flex justify-center items-center">
               <img 
                 src={cactoProcessingGif} 
                 alt="Processando" 
-                className="w-full max-w-[180px] opacity-80 animate-fade-in"
+                className="w-full max-w-[120px] lg:max-w-[180px] opacity-80 animate-fade-in"
               />
             </div>
           </div>
