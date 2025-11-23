@@ -25,7 +25,7 @@ export const TourNavigation = ({
         onClick={onPrevious}
         disabled={isFirstStep}
         variant="outline"
-        className="bg-white/10 border-white/20 text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed backdrop-blur-lg"
+        className="bg-white/10 border-white/20 text-white disabled:opacity-30 disabled:cursor-not-allowed backdrop-blur-lg"
       >
         <ChevronLeft className="w-5 h-5 mr-2" />
         Anterior
