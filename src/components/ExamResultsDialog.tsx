@@ -550,7 +550,7 @@ export function ExamResultsDialog({ open, onOpenChange, examId }: ExamResultsDia
                 onClick={() => setAddBiomarkerOpen(true)}
                 disabled={!examId}
                 variant="outline"
-                className="h-12 border-2 border-gray-200 hover:border-orange-500 hover:bg-orange-50 rounded-xl font-semibold transition-all"
+                className="h-12 border-2 border-gray-200 hover:border-blue-500 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 hover:text-white rounded-xl font-semibold transition-all"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Adicionar Biomarcador
