@@ -13,7 +13,7 @@ const generateWelcomeEmail = (params: {
   const { professionalName, professionalEmail, specialty } = params;
   
   return {
-    subject: `🎉 Bem-vindo(a) ao HealthTrack, ${professionalName}!`,
+    subject: `🎉 Bem-vindo(a) ao Exames.co, ${professionalName}!`,
     html: `
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -30,7 +30,7 @@ const generateWelcomeEmail = (params: {
           <tr>
             <td style="background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%); padding: 50px 40px; text-align: center;">
               <div style="font-size: 56px; margin-bottom: 20px;">🎉</div>
-              <h1 style="color: white; margin: 0 0 10px; font-size: 32px; font-weight: 700;">Bem-vindo(a) ao HealthTrack!</h1>
+              <h1 style="color: white; margin: 0 0 10px; font-size: 32px; font-weight: 700;">Bem-vindo(a) ao Exames.co!</h1>
               <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 16px;">Sua jornada na automação de exames começa agora</p>
             </td>
           </tr>
@@ -43,7 +43,7 @@ const generateWelcomeEmail = (params: {
               </p>
               
               <p style="font-size: 16px; line-height: 1.6; margin: 0 0 24px; color: #b0b0b0;">
-                É com grande satisfação que damos as boas-vindas à plataforma <strong style="color: #2196F3;">HealthTrack</strong>! 
+                É com grande satisfação que damos as boas-vindas à plataforma <strong style="color: #2196F3;">Exames.co</strong>! 
                 Você agora faz parte de uma comunidade de profissionais de saúde que está revolucionando a forma de acompanhar exames de pacientes.
               </p>
 
@@ -117,10 +117,10 @@ const generateWelcomeEmail = (params: {
           <tr>
             <td style="background-color: #0a0a0a; padding: 32px; text-align: center; border-top: 1px solid #333;">
               <p style="margin: 0 0 8px; font-size: 14px; color: #666;">
-                <strong style="color: #2196F3;">HealthTrack</strong> - Automação Inteligente de Exames
+                <strong style="color: #2196F3;">Exames.co</strong> - Automação Inteligente de Exames
               </p>
               <p style="margin: 0; font-size: 12px; color: #444;">
-                © ${new Date().getFullYear()} HealthTrack. Todos os direitos reservados.
+                © ${new Date().getFullYear()} Exames.co. Todos os direitos reservados.
               </p>
             </td>
           </tr>
@@ -132,11 +132,11 @@ const generateWelcomeEmail = (params: {
 </html>
     `,
     text: `
-🎉 Bem-vindo(a) ao HealthTrack, ${professionalName}!
+🎉 Bem-vindo(a) ao Exames.co, ${professionalName}!
 
 Olá ${professionalName},
 
-É com grande satisfação que damos as boas-vindas à plataforma HealthTrack! 
+É com grande satisfação que damos as boas-vindas à plataforma Exames.co!
 Você agora faz parte de uma comunidade de profissionais de saúde que está revolucionando a forma de acompanhar exames de pacientes.
 
 ${specialty ? `Especialidade: ${specialty}` : ''}
@@ -166,8 +166,8 @@ Se tiver qualquer dúvida ou precisar de ajuda, nossa equipe está à disposiç�
 Desejamos muito sucesso na utilização da plataforma!
 
 ---
-HealthTrack - Automação Inteligente de Exames
-© ${new Date().getFullYear()} HealthTrack. Todos os direitos reservados.
+Exames.co - Automação Inteligente de Exames
+© ${new Date().getFullYear()} Exames.co. Todos os direitos reservados.
     `.trim()
   };
 };
@@ -208,7 +208,7 @@ serve(async (req: Request): Promise<Response> => {
         "Authorization": `Bearer ${resendApiKey}`,
       },
       body: JSON.stringify({
-        from: "HealthTrack Boas-vindas <boas-vindas@exames.co>",
+        from: "Exames.co Boas-vindas <boas-vindas@exames.co>",
         to: [professionalEmail],
         subject: emailContent.subject,
         html: emailContent.html,
