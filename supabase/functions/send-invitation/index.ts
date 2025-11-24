@@ -53,7 +53,7 @@ serve(async (req: Request): Promise<Response> => {
     const adminName = admin?.full_name || "Administrador";
 
     // Gerar link de convite
-    const appUrl = `${supabaseUrl.replace('.supabase.co', '.lovable.app')}`;
+    const appUrl = 'https://exames.co';
     const inviteLink = `${appUrl}/accept-invite?token=${invitation.token}`;
 
     // Gerar template de email
