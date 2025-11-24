@@ -30,7 +30,11 @@ const generateAcceptanceNotificationEmail = (params: {
         <table width="600" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(76, 175, 80, 0.2);">
           <tr>
             <td style="background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%); padding: 40px; text-align: center;">
-              <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+              <img src="https://exames.co/icon-192.png" 
+                   alt="Exames.co Logo" 
+                   width="64" 
+                   height="64" 
+                   style="display: block; margin: 0 auto 16px; border-radius: 16px; background-color: white; padding: 6px;" />
               <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 600;">Convite Aceito!</h1>
             </td>
           </tr>

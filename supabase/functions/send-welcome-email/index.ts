@@ -29,7 +29,11 @@ const generateWelcomeEmail = (params: {
           <!-- Header com gradiente azul -->
           <tr>
             <td style="background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%); padding: 50px 40px; text-align: center;">
-              <div style="font-size: 56px; margin-bottom: 20px;">🎉</div>
+              <img src="https://exames.co/icon-192.png" 
+                   alt="Exames.co Logo" 
+                   width="80" 
+                   height="80" 
+                   style="display: block; margin: 0 auto 20px; border-radius: 20px; background-color: white; padding: 8px;" />
               <h1 style="color: white; margin: 0 0 10px; font-size: 32px; font-weight: 700;">Bem-vindo(a) ao Exames.co!</h1>
               <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 16px;">Sua jornada na automação de exames começa agora</p>
             </td>
