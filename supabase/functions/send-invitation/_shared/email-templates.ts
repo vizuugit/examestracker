@@ -39,9 +39,11 @@ export const generateInvitationEmail = (params: {
           
           <tr>
             <td style="background: linear-gradient(135deg, #0066CC 0%, #0099FF 100%); padding: 40px; text-align: center;">
-              <div style="background-color: white; width: 80px; height: 80px; border-radius: 20px; display: inline-block; line-height: 80px; font-size: 48px; font-weight: bold; color: #0066CC; margin-bottom: 16px;">
-                Ex
-              </div>
+              <img src="https://exames.co/icon-192.png" 
+                   alt="Exames.co Logo" 
+                   width="80" 
+                   height="80" 
+                   style="display: block; margin: 0 auto 16px; border-radius: 20px; background-color: white; padding: 8px;" />
               <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 600;">Você foi convidado!</h1>
             </td>
           </tr>
@@ -168,7 +170,11 @@ export const generateAcceptanceNotificationEmail = (params: {
           
           <tr>
             <td style="background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%); padding: 40px; text-align: center;">
-              <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+              <img src="https://exames.co/icon-192.png" 
+                   alt="Exames.co Logo" 
+                   width="64" 
+                   height="64" 
+                   style="display: block; margin: 0 auto 16px; border-radius: 16px; background-color: white; padding: 6px;" />
               <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 600;">Convite Aceito!</h1>
             </td>
           </tr>
